@@ -8,6 +8,7 @@ import android.widget.Button;
 
 public class HomeActivity extends Activity{
 
+	//Test
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
