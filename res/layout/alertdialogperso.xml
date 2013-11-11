@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    
+    <TextView 
+        android:id="@+id/TextViewAlertDialogPerso"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Name :" 
+        android:textColor="@android:color/white"
+    />
+    
+    <EditText 
+        android:id="@+id/EditTextAlertDialogPerso"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/TextViewAlertDialogPerso"
+    />
+    
+    <CheckBox
+        android:id="@+id/ChkAlertDialogPerso"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/checkBoxAlertDialogPerso" 
+        android:textColor="@android:color/white"
+    />
+
+</LinearLayout>

@@ -1,0 +1,11 @@
+<resources>
+
+    <style name="AppTheme" parent="android:Theme.Light" >
+        <item name="android:windowTitleSize">48dip</item>
+    </style>
+    
+    <style name="SmallTitleTheme" parent="android:Theme.Light" >
+        <item name="android:windowTitleSize">24dip</item>
+    </style>
+    
+</resources>

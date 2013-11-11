@@ -1,0 +1,32 @@
+<resources>
+
+    <string name="app_name">SpeakingTime</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="menu_settings">Settings</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="buttonTakePhoto_text">Prendre la photo</string>
+    <string name="title_selection_contact">SpeakingTime</string>
+    <string name="buttonSendToDatabase">Send to database</string>
+    <string name="buttonSelectGroup">Select a group</string>
+    <string name="buttonCreateGroup">Create a group</string>
+    <string name="title_selection_group">SpeakingTime</string>
+    <string name="buttonCreateTheGroup">Create the group</string>
+    <string name="buttonSelectContacts">Select these contacts and debute meeting</string>
+    <string name="buttonSelectGroupAndDebuteMeeting">Select group and debute meeting</string>
+    <string name="buttonCreateAndSaveToLocalDatabase">Create group and save it to local database</string>
+    <string name="buttonCreateGroupOrSelectContacts">Start meeting : \n -create a group \n -select contacts</string>
+    <string name="title_create_group_activity">Create a group activity</string>
+    <string name="buttonDeleteGroup">Delete group</string>
+    <string name="checkBoxAlertDialogPerso">Send by SSH</string>
+    <string name="buttonEditGroup">Edit a group</string>
+    <string name="buttonSelectGroupToEdit">Select this group to edit</string>
+    <string name="title_selection_group_to_edit">Edit a group activity</string>
+    <string name="buttonEditTheGroupAndDebuteMeeting">Edit this group and debute meeting</string>
+    <string name="buttonEditTheGroup">Edit this group</string>
+    <string name="title_selection_contact_to_edit">Edit this group</string>
+	<string name="buttonSelectAll_ecoute">Select All</string>
+	<string name="buttonSelectAll_parole">Select All</string>
+	<string name="buttonSelectAll_inactif">Select All</string>
+	<string name="buttonAddMember">+</string>
+	
+</resources>

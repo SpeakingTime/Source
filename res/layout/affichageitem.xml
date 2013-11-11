@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/item"
+    android:orientation="horizontal"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/listview_background"
+    >
+    
+    <LinearLayout
+	    android:orientation="vertical"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	   	android:layout_gravity="center_vertical"
+	   	android:paddingLeft="10px"
+	    >
+    	
+    	<ImageView
+			android:id="@+id/IMG"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+	   		android:layout_gravity="center_vertical"
+	   		android:padding="10px"
+		/>
+ 
+   	</LinearLayout>
+ 
+	<LinearLayout
+	    android:orientation="vertical"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	   	android:layout_gravity="center_vertical"
+	   	android:paddingLeft="10px"
+	    android:layout_weight="1"
+	    >
+ 
+	    <TextView android:id="@+id/DISPLAY_NAME"
+	         android:layout_width="fill_parent"
+	         android:layout_height="fill_parent"
+	         android:textSize="16px"
+	         android:textStyle="bold"
+	         android:textColor="@android:color/white"
+	         />
+ 
+	    <TextView android:id="@+id/COMPANY_AND_TITLE"
+	         android:layout_width="fill_parent"
+	         android:layout_height="fill_parent"
+	         android:textSize="16px"
+	         android:textColor="@android:color/white"
+	         />
+	    
+	    <Chronometer android:id="@+id/CHRONOMETRE"
+	         android:layout_width="wrap_content"
+	         android:layout_height="wrap_content"
+	         android:textSize="20px"
+	         android:textColor="@android:color/white"
+	         />
+
+ 
+    </LinearLayout>
+ 
+</LinearLayout>

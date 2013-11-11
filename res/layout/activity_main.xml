@@ -1,0 +1,145 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/black"
+    android:orientation="vertical" 
+    android:gravity="bottom"
+    android:baselineAligned="false">
+    
+    <LinearLayout 
+        android:id="@+id/LinearLayoutHorizontal"
+    	android:orientation="horizontal" 
+        android:layout_width="match_parent"
+    	android:layout_height="match_parent"
+    	android:layout_weight="1"
+      	android:gravity="top">
+    
+	    <LinearLayout 
+	        android:id="@+id/LinearLayoutVertical1"
+	    	android:orientation="vertical" 
+	        android:layout_width="match_parent"
+	    	android:layout_height="match_parent"
+	    	android:layout_weight="1"
+	      	android:gravity="top">
+	
+	        <com.example.observationreunion.MyListView
+	            android:id="@+id/listViewEcoute"
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content" 
+	            android:divider="@null">
+	        </com.example.observationreunion.MyListView>
+	      	
+	    </LinearLayout>
+	     
+	    <LinearLayout 
+	        android:id="@+id/LinearLayoutVertical2"
+	        android:orientation="vertical"    	
+	        android:layout_width="match_parent"
+	    	android:layout_height="match_parent"
+	    	android:layout_weight="1"
+	       	android:gravity="top">      	
+	       	
+	        <com.example.observationreunion.MyListView
+	            android:id="@+id/listViewParole"
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content" 
+	            android:divider="@null">
+	        </com.example.observationreunion.MyListView>
+	        
+	    </LinearLayout>   
+	    
+	    <LinearLayout 
+	        android:id="@+id/LinearLayoutVertical3"
+	        android:orientation="vertical"    	
+	        android:layout_width="match_parent"
+	    	android:layout_height="match_parent"
+	    	android:layout_weight="1"
+	       	android:gravity="top">      	
+	       	
+	        <com.example.observationreunion.MyListView
+	            android:id="@+id/listViewInactif"
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content" 
+	            android:divider="@null">
+	        </com.example.observationreunion.MyListView>
+	        
+	    </LinearLayout>
+    
+	</LinearLayout>
+	    
+    <LinearLayout
+        android:id="@+id/BottomLinearLayoutHorizontal"
+	    android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" 
+        android:gravity="center" 
+        android:layout_alignParentBottom="true">
+		<LinearLayout 
+	        android:layout_width="match_parent"
+	    	android:layout_height="match_parent"
+	    	android:layout_weight="1"
+	    	android:background="@drawable/border"
+	      	android:gravity="center"	>
+			<LinearLayout 
+			    android:layout_width="fill_parent"
+		        android:layout_height="wrap_content"
+		        android:layout_weight="1"
+		        android:orientation="horizontal" 
+		        android:gravity="center" 
+		        android:layout_alignParentBottom="true" >
+				<Chronometer
+			    	android:id="@+id/chronometerTotalTime"
+			    	android:layout_width="wrap_content"
+					android:layout_height="wrap_content" 
+					android:textSize="20px"
+		            android:textColor="@color/red" >
+		        </Chronometer>
+		    </LinearLayout>
+		    <LinearLayout 
+			    android:layout_width="fill_parent"
+		        android:layout_height="wrap_content"
+		        android:orientation="horizontal" 
+		        android:layout_weight="1"
+		        android:gravity="center_horizontal|center_vertical" 		        
+		        android:layout_alignParentBottom="true" >
+		        <ImageButton
+				    android:id="@+id/imageButtonPause"
+    				android:layout_width="36dip"
+    				android:layout_height="36dip"
+    				android:src="@drawable/pause" >
+    			</ImageButton>
+    			<ImageButton
+				    android:id="@+id/imageButtonPlay"
+    				android:layout_width="36dip"
+    				android:layout_height="36dip"
+    				android:src="@drawable/play" >
+    			</ImageButton>
+    			<Button
+				    android:id="@+id/buttonAddMember"
+    				android:text="@string/buttonAddMember"
+		    		android:layout_width="36dip"
+					android:layout_height="36dip"
+				    android:textStyle="bold"
+					android:layout_gravity="center" >
+    			</Button>
+		    </LinearLayout>  
+	    </LinearLayout>
+	    <LinearLayout 
+	        android:layout_width="match_parent"
+	    	android:layout_height="match_parent"
+	    	android:layout_weight="1"
+	      	android:gravity="center"	>		
+	      	<Button
+		    	android:id="@+id/buttonSendToDatabase"
+		    	android:text="@string/buttonSendToDatabase"
+		    	android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_gravity="center" >
+	    	</Button>
+	    </LinearLayout>
+    </LinearLayout>
+    	
+        
+
+</LinearLayout>

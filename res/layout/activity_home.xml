@@ -1,0 +1,58 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/black"
+    android:orientation="vertical" 
+    android:gravity="bottom">
+		
+       	<LinearLayout 
+	        android:layout_width="match_parent"
+	    	android:layout_height="match_parent"
+	    	android:layout_weight="1"
+	    	android:gravity="center"
+   			android:padding="5dip"
+   			>
+			<Button
+    		    android:id="@+id/buttonSelectGroup"
+    		    android:text="@string/buttonSelectGroup"
+    		    android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:textSize="16dp"
+		    	>
+    		</Button>
+    	</LinearLayout>
+    	
+       	<LinearLayout 
+	        android:layout_width="match_parent"
+	    	android:layout_height="match_parent"
+	    	android:layout_weight="1"
+	    	android:gravity="center"
+   			android:padding="5dip"
+   			>
+			<Button
+    		    android:id="@+id/buttonEditGroup"
+    		    android:text="@string/buttonEditGroup"
+    		    android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:textSize="16dp"
+		    	>
+    		</Button>
+    	</LinearLayout>
+        
+        <LinearLayout 
+	        android:layout_width="match_parent"
+	    	android:layout_height="match_parent"
+	    	android:layout_weight="1"
+	    	android:gravity="center"	
+  			android:padding="5dip" >
+			<Button
+		    	android:id="@+id/buttonCreateGroupOrSelectContacts"
+		    	android:text="@string/buttonCreateGroupOrSelectContacts"
+		    	android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:textSize="16dp" >
+    		</Button>
+    	</LinearLayout>
+    	
+</LinearLayout>

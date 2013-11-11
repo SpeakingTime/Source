@@ -1,0 +1,71 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/black"
+    android:orientation="vertical" 
+    android:gravity="bottom"
+    android:baselineAligned="false">
+    
+    <LinearLayout 
+        android:orientation="horizontal" 
+        android:layout_width="match_parent"
+    	android:layout_height="match_parent"
+    	android:layout_weight="1"
+      	android:gravity="top">
+    
+	    <com.example.observationreunion.MyListView
+	    	android:id="@+id/listViewContactsGroup_c"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content" 
+	        android:divider="@null">
+	    </com.example.observationreunion.MyListView>
+	      	
+	</LinearLayout>
+	
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" 
+        android:gravity="center" 
+        android:layout_alignParentBottom="true">
+		
+		
+         <TextView
+            android:id="@+id/title_ecoute"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14dip"
+            android:textColor="#ff0000"
+            android:textStyle="bold"
+            android:text="Group Name : " />
+        
+		<EditText
+			android:id="@+id/editTextGroupName"
+		    android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center" >
+	    </EditText>
+
+	
+	</LinearLayout>
+	    
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" 
+        android:gravity="center" 
+        android:layout_alignParentBottom="true">
+		
+		<Button
+		    android:id="@+id/buttonCreateAndSaveToLocalDatabase"
+		    android:text="@string/buttonCreateAndSaveToLocalDatabase"
+		    android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center" >
+	    </Button>
+	</LinearLayout>
+    	
+        
+
+</LinearLayout>

@@ -1,0 +1,61 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:gravity="bottom"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/black">
+
+    
+    <ListView
+    	android:id="@+id/ListViewCheckBoxToEdit"
+		android:layout_width="match_parent"
+   		android:layout_height="match_parent" 
+	    android:layout_alignParentTop="true"
+        android:layout_weight="1.0">
+	</ListView>
+    
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" 
+        android:gravity="left" 
+        android:layout_alignParentBottom="true">
+		
+       	<LinearLayout 
+	        android:layout_width="match_parent"
+	    	android:layout_height="match_parent"
+	    	android:layout_weight="1"
+	    	android:gravity="center"
+	      	android:background="@drawable/border"
+   			android:padding="5dip"
+   			>
+			<Button
+    		    android:id="@+id/buttonEditTheGroup"
+    		    android:text="@string/buttonEditTheGroup"
+    		    android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:textSize="16dp"
+		    	>
+    		</Button>
+    	</LinearLayout>
+        
+        <LinearLayout 
+	        android:layout_width="match_parent"
+	    	android:layout_height="match_parent"
+	    	android:layout_weight="1"
+	    	android:gravity="center"	
+	      	android:background="@drawable/border"
+  			android:padding="5dip" >
+			<Button
+		    	android:id="@+id/buttonEditTheGroupAndDebuteMeeting"
+		    	android:text="@string/buttonEditTheGroupAndDebuteMeeting"
+		    	android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:textSize="16dp" >
+    		</Button>
+    	</LinearLayout>
+    	
+    </LinearLayout>
+
+</LinearLayout>
