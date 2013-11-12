@@ -144,7 +144,9 @@ public class ModalDialog{
 				final EditText editTextAlertDialogPerso = (EditText) alertDialogView.findViewById(R.id.EditTextAlertDialogPerso);
 				
 				ModalDialog.this.mEditText = editTextAlertDialogPerso.getText().toString();
+				
 				dialog.dismiss();
+				
 			}
 		});
 		

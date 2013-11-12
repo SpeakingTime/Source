@@ -88,6 +88,7 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
     Boolean flagActionDownModeEcoute = false;
     Boolean flagActionDownModeParole = false;
     Boolean flagActionDownModeInactif = false;
+    Boolean playStatus = true;
     
     String meeting_total_time;
     
@@ -96,6 +97,8 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
     
     private static ProgressDialog dialog;
     int position = 0;
+    
+    long totalTimeWhenStopped = 0;
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -183,15 +186,23 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
     				public void onClick(View v) {
     					// TODO Auto-generated method stub
     					
-    					int i = 0;
-    					for (i = 0; i<lVDataParole.getCount(); i++){
-    						HashMap<String, Object> mapItemContact = (HashMap<String, Object>) lVDataParole.getItemAtPosition(i);
-    	        			listItemParole.remove(mapItemContact);		
-    	        			mapItemContact.put("onPause", true);
-    	        			mapItemContact.put("chronometre", new ChronoData((ChronoData) mapItemContact.get("chronometre"), "stop"));
-    	        			listItemParole.add(i, mapItemContact);	
-    	        			mScheduleParole.notifyDataSetChanged();
-    	        			
+    					if (playStatus == true) {
+    					
+	    					int i = 0;
+	    					for (i = 0; i<lVDataParole.getCount(); i++){
+	    						HashMap<String, Object> mapItemContact = (HashMap<String, Object>) lVDataParole.getItemAtPosition(i);
+	    	        			listItemParole.remove(mapItemContact);		
+	    	        			mapItemContact.put("onPause", true);
+	    	        			mapItemContact.put("chronometre", new ChronoData((ChronoData) mapItemContact.get("chronometre"), "stop"));
+	    	        			listItemParole.add(i, mapItemContact);	
+	    	        			mScheduleParole.notifyDataSetChanged();
+	    					}
+	    					
+	    					Chronometer chronometerTotalTime = (Chronometer) findViewById(R.id.chronometerTotalTime);
+	    					totalTimeWhenStopped = chronometerTotalTime.getBase() - SystemClock.elapsedRealtime();
+	    					chronometerTotalTime.stop();
+	    					
+	    					playStatus = false;
     					}
     					
     					//ModalDialog modalDialog = new ModalDialog();
@@ -209,16 +220,23 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
     				public void onClick(View v) {
     					// TODO Auto-generated method stub
     					
-    					int i = 0;
-    					for (i = 0; i<lVDataParole.getCount(); i++){
-    						HashMap<String, Object> mapItemContact = (HashMap<String, Object>) lVDataParole.getItemAtPosition(i);
-    	        			listItemParole.remove(mapItemContact);		
-    	        			mapItemContact.put("onPause", false);
-    	        			mapItemContact.put("chronometre", new ChronoData((ChronoData) mapItemContact.get("chronometre"), "start"));
-    	        			listItemParole.add(i, mapItemContact);	
-    	        			mScheduleParole.notifyDataSetChanged();
+    					if (playStatus == false){
+	    					int i = 0;
+	    					for (i = 0; i<lVDataParole.getCount(); i++){
+	    						HashMap<String, Object> mapItemContact = (HashMap<String, Object>) lVDataParole.getItemAtPosition(i);
+	    	        			listItemParole.remove(mapItemContact);		
+	    	        			mapItemContact.put("onPause", false);
+	    	        			mapItemContact.put("chronometre", new ChronoData((ChronoData) mapItemContact.get("chronometre"), "start"));
+	    	        			listItemParole.add(i, mapItemContact);	
+	    	        			mScheduleParole.notifyDataSetChanged();
+	    					}
+	    					
+	    					Chronometer chronometerTotalTime = (Chronometer) findViewById(R.id.chronometerTotalTime);
+	    					chronometerTotalTime.setBase(SystemClock.elapsedRealtime() + totalTimeWhenStopped);
+	    					chronometerTotalTime.start();
+	    					
+	    					playStatus = true;
     					}
-    					
     				}
     			}
     	);
@@ -234,37 +252,52 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
     					ModalDialog modalDialog = new ModalDialog();
     					String meeting_name = modalDialog.showEditTextDialog(MainActivity.this, "Give a name to this meeting");    					
     					
-    					TextView textViewTotalTime = (TextView) findViewById (R.id.chronometerTotalTime);
-    					meeting_total_time = textViewTotalTime.getText().toString();
-    	     		    if (meeting_total_time.length()==5){
-    	     		    	meeting_total_time = "00:" + meeting_total_time;
-    	    		    }
-    	    		    else if (meeting_total_time.length()==7){
-    	    		    	//timestring = "0:" + timestring;
-    	    		    	meeting_total_time = "0" + meeting_total_time;
-    	    		    }
-    	     		    
-    					dialog = ProgressDialog.show(MainActivity.this, "Send Data", "sending");
-    					    					
-    					if (SendToDatabase(meeting_name, meeting_total_time)){
-    						Log.i("SEND", "- DATA SEND -");
+    					if (meeting_name != "Cancel"){
+    						
+    						if (meeting_name.equalsIgnoreCase("")){
+    							
+    							AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
+    							alertDialog.setTitle("Warning : GIVE A VALID NAME");
+    							alertDialog.setMessage("DATA NOT SEND !");
+    							alertDialog.show();
+    							
+    						}
+    						else {
+    						
+	    						TextView textViewTotalTime = (TextView) findViewById (R.id.chronometerTotalTime);
+			    				meeting_total_time = textViewTotalTime.getText().toString();
+			    	     		if (meeting_total_time.length()==5){
+			    	     		   	meeting_total_time = "00:" + meeting_total_time;
+			    	    		}
+			    	    		else if (meeting_total_time.length()==7){
+			    	    		  	//timestring = "0:" + timestring;
+			    	    		   	meeting_total_time = "0" + meeting_total_time;
+			    	    		}
+			    	     		    
+			    				dialog = ProgressDialog.show(MainActivity.this, "Send Data", "sending");
+			    					    					
+			    				if (SendToDatabase(meeting_name, meeting_total_time)){
+			    					Log.i("SEND", "- DATA SEND -");
+			    				}
+			    				else{
+			    					Log.i("SEND", "- DATA NOT SEND - BIG ERROR !!! -");
+			    				}
+			    					
+			    				/*CheckBox chkSendbySSH = (CheckBox) findViewById(R.id.ChkAlertDialogPerso);
+			    			    if (chkSendbySSH.isChecked()) {
+			    			        System.out.println("Send by SSH : true.");
+			    			    }
+			    			    else {
+			    			      	System.out.println("Send by SSH : false.");
+			    			    }*/
+			
+			    					
+			    				dialog.dismiss();
+			    					
+			    				finish();
+    						}
+	    					
     					}
-    					else{
-    						Log.i("SEND", "- DATA NOT SEND - BIG ERROR !!! -");
-    					}
-    					
-    					/*CheckBox chkSendbySSH = (CheckBox) findViewById(R.id.ChkAlertDialogPerso);
-    			        if (chkSendbySSH.isChecked()) {
-    			            System.out.println("Send by SSH : true.");
-    			        }
-    			        else {
-    			        	System.out.println("Send by SSH : false.");
-    			        }*/
-
-    					
-    					dialog.dismiss();
-    					
-    					finish();
     				}
     					
     					
@@ -863,7 +896,16 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
     	}
     	mCursor.close();
     	
-    	output.append("end: participants list  \r\n \r\nbegin: meeting " + getCurrentTimeStamp() + "\r\n"); 
+    	Chronometer chronometerTotalTime = (Chronometer) findViewById(R.id.chronometerTotalTime);
+		String timetotalstring = chronometerTotalTime.getText().toString();
+		    if (timetotalstring.length()==5){
+		    	timetotalstring = "00:" + timetotalstring;
+	    }
+	    else if (timestring.length()==7){
+	    	timetotalstring = "0" + timetotalstring;
+	    }
+    	
+    	output.append("end: participants list  \r\n \r\nbegin: meeting " + timetotalstring /* getCurrentTimeStamp()*/ + "\r\n"); 
     	
         mScheduleEcoute = new /*SimpleAdapter*/MyListAdapterCheckmarkEcoute (this.getBaseContext(), listItemEcoute, R.layout.affichageitem_with_chekmark_ecoute,
                 new String[] { "img", "display_name", "company_and_title", "chronometre", "tag2"}, 
@@ -995,7 +1037,7 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
 			
 			is.close();*/
 			
-    		for (int i=0; i<mScheduleEcoute.getCount(); i++){
+    		/*for (int i=0; i<mScheduleEcoute.getCount(); i++){
     			
     			_idmax = _idmax +1;
     			
@@ -1021,7 +1063,7 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
     		    }
      		    nameValuePairs.add(new BasicNameValuePair("chronometre", timestring) );
         		
-     		    /*HttpClient httpclient = new DefaultHttpClient();
+     		    HttpClient httpclient = new DefaultHttpClient();
      		    //HttpPost httppost = new HttpPost("http://213.186.33.3/~datamysq/timespeaking/add.php"); //OVH
      		    HttpPost httppost = new HttpPost("http://195.221.173.83/speakingtime/add.php"); //CentOs Cirad
      		    //HttpPost httppost = new HttpPost("http://195.221.173.83/timespeaking/add.php"); //CentOs Perso
@@ -1031,7 +1073,7 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
     		    Log.i("Connexion", nameValuePairs.get(1).toString());
     		    Log.i("Connexion", nameValuePairs.get(2).toString());
     		    HttpResponse response = httpclient.execute(httppost);
-    		    Log.i("Connexion add.php", "Done");*/
+    		    Log.i("Connexion add.php", "Done");
      		    
      		    //Envoi de l'image associée
      		    try{
@@ -1049,7 +1091,7 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
  		            nameValuePairsImage.add(new BasicNameValuePair("image",ba1));
  		            nameValuePairsImage.add(new BasicNameValuePair("id", String.valueOf(_idmax)));
      		    	
- 		           /*try{
+ 		           try{
 		            	//HttpClient httpclient = new DefaultHttpClient();
 		            	//HttpPost httppost2 = new HttpPost("http://10.0.2.2/img/base.php");
 		            	//HttpPost httppost_image = new HttpPost("http://213.186.33.3/~datamysq/timespeaking/img/image.php"); //OVH  
@@ -1065,7 +1107,7 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
 		           }
  		           catch(Exception e){
 		        		  Log.i("image_exception", "IMAGE EXCEPTION : " + e.toString());
-		           }*/
+		           }
      		    	
      		    	
      		    	
@@ -1076,9 +1118,9 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
      		    
      		    
     		
-    		}
+    		}*/
     		
-    		for (int i=0; i<mScheduleParole.getCount(); i++){
+    		/*for (int i=0; i<mScheduleParole.getCount(); i++){
     			
     			_idmax = _idmax +1;
     			
@@ -1106,7 +1148,7 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
      		    
      		    output.append("    " +  getCurrentTimeStamp() + ";" + timestring + ";" + map.get("display_name").toString() + ";speaker;" + "\r\n"); 
      		    
-     		    /*HttpClient httpclient = new DefaultHttpClient();
+     		    HttpClient httpclient = new DefaultHttpClient();
      		    //HttpPost httppost = new HttpPost("http://213.186.33.3/~datamysq/timespeaking/add.php"); //OVH
         		HttpPost httppost = new HttpPost("http://195.221.173.83/timespeaking/add.php"); //CentOs Cirad
                 //HttpPost httppost = new HttpPost("http://195.221.173.83/timespeaking/add.php"); //CentOs Perso
@@ -1116,7 +1158,7 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
      		    Log.i("Connexion", nameValuePairs.get(1).toString());
      		    Log.i("Connexion", nameValuePairs.get(2).toString());
      		    HttpResponse response = httpclient.execute(httppost);
-     		    Log.i("Connexion", "Done"); */
+     		    Log.i("Connexion", "Done"); 
      		    
      		    //Envoi de l'image associée
      		    try{
@@ -1136,7 +1178,7 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
  		            nameValuePairsImage.add(new BasicNameValuePair("image",ba1));
  		            nameValuePairsImage.add(new BasicNameValuePair("id", String.valueOf(_idmax)));
      		    	
- 		            /*try{
+ 		            try{
 		            	//HttpClient httpclient = new DefaultHttpClient();
 		            	//HttpPost httppost2 = new HttpPost("http://10.0.2.2/img/base.php");
 		            	//HttpPost httppost_image = new HttpPost("http://213.186.33.3/~datamysq/timespeaking/img/image.php"); //OVH
@@ -1149,7 +1191,7 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
 		            }
  		            catch(Exception e){
 		        		  Log.i("image_exception", "IMAGE EXCEPTION : " + e.toString());
- 		            }*/
+ 		            }
      		     }
      		     catch (Exception e){
      		    	
@@ -1157,7 +1199,7 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
      		    
      		    
      		    
-    		}
+    		}*/
     		
     		
     		StringBuilder meeting_result = new StringBuilder();
@@ -1430,7 +1472,16 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
 		    	timestring = "0" + timestring;
 		    }
  		    
- 		    output.append("    " + getCurrentTimeStamp() + ";" + timestring + ";" + map_modified.get("display_name") + ";speaker;" + "\r\n");
+ 		    Chronometer chronometerTotalTime = (Chronometer) findViewById(R.id.chronometerTotalTime);
+ 		    String timetotalstring = chronometerTotalTime.getText().toString();
+ 		    if (timetotalstring.length()==5){
+ 		    	timetotalstring = "00:" + timetotalstring;
+		    }
+		    else if (timestring.length()==7){
+		    	timetotalstring = "0" + timetotalstring;
+		    }
+ 		    
+ 		    output.append("    " + /*getCurrentTimeStamp()*/ timetotalstring + ";" + timestring + ";" + map_modified.get("display_name") + ";speaker;" + "\r\n");
 		   	  	
 	    }
 	}
@@ -1479,7 +1530,16 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
 		    	timestring = "0" + timestring;
 		    }
  		    
- 		    output.append("    " + getCurrentTimeStamp() + ";" + timestring + ";" + map_modified.get("display_name") + ";listener;" + "\r\n");
+ 		    Chronometer chronometerTotalTime = (Chronometer) findViewById(R.id.chronometerTotalTime);
+		    String timetotalstring = chronometerTotalTime.getText().toString();
+		    if (timetotalstring.length()==5){
+		    	timetotalstring = "00:" + timetotalstring;
+		    }
+		    else if (timestring.length()==7){
+		    	timetotalstring = "0" + timetotalstring;
+		    }
+ 		    
+ 		    output.append("    " + timetotalstring /*getCurrentTimeStamp()*/ + ";" + timestring + ";" + map_modified.get("display_name") + ";listener;" + "\r\n");
 		   				
 	    }
 	}
@@ -1527,7 +1587,16 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
 		    	timestring = "0" + timestring;
 		    }
  		    
- 		    output.append("    " + getCurrentTimeStamp() + ";" + timestring + ";" + map_modified.get("display_name") + ";idle;" + "\r\n");
+ 		    Chronometer chronometerTotalTime = (Chronometer) findViewById(R.id.chronometerTotalTime);
+		    String timetotalstring = chronometerTotalTime.getText().toString();
+		    if (timetotalstring.length()==5){
+		    	timetotalstring = "00:" + timetotalstring;
+		    }
+		    else if (timestring.length()==7){
+		    	timetotalstring = "0" + timetotalstring;
+		    }
+ 		    
+ 		    output.append("    " + timetotalstring /*getCurrentTimeStamp()*/ + ";" + timestring + ";" + map_modified.get("display_name") + ";idle;" + "\r\n");
  		    
  		    /*AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
 			alertDialog.setTitle("chronometre");
@@ -1582,7 +1651,16 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
 		    	timestring = "0" + timestring;
 		    }
  		    
- 		    output.append("    " + getCurrentTimeStamp() + ";" + timestring + ";" + map_modified.get("display_name") + ";idle;" + "\r\n");
+ 		    Chronometer chronometerTotalTime = (Chronometer) findViewById(R.id.chronometerTotalTime);
+		    String timetotalstring = chronometerTotalTime.getText().toString();
+		    if (timetotalstring.length()==5){
+		    	timetotalstring = "00:" + timetotalstring;
+		    }
+		    else if (timestring.length()==7){
+		    	timetotalstring = "0" + timetotalstring;
+		    }
+ 		    
+ 		    output.append("    " + timetotalstring /*getCurrentTimeStamp()*/ + ";" + timestring + ";" + map_modified.get("display_name") + ";idle;" + "\r\n");
  		    
 		   				
 	    }
@@ -1631,7 +1709,16 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
 		    	timestring = "0" + timestring;
 		    }
  		    
- 		    output.append("    " + getCurrentTimeStamp() + ";" + timestring + ";" + map_modified.get("display_name") + ";listener;" + "\r\n");
+ 		    Chronometer chronometerTotalTime = (Chronometer) findViewById(R.id.chronometerTotalTime);
+		    String timetotalstring = chronometerTotalTime.getText().toString();
+		    if (timetotalstring.length()==5){
+		    	timetotalstring = "00:" + timetotalstring;
+		    }
+		    else if (timestring.length()==7){
+		    	timetotalstring = "0" + timetotalstring;
+		    }
+ 		    
+ 		    output.append("    " + timetotalstring /*getCurrentTimeStamp()*/ + ";" + timestring + ";" + map_modified.get("display_name") + ";listener;" + "\r\n");
 		   				
 	    }
 	}
@@ -1678,12 +1765,24 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
 		    else if (timestring.length()==7){
 		    	timestring = "0" + timestring;
 		    }
+		    	
+		    Chronometer chronometerTotalTime = (Chronometer) findViewById(R.id.chronometerTotalTime);
+			String timetotalstring = chronometerTotalTime.getText().toString();
+			if (timetotalstring.length()==5){
+			   	timetotalstring = "00:" + timetotalstring;
+			}
+			else if (timestring.length()==7){
+			   	timetotalstring = "0" + timetotalstring;
+		    }
  		    
- 		    output.append("    " + getCurrentTimeStamp() + ";" + timestring + ";" + modified_map_onmove.get("display_name") + ";speaker;" + "\r\n");
+ 		    output.append("    " + timetotalstring /*getCurrentTimeStamp()*/ + ";" + timestring + ";" + map_modified.get("display_name") + ";speaker;" + "\r\n");
  		    
 		   	
 	    }
 	}
+	
+	protected void onDestroy() {
+        super.onDestroy(); }
    
 }
 
