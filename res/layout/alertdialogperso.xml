@@ -25,6 +25,7 @@
         android:layout_height="wrap_content"
         android:text="@string/checkBoxAlertDialogPerso" 
         android:textColor="@android:color/white"
+        android:onClick="myClickHandlerSSH"
     />
 
 </LinearLayout>

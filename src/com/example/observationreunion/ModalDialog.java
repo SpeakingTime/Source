@@ -3,10 +3,13 @@ package com.example.observationreunion;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.HashMap;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -14,13 +17,15 @@ import android.os.Message;
 import android.os.MessageQueue;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.EditText;
 
-public class ModalDialog{
+public class ModalDialog {
 	
 	private boolean mChoice = false;
 	private boolean mQuitModal = false;
 	private String mEditText = "";
+	private boolean chkSSH_Status = false;
 	
 	private Method mMsgQueueNextMethod = null;
 	private Field mMsgTargetFiled = null;
@@ -158,6 +163,9 @@ public class ModalDialog{
 			}
 		});
 		
+		CheckBox chkSSH = (CheckBox) alertDialogView.findViewById(R.id.ChkAlertDialogPerso);
+		
+		
 		AlertDialog alert = builder.create();
 		
 		alert.show();
@@ -261,4 +269,6 @@ public class ModalDialog{
 			}
 		}
 	}
+	
+	
 }

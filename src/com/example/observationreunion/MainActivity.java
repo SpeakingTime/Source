@@ -85,10 +85,11 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
     
     HashMap<String, Object> original_map_onmove = null; 
     HashMap<String, Object> modified_map_onmove = null;
-    Boolean flagActionDownModeEcoute = false;
-    Boolean flagActionDownModeParole = false;
-    Boolean flagActionDownModeInactif = false;
-    Boolean playStatus = true;
+    boolean flagActionDownModeEcoute = false;
+    boolean flagActionDownModeParole = false;
+    boolean flagActionDownModeInactif = false;
+    boolean playStatus = true;
+    boolean ssh = true;
     
     String meeting_total_time;
     
@@ -283,21 +284,17 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
 			    					Log.i("SEND", "- DATA NOT SEND - BIG ERROR !!! -");
 			    				}
 			    					
-			    				/*CheckBox chkSendbySSH = (CheckBox) findViewById(R.id.ChkAlertDialogPerso);
-			    			    if (chkSendbySSH.isChecked()) {
-			    			        System.out.println("Send by SSH : true.");
-			    			    }
-			    			    else {
-			    			      	System.out.println("Send by SSH : false.");
-			    			    }*/
-			
+			    				if (ssh == true) {
 			    					
+			    				}
+			    				
 			    				dialog.dismiss();
 			    					
 			    				finish();
     						}
 	    					
     					}
+    					
     				}
     					
     					
@@ -1409,6 +1406,24 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
 			mapItemContact.put("isSelected", false);
 			listItemInactif.add(position, mapItemContact);	
 			mScheduleInactif.notifyDataSetChanged();
+				
+		}
+		
+	}
+    
+    public void myClickHandlerSSH(View v) {
+		
+    	CheckBox cb = (CheckBox)v;
+		
+		if (cb.isChecked()){
+			//cb.setBackgroundResource(Color.GREEN);
+			ssh = true;	
+			
+				
+		}
+		else{
+			//cb.setBackgroundResource(Color.BLUE);
+			ssh = false;	
 				
 		}
 		
