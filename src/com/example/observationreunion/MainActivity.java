@@ -274,8 +274,8 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
 			    	    		  	//timestring = "0:" + timestring;
 			    	    		   	meeting_total_time = "0" + meeting_total_time;
 			    	    		}
-			    	     		    
-			    				dialog = ProgressDialog.show(MainActivity.this, "Send Data", "sending");
+			    	     		
+			    	     		dialog = ProgressDialog.show(MainActivity.this, "Send Data", "sending");
 			    					    					
 			    				if (SendToDatabase(meeting_name, meeting_total_time)){
 			    					Log.i("SEND", "- DATA SEND -");
@@ -284,7 +284,10 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
 			    					Log.i("SEND", "- DATA NOT SEND - BIG ERROR !!! -");
 			    				}
 			    					
-			    				if (ssh == true) {
+			    				if (ssh == true){
+			    					
+			    					ModalDialog modalDialogSSH = new ModalDialog();
+			    					modalDialogSSH.showSSHDialog(MainActivity.this, "SSH Connexion...");
 			    					
 			    				}
 			    				

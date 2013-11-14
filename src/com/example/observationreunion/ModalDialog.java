@@ -173,6 +173,59 @@ public class ModalDialog {
 		doModal();
 		return mEditText;
 	}
+	
+	public String showSSHDialog(Context context, String info) {
+		
+		if (!prepareModal()) {
+			return "Cancel";
+		}
+		
+		mEditText = "Cancel";
+		
+		LayoutInflater factory = LayoutInflater.from(context);
+		final View alertDialogView = factory.inflate(R.layout.alertdialogssh, null);
+
+				
+		AlertDialog.Builder builder = new AlertDialog.Builder(context);
+		builder.setMessage(info);
+		
+		builder.setView(alertDialogView);
+		
+		builder.setCancelable(false);
+		
+		builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+				ModalDialog.this.mQuitModal = true;
+				
+				final EditText editTextAlertDialogPerso = (EditText) alertDialogView.findViewById(R.id.EditTextAlertDialogHost);
+				
+				ModalDialog.this.mEditText = editTextAlertDialogPerso.getText().toString();
+				
+				dialog.dismiss();
+				
+			}
+		});
+		
+		builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+				ModalDialog.this.mQuitModal = true;
+				ModalDialog.this.mEditText = "Cancel";
+				//dialog.cancel();
+			}
+		});
+		
+		//CheckBox chkSSH = (CheckBox) alertDialogView.findViewById(R.id.ChkAlertDialogPerso);
+		
+		
+		AlertDialog alert = builder.create();
+		
+		alert.show();
+		
+		doModal();
+		return mEditText;
+		
+		
+	}
 			
 	private boolean prepareModal() {
 		Class<?> clsMsgQueue = null;

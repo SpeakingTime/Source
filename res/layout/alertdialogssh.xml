@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    
+    <TextView 
+        android:id="@+id/TextViewAlertDialogHost"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Host :" 
+        android:textColor="@android:color/white"
+    />
+    
+    <EditText 
+        android:id="@+id/EditTextAlertDialogHost"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/TextViewAlertDialogPerso"
+    />
+    
+    <TextView 
+        android:id="@+id/TextViewAlertDialogUsername"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Username :" 
+        android:textColor="@android:color/white"
+    />
+    
+    <EditText 
+        android:id="@+id/EditTextAlertDialogUsername"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/TextViewAlertDialogUsername"
+    />
+    
+    <TextView 
+        android:id="@+id/TextViewAlertDialogPassword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Password :" 
+        android:textColor="@android:color/white"
+    />
+    
+    <EditText 
+        android:id="@+id/EditTextAlertDialogPassword"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/TextViewAlertDialogPassword"
+        android:password="true"
+    />
+    
+
+</LinearLayout>
