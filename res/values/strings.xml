@@ -17,7 +17,7 @@
     <string name="buttonCreateGroupOrSelectContacts">Start meeting : \n -create a group \n -select contacts</string>
     <string name="title_create_group_activity">Create a group activity</string>
     <string name="buttonDeleteGroup">Delete group</string>
-    <string name="checkBoxAlertDialogPerso">Send by SSH</string>
+    <string name="checkBoxAlertDialogPerso">Send to Remote Server</string>
     <string name="buttonEditGroup">Edit a group</string>
     <string name="buttonSelectGroupToEdit">Select this group to edit</string>
     <string name="title_selection_group_to_edit">Edit a group activity</string>
