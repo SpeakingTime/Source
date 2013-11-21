@@ -89,7 +89,7 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
     boolean flagActionDownModeParole = false;
     boolean flagActionDownModeInactif = false;
     boolean playStatus = true;
-    boolean ssh = true;
+    boolean ssh = false;
     
     String meeting_total_time;
     
@@ -118,18 +118,7 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
     				
     				@Override
     				public void onClick(View v) {
-    					// TODO Auto-generated method stub
-    					
-    					int i = 0;
-    					
-    	                    
-    					for (i = 0; i<lVDataEcoute.getCount(); i++){
-    						HashMap<String, Object> mapItemContact = (HashMap<String, Object>) lVDataEcoute.getItemAtPosition(i);
-    	        			listItemEcoute.remove(mapItemContact);		
-    	        			mapItemContact.put("isSelected", true);
-    	        			listItemEcoute.add(i, mapItemContact);	
-    	        			mScheduleEcoute.notifyDataSetChanged();
-    					}
+    					Select(lVDataEcoute, listItemEcoute, mScheduleEcoute, true);
     				}
     			}
     	);
@@ -140,18 +129,7 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
     				
     				@Override
     				public void onClick(View v) {
-    					// TODO Auto-generated method stub
-    					
-    					int i = 0;
-    					
-    	                    
-    					for (i = 0; i<lVDataParole.getCount(); i++){
-    						HashMap<String, Object> mapItemContact = (HashMap<String, Object>) lVDataParole.getItemAtPosition(i);
-    	        			listItemParole.remove(mapItemContact);		
-    	        			mapItemContact.put("isSelected", true);
-    	        			listItemParole.add(i, mapItemContact);	
-    	        			mScheduleParole.notifyDataSetChanged();
-    					}
+    					Select(lVDataParole, listItemParole, mScheduleParole, true);
     				}
     			}
     	);
@@ -162,21 +140,45 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
     				
     				@Override
     				public void onClick(View v) {
-    					// TODO Auto-generated method stub
-    					
-    					int i = 0;
-    					
-    	                    
-    					for (i = 0; i<lVDataInactif.getCount(); i++){
-    						HashMap<String, Object> mapItemContact = (HashMap<String, Object>) lVDataInactif.getItemAtPosition(i);
-    	        			listItemInactif.remove(mapItemContact);		
-    	        			mapItemContact.put("isSelected", true);
-    	        			listItemInactif.add(i, mapItemContact);	
-    	        			mScheduleInactif.notifyDataSetChanged();
-    					}
+    					Select(lVDataInactif, listItemInactif, mScheduleInactif, true);
     				}
     			}
     	);
+        
+        Button buttonUnselectAll_ecoute = (Button) findViewById(R.id.buttonUnselectAll_ecoute);
+        buttonUnselectAll_ecoute.setOnClickListener( 
+        		new Button.OnClickListener(){
+    				
+    				@Override
+    				public void onClick(View v) {
+    					Select(lVDataEcoute, listItemEcoute, mScheduleEcoute, false);
+    				}
+    			}
+    	);
+        
+        Button buttonUnselectAll_parole = (Button) findViewById(R.id.buttonUnselectAll_parole);
+        buttonUnselectAll_parole.setOnClickListener( 
+        		new Button.OnClickListener(){
+    				
+    				@Override
+    				public void onClick(View v) {
+    					Select(lVDataParole, listItemParole, mScheduleParole, false);
+    				}
+    			}
+    	);
+        
+        Button buttonUnselectAll_inactif = (Button) findViewById(R.id.buttonUnselectAll_inactif);
+        buttonUnselectAll_inactif.setOnClickListener( 
+        		new Button.OnClickListener(){
+    				
+    				@Override
+    				public void onClick(View v) {
+    					Select(lVDataInactif, listItemInactif, mScheduleInactif, false);
+    				}
+    			}
+    	);
+        
+        
         
 
         ImageButton imageButtonPause = (ImageButton) findViewById(R.id.imageButtonPause);
@@ -287,7 +289,7 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
 			    				if (ssh == true){
 			    					
 			    					ModalDialog modalDialogSSH = new ModalDialog();
-			    					modalDialogSSH.showSSHDialog(MainActivity.this, "SSH Connexion...");
+			    					modalDialogSSH.showSSHDialog(MainActivity.this, "Remote Server Connexion...");
 			    					
 			    				}
 			    				
@@ -394,6 +396,20 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
     public void OnSingleTap(AdapterView<?> parent, View view, int position, long id) {
 
     }*/
+    
+    private void Select(ListView listView, ArrayList<HashMap<String, Object>> listItem, 
+    					SimpleAdapter mSchedule, Boolean bSelectAll){
+    	
+    	int i = 0;
+		for (i = 0; i<listView.getCount(); i++){
+			HashMap<String, Object> mapItemContact = (HashMap<String, Object>) listView.getItemAtPosition(i);
+			listItem.remove(mapItemContact);		
+			mapItemContact.put("isSelected", bSelectAll);
+			listItem.add(i, mapItemContact);	
+			mSchedule.notifyDataSetChanged();
+		}
+    	
+    }
     
     @Override
     public void OnMoveTap(View view, MotionEvent event) {

@@ -14,12 +14,12 @@
     	android:layout_weight="1"
       	android:gravity="top">
     
-	    <com.example.observationreunion.MyListView
-	    	android:id="@+id/listViewContactsGroup_s_to_edit"
+	    <ListView
+	    	android:id="@+id/listViewGroupNameToEdit"
 	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content" 
 	        android:divider="@null">
-	    </com.example.observationreunion.MyListView>
+	    </ListView>
 	      	
 	</LinearLayout>
 	

@@ -127,9 +127,9 @@ import android.widget.Spinner;
 			
 			if (!s_group_name_choiced.equalsIgnoreCase("")){
 			
-				ModalDialog modalDialog = new ModalDialog();
-				modalDialog.showConfirmDialog(this, "Choisir ce groupe : " +
-													s_group_name_choiced);
+				/*ModalDialog modalDialog = new ModalDialog();
+				modalDialog.showConfirmDialog(this, "Choose this group : " +
+													s_group_name_choiced);*/
 				
 				GroupBDD groupBdd = new GroupBDD(this);
 				groupBdd.open();						 

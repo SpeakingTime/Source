@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Spinner;
 
 public class SelectionGroupToEdit extends Activity{
@@ -43,6 +44,7 @@ public class SelectionGroupToEdit extends Activity{
 		
 		
 		Spinner spinnerGroupNameToEdit = (Spinner) findViewById(R.id.spinnerGroupName_to_edit);
+		//ListView listViewGroupNameToEdit = (ListView) findViewById(R.id.listViewGroupNameToEdit);
 		
 		GroupBDD groupBdd = new GroupBDD(this);
 		groupBdd.open();
@@ -54,6 +56,7 @@ public class SelectionGroupToEdit extends Activity{
 		
 		//String[] array_spinner = new String[imax];
 		List list_spinner = new LinkedList();
+		//List list_listView = new LinkedList();
 		
 		mCursor.moveToFirst();
 		
@@ -73,6 +76,7 @@ public class SelectionGroupToEdit extends Activity{
 				
 				//list_spinner.add(s_ID_group + " " + s_group_name);
 				list_spinner.add(s_group_name);
+				//list_listView.add(s_group_name);
 									
 				//ModalDialog modalDialog = new ModalDialog();
 				//modalDialog.showAlertDialog(this, array_spinner[i] + ", i = " + String.valueOf(i));
@@ -98,6 +102,15 @@ public class SelectionGroupToEdit extends Activity{
 		ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, array_spinner);
 		spinnerGroupNameToEdit.setAdapter(adapter);
 		
+		/*String[] array_listView = new String[i];
+		
+		for (int j=0;j<i;j++){
+			array_listView[j] = list_listView.get(j).toString();
+		}
+		
+		ArrayAdapter adapter_listView = new ArrayAdapter(this, R.layout.affichageitem, array_listView);
+		listViewGroupNameToEdit.setAdapter(adapter_listView);*/
+		
 	}
 
 	
@@ -111,9 +124,9 @@ public class SelectionGroupToEdit extends Activity{
 		
 		if (!s_group_name_choiced.equalsIgnoreCase("")){
 		
-			ModalDialog modalDialog = new ModalDialog();
-			modalDialog.showConfirmDialog(this, "Choisir ce groupe : " +
-												s_group_name_choiced);
+			/*ModalDialog modalDialog = new ModalDialog();
+			modalDialog.showConfirmDialog(this, "Choose this group : " +
+												s_group_name_choiced);*/
 			
 			GroupBDD groupBdd = new GroupBDD(this);
 			groupBdd.open();						 

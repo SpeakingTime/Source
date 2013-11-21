@@ -43,8 +43,8 @@ public class SelectionContactToEdit extends Activity{
 		
 		InitContact(this);
 				
-		Button buttonEditTheGroup = (Button) findViewById(R.id.buttonEditTheGroup);
-		buttonEditTheGroup.setOnClickListener( 
+		Button buttonModifyThisGroup = (Button) findViewById(R.id.buttonModifyThisGroup);
+		buttonModifyThisGroup.setOnClickListener( 
 				new Button.OnClickListener(){
 					
 					@Override
@@ -56,8 +56,20 @@ public class SelectionContactToEdit extends Activity{
 				
 		});
 		
-		Button buttonEditTheGroupAndDebuteMeeting = (Button) findViewById(R.id.buttonEditTheGroupAndDebuteMeeting);
-		buttonEditTheGroupAndDebuteMeeting.setOnClickListener( 
+		Button buttonCancelModifyThisGroup = (Button) findViewById(R.id.buttonCancelModifyThisGroup);
+		buttonCancelModifyThisGroup.setOnClickListener( 
+				new Button.OnClickListener(){
+					
+					@Override
+					public void onClick(View v) {
+						// TODO Auto-generated method stub
+						finish();
+					}
+				
+		});
+		
+		Button buttonModifyThisGroupAndDebuteTheMeeting = (Button) findViewById(R.id.buttonModifyThisGroupAndDebuteTheMeeting);
+		buttonModifyThisGroupAndDebuteTheMeeting.setOnClickListener( 
 				new Button.OnClickListener(){
 					
 					@Override

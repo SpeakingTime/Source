@@ -35,6 +35,8 @@
     		    android:text="@string/buttonCreateTheGroup"
     		    android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
+				android:layout_marginTop="4dip"
+				android:layout_marginTop="3dip"
 				android:textSize="16dp"
 		    	>
     		</Button>

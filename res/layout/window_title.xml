@@ -24,15 +24,32 @@
 	        android:textStyle="bold"
 	        android:text="Listening" />
 	    
-	    <Button
-			android:id="@+id/buttonSelectAll_ecoute"
-		    android:text="@string/buttonSelectAll_ecoute"
-		   	android:layout_width="wrap_content"
+		<LinearLayout
+			android:orientation="horizontal"
+			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:textSize="10dp"
+			android:layout_weight="1"
+			android:gravity="center_vertical"
 			android:layout_gravity="left" >
-	   	</Button>
-	    
+			    
+			<Button
+				android:id="@+id/buttonSelectAll_ecoute"
+				android:text="@string/buttonSelectAll_ecoute"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:textSize="10dp"
+				android:layout_gravity="left" >
+			</Button>
+			    
+			<Button
+				android:id="@+id/buttonUnselectAll_ecoute"
+				android:text="@string/buttonUnselectAll_ecoute"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:textSize="10dp"
+				android:layout_gravity="left" >
+			</Button>
+		</LinearLayout>		    
 	</LinearLayout>
 	    
 	<LinearLayout
@@ -51,14 +68,32 @@
 	        android:textStyle="bold"
 	        android:text="Speaking" />
 	    
-	    <Button
-			android:id="@+id/buttonSelectAll_parole"
-		    android:text="@string/buttonSelectAll_parole"
-		   	android:layout_width="wrap_content"
+	    <LinearLayout
+			android:orientation="horizontal"
+			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:textSize="10dp"
+			android:layout_weight="1"
+			android:gravity="center_vertical"
 			android:layout_gravity="left" >
-	   	</Button>
+			
+			<Button
+				android:id="@+id/buttonSelectAll_parole"
+				android:text="@string/buttonSelectAll_parole"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:textSize="10dp"
+				android:layout_gravity="left" >
+			</Button>
+			
+			<Button
+				android:id="@+id/buttonUnselectAll_parole"
+				android:text="@string/buttonUnselectAll_parole"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:textSize="10dp"
+				android:layout_gravity="left" >
+			</Button>
+		</LinearLayout>
 	</LinearLayout>
 	    
 	<LinearLayout
@@ -76,15 +111,33 @@
 	        android:textColor="#ff0000"
 	        android:textStyle="bold"
 	        android:text="Idle" />
-	    <Button
-			android:id="@+id/buttonSelectAll_inactif"
-		    android:text="@string/buttonSelectAll_inactif"
-		   	android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:textSize="10dp"
-			android:layout_gravity="left" >
-	   	</Button>
 	    
+	    <LinearLayout
+			android:orientation="horizontal"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:gravity="center_vertical"
+			android:layout_gravity="left" >
+	    
+	    	<Button
+				android:id="@+id/buttonSelectAll_inactif"
+		    	android:text="@string/buttonSelectAll_inactif"
+		   		android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:textSize="10dp"
+				android:layout_gravity="left" >
+	  	 	</Button>
+		
+	    	<Button
+				android:id="@+id/buttonUnselectAll_inactif"
+		    	android:text="@string/buttonUnselectAll_inactif"
+		   		android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:textSize="10dp"
+				android:layout_gravity="left" >
+	  	 	</Button>
+		</LinearLayout>
 	</LinearLayout>
 
 </LinearLayout>	

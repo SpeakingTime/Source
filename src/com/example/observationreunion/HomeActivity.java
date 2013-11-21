@@ -54,6 +54,18 @@ public class HomeActivity extends Activity{
 					}
 				
 		});
+		
+		Button buttonQuit = (Button) findViewById(R.id.buttonQuit);
+		buttonQuit.setOnClickListener( 
+				new Button.OnClickListener(){
+					
+					@Override
+					public void onClick(View v) {
+						// TODO Auto-generated method stub
+						System.exit(0);
+					}
+				
+		});
 	}
 	
 	

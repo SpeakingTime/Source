@@ -21,12 +21,17 @@
     <string name="buttonEditGroup">Edit a group</string>
     <string name="buttonSelectGroupToEdit">Select this group to edit</string>
     <string name="title_selection_group_to_edit">Edit a group activity</string>
-    <string name="buttonEditTheGroupAndDebuteMeeting">Edit this group and debute meeting</string>
-    <string name="buttonEditTheGroup">Edit this group</string>
+    <string name="buttonModifyThisGroupAndDebuteTheMeeting">Modify This Group And Debute The Meeting</string>
+    <string name="buttonModifyThisGroup">Modify this group</string>
     <string name="title_selection_contact_to_edit">Edit this group</string>
 	<string name="buttonSelectAll_ecoute">Select All</string>
 	<string name="buttonSelectAll_parole">Select All</string>
 	<string name="buttonSelectAll_inactif">Select All</string>
 	<string name="buttonAddMember">+</string>
+	<string name="buttonQuit">Quit</string>
+	<string name="buttonCancelModifyThisGroup">Cancel</string>
+	<string name="buttonUnselectAll_ecoute">Unselect All</string>
+	<string name="buttonUnselectAll_parole">Unselect All</string>
+	<string name="buttonUnselectAll_inactif">Unselect All</string>
 	
 </resources>
