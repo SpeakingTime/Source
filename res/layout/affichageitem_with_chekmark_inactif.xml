@@ -26,17 +26,6 @@
 	   		android:padding="10px"
 
 		/>
-    
-   		<CheckBox
-	    	android:id="@+id/selection_chekbox_inactif"
-    		android:layout_width="wrap_content"
-       		android:layout_height="wrap_content"
-       		android:layout_gravity="center_horizontal"
-       		android:tag="@+id/tag2_inactif" 
-			android:onClick="myClickHandlerInactif"
-			
-			/>
-    	
  
    	</LinearLayout>
  
@@ -73,5 +62,25 @@
 
  
     </LinearLayout>
+    
+	    <LinearLayout
+	    android:orientation="vertical"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	   	android:layout_gravity="top"
+	   	android:paddingLeft="10px"
+	    >
+    
+   		<CheckBox
+	    	android:id="@+id/selection_chekbox_inactif"
+    		android:layout_width="wrap_content"
+       		android:layout_height="wrap_content"
+       		android:layout_gravity="center_horizontal"
+       		android:tag="@+id/tag2_inactif" 
+			android:onClick="myClickHandlerInactif"
+			
+			/>
+ 
+   	</LinearLayout>
  
 </LinearLayout>

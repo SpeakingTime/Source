@@ -1,5 +1,7 @@
 package com.example.observationreunion;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -12,8 +14,11 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 public class SelectionGroupToEdit extends Activity{
 	
@@ -21,9 +26,14 @@ public class SelectionGroupToEdit extends Activity{
 	private static final int NUM_COL_GROUP_NAME = 1;
 	private static final int NUM_COL_ID_CONTACT = 2;
 	
+	ArrayList<HashMap<String, Object>> listItem = new ArrayList<HashMap<String, Object>>();
+	ListView lVGroupToEdit;
+	SimpleAdapter mSchedule = null;
+	String s_group_name_choiced = "";
+	String s_group_id_choiced = "";
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_selection_group_to_edit);
 		
@@ -33,7 +43,6 @@ public class SelectionGroupToEdit extends Activity{
 					
 					@Override
 					public void onClick(View v) {
-						// TODO Auto-generated method stub
 						Intent intent = new Intent(SelectionGroupToEdit.this, SelectionContactToEdit.class);
 						intent.putExtra("selectedContact", ValidateGroupSelection());
 						intent.putExtra("groupName", GetGroupName());
@@ -42,21 +51,12 @@ public class SelectionGroupToEdit extends Activity{
 					}
 				});
 		
-		
-		Spinner spinnerGroupNameToEdit = (Spinner) findViewById(R.id.spinnerGroupName_to_edit);
-		//ListView listViewGroupNameToEdit = (ListView) findViewById(R.id.listViewGroupNameToEdit);
-		
 		GroupBDD groupBdd = new GroupBDD(this);
 		groupBdd.open();
 					 
 		Cursor mCursor = groupBdd.getCursor();
 		
 		int i = 0;
-		//int imax = mCursor.getCount();
-		
-		//String[] array_spinner = new String[imax];
-		List list_spinner = new LinkedList();
-		//List list_listView = new LinkedList();
 		
 		mCursor.moveToFirst();
 		
@@ -70,20 +70,13 @@ public class SelectionGroupToEdit extends Activity{
 			String s_ID_contact =  mCursor.getString(NUM_COL_ID_CONTACT);
 							
 			if (!s_group_name_current.equalsIgnoreCase(mCursor.getString(NUM_COL_GROUP_NAME))) {
-			
-				//array_spinner[i] = s_ID_group + " " + s_group_name + " " + s_ID_contact;
-				//array_spinner[i] = s_ID_group + " " + s_group_name;
 				
-				//list_spinner.add(s_ID_group + " " + s_group_name);
-				list_spinner.add(s_group_name);
-				//list_listView.add(s_group_name);
-									
-				//ModalDialog modalDialog = new ModalDialog();
-				//modalDialog.showAlertDialog(this, array_spinner[i] + ", i = " + String.valueOf(i));
-				//modalDialog.showAlertDialog(this, list_spinner.get(i).toString() );
-									
+				HashMap<String, Object> map = new HashMap<String, Object>();
+				map.put("id_group", s_ID_group);
+				map.put("group_name", s_group_name);
+				map.put("tag_group", i);
+				listItem.add(map); 					
 				s_group_name_current = mCursor.getString(NUM_COL_GROUP_NAME);
-				
 				i++;
 			
 			}
@@ -93,41 +86,39 @@ public class SelectionGroupToEdit extends Activity{
     	}
 		mCursor.close();
 		
-		String[] array_spinner = new String[i];
+		lVGroupToEdit = new ListView(this.getApplicationContext());
+		lVGroupToEdit = (ListView) findViewById(R.id.listViewGroupNameToEdit);
 		
-		for (int j=0;j<i;j++){
-			array_spinner[j] = list_spinner.get(j).toString();
-		}
+        mSchedule = new MyListAdapterGroup (this.getBaseContext(), listItem, R.layout.affichageitem_group,
+                new String[] { "group_name", "tag_group"}, 
+                new int[] { R.id.group_name, R.id.tag_group});
+        
+        lVGroupToEdit.setAdapter(mSchedule);
 		
-		ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, array_spinner);
-		spinnerGroupNameToEdit.setAdapter(adapter);
+	}
+	
+	public void myClickHandlerGroup(View v) {
 		
-		/*String[] array_listView = new String[i];
+		LinearLayout ll = (LinearLayout)v;
+		int position = Integer.parseInt(ll.getTag().toString());
 		
-		for (int j=0;j<i;j++){
-			array_listView[j] = list_listView.get(j).toString();
-		}
+		HashMap<String, Object> mapItem = (HashMap<String, Object>) lVGroupToEdit.getItemAtPosition(position);
+		s_group_name_choiced = mapItem.get("group_name").toString();
+		s_group_id_choiced = mapItem.get("id_group").toString();;
 		
-		ArrayAdapter adapter_listView = new ArrayAdapter(this, R.layout.affichageitem, array_listView);
-		listViewGroupNameToEdit.setAdapter(adapter_listView);*/
+		TextView textViewGroupName = (TextView) findViewById (R.id.textView_group_name_to_edit);	
+		textViewGroupName.setText(s_group_name_choiced);
 		
 	}
 
 	
 	public String ValidateGroupSelection(){
 		
-		Spinner spinnerGroupName = (Spinner) findViewById(R.id.spinnerGroupName_to_edit);
-		String s_group_name_choiced =  spinnerGroupName.getSelectedItem().toString();
-		
 		StringBuilder out = new StringBuilder();
 		out.append("");
 		
 		if (!s_group_name_choiced.equalsIgnoreCase("")){
 		
-			/*ModalDialog modalDialog = new ModalDialog();
-			modalDialog.showConfirmDialog(this, "Choose this group : " +
-												s_group_name_choiced);*/
-			
 			GroupBDD groupBdd = new GroupBDD(this);
 			groupBdd.open();						 
 			Cursor mCursor = groupBdd.getCursor();
@@ -160,17 +151,11 @@ public class SelectionGroupToEdit extends Activity{
 	}
 	
 	public String GetGroupName(){
-		
-		Spinner spinnerGroupNameToEdit = (Spinner) findViewById(R.id.spinnerGroupName_to_edit);
-		return spinnerGroupNameToEdit.getSelectedItem().toString();
-		 
+		return s_group_name_choiced;
 	}
 	
 	public String GetGroupID(){
-		
-		Spinner spinnerGroupNameToEdit = (Spinner) findViewById(R.id.spinnerGroupName_to_edit);
-		return spinnerGroupNameToEdit.getSelectedItem().toString();
-		 
+		return s_group_id_choiced;
 	}
 	
 	

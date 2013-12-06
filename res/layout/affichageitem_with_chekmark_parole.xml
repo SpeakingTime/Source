@@ -26,17 +26,6 @@
 	   		android:padding="10px"
 
 		/>
-    
-   		<CheckBox
-	    	android:id="@+id/selection_chekbox_parole"
-    		android:layout_width="wrap_content"
-       		android:layout_height="wrap_content"
-       		android:layout_gravity="center_horizontal"
-       		android:tag="@+id/tag2_parole" 
-			android:onClick="myClickHandlerParole"
-			
-			/>
-    	
  
    	</LinearLayout>
  
@@ -73,5 +62,26 @@
 
  
     </LinearLayout>
+    
+	    <LinearLayout
+	    android:orientation="vertical"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	   	android:layout_gravity="top"
+	   	android:paddingLeft="10px"
+	    >
+    
+   		<CheckBox
+	    	android:id="@+id/selection_chekbox_parole"
+    		android:layout_width="wrap_content"
+       		android:layout_height="wrap_content"
+       		android:layout_gravity="center_horizontal"
+       		android:tag="@+id/tag2_parole" 
+			android:onClick="myClickHandlerParole"
+			
+			/>
+    	
+ 
+   	</LinearLayout>
  
 </LinearLayout>

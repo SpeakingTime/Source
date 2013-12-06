@@ -1,11 +1,13 @@
 package com.example.observationreunion;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -14,17 +16,25 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 	public class SelectionGroup extends Activity{
 		
 		private static final int NUM_COL_ID_GROUP = 0;
 		private static final int NUM_COL_GROUP_NAME = 1;
 		private static final int NUM_COL_ID_CONTACT = 2;
-				
+		
+		ArrayList<HashMap<String, Object>> listItem = new ArrayList<HashMap<String, Object>>();
+		ListView lVGroup;
+		SimpleAdapter mSchedule = null;
+		
 		@Override
 		protected void onCreate(Bundle savedInstanceState) {
-			// TODO Auto-generated method stub
 			super.onCreate(savedInstanceState);
 			setContentView(R.layout.activity_selection_group);
 			
@@ -34,10 +44,20 @@ import android.widget.Spinner;
 						
 						@Override
 						public void onClick(View v) {
-							// TODO Auto-generated method stub
-							Intent intent = new Intent(SelectionGroup.this, MainActivity.class);
-							intent.putExtra("selectedContact", ValidateGroupSelection());
-							startActivity(intent);
+							TextView textViewGroupName = (TextView) findViewById (R.id.textView_group_name);
+							String s_group_name_choiced =  textViewGroupName.getText().toString();
+							
+							if (!s_group_name_choiced.equalsIgnoreCase("Select a group")){
+								Intent intent = new Intent(SelectionGroup.this, MainActivity.class);
+								intent.putExtra("selectedContact", ValidateGroupSelection());
+								startActivity(intent);
+							}
+							else {
+								AlertDialog.Builder alertDialog = new AlertDialog.Builder(SelectionGroup.this);
+    							alertDialog.setTitle("Warning");
+    							alertDialog.setMessage("Please, select a group !");
+    							alertDialog.show();
+							}
 						}
 					});
 			
@@ -47,28 +67,19 @@ import android.widget.Spinner;
 
 						@Override
 						public void onClick(View v) {
-							// TODO Auto-generated method stub
-						
 							RemoveGroup();	
-							
 						}
 						
 						
 					});
-			
-			Spinner spinnerGroupName = (Spinner) findViewById(R.id.spinnerGroupName);
-			
+
 			GroupBDD groupBdd = new GroupBDD(this);
 			groupBdd.open();
-						 
+			
 			Cursor mCursor = groupBdd.getCursor();
 			
 			int i = 0;
-			//int imax = mCursor.getCount();
-			
-			//String[] array_spinner = new String[imax];
-			List list_spinner = new LinkedList();
-			
+					
 			mCursor.moveToFirst();
 			
 			//initialisation de la variable indiquant le group_name courant
@@ -81,55 +92,52 @@ import android.widget.Spinner;
 				String s_ID_contact =  mCursor.getString(NUM_COL_ID_CONTACT);
 								
 				if (!s_group_name_current.equalsIgnoreCase(mCursor.getString(NUM_COL_GROUP_NAME))) {
-				
-					//array_spinner[i] = s_ID_group + " " + s_group_name + " " + s_ID_contact;
-					//array_spinner[i] = s_ID_group + " " + s_group_name;
-					
-					//list_spinner.add(s_ID_group + " " + s_group_name);
-					list_spinner.add(s_group_name);
-										
-					//ModalDialog modalDialog = new ModalDialog();
-					//modalDialog.showAlertDialog(this, array_spinner[i] + ", i = " + String.valueOf(i));
-					//modalDialog.showAlertDialog(this, list_spinner.get(i).toString() );
-										
+					HashMap<String, Object> map = new HashMap<String, Object>();
+					map.put("id_group", s_ID_group);
+					map.put("group_name", s_group_name);
+					map.put("tag_group", i);
+					listItem.add(map); 
 					s_group_name_current = mCursor.getString(NUM_COL_GROUP_NAME);
-					
 					i++;
-				
 				}
 				
 	    		mCursor.moveToNext();
 	    			
 	    	}
 			mCursor.close();
+					
+			lVGroup = new ListView(this.getApplicationContext());
+	        lVGroup = (ListView) findViewById(R.id.listViewContactsGroup_s);
 			
-			String[] array_spinner = new String[i];
-			
-			for (int j=0;j<i;j++){
-				array_spinner[j] = list_spinner.get(j).toString();
-			}
-			
-			ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, array_spinner);
-			spinnerGroupName.setAdapter(adapter);
-			
+	        mSchedule = new MyListAdapterGroup (this.getBaseContext(), listItem, R.layout.affichageitem_group,
+	                new String[] { "group_name", "tag_group"}, 
+	                new int[] { R.id.group_name, R.id.tag_group});
+	        
+	        lVGroup.setAdapter(mSchedule);
 	
 		}
 		
-		
-		
+		public void myClickHandlerGroup(View v) {
+			
+			LinearLayout ll = (LinearLayout)v;
+			int position = Integer.parseInt(ll.getTag().toString());
+			
+			HashMap<String, Object> mapItem = (HashMap<String, Object>) lVGroup.getItemAtPosition(position);
+			String groupname = mapItem.get("group_name").toString();
+			TextView textViewGroupName = (TextView) findViewById (R.id.textView_group_name);	
+			textViewGroupName.setText(groupname);
+			
+		}
+					
 		public String ValidateGroupSelection(){
 			
-			Spinner spinnerGroupName = (Spinner) findViewById(R.id.spinnerGroupName);
-			String s_group_name_choiced =  spinnerGroupName.getSelectedItem().toString();
+			TextView textViewGroupName = (TextView) findViewById (R.id.textView_group_name);
+			String s_group_name_choiced =  textViewGroupName.getText().toString();
 			
 			StringBuilder out = new StringBuilder();
 			out.append("");
 			
 			if (!s_group_name_choiced.equalsIgnoreCase("")){
-			
-				/*ModalDialog modalDialog = new ModalDialog();
-				modalDialog.showConfirmDialog(this, "Choose this group : " +
-													s_group_name_choiced);*/
 				
 				GroupBDD groupBdd = new GroupBDD(this);
 				groupBdd.open();						 
@@ -158,25 +166,12 @@ import android.widget.Spinner;
 			System.out.println("ValidateSelection() : " + out.toString());
 			
 			return out.toString();
-			
-			
-			
-			/*Bundle b = getIntent().getExtras();
-	    	String s = b.getString("selectedContact");
-	    	Scanner scanner = new Scanner(s);
-			while (scanner.hasNextLine()) {
-				String id_contact = scanner.nextLine();
-				//System.out.println("id_contact : " + id_contact);
-			
-				getContact(id_contact);
-			
-			}			*/
 		}
 		
 		public boolean RemoveGroup(){
 			
-			Spinner spinnerGroupName = (Spinner) findViewById(R.id.spinnerGroupName);
-			String s_group_name =  spinnerGroupName.getSelectedItem().toString();
+			TextView textViewGroupName = (TextView) findViewById (R.id.textView_group_name);
+			String s_group_name =  textViewGroupName.getText().toString();
 			
 			if (!s_group_name.equalsIgnoreCase("")){
 			
@@ -188,15 +183,16 @@ import android.widget.Spinner;
 				groupBdd.open();
 				
 				groupBdd.removeGroupWithgroup_name(s_group_name);
-				//groupBdd.removeGroupWith_ID_group(17);
 				
 				Cursor mCursor = groupBdd.getCursor();
 				mCursor.moveToFirst();
 				
 				//initialisation de la variable indiquant le group_name courant
 				String s_group_name_current = "";
-				List list_spinner = new LinkedList();
+
 				int i =0;
+				
+				listItem.clear();
 				
 				while (mCursor.isAfterLast() == false){
 					
@@ -205,48 +201,36 @@ import android.widget.Spinner;
 					String s_ID_contact =  mCursor.getString(NUM_COL_ID_CONTACT);
 									
 					if (!s_group_name_current.equalsIgnoreCase(mCursor.getString(NUM_COL_GROUP_NAME))) {
-					
-						list_spinner.add(s_group_name);
+						HashMap<String, Object> map = new HashMap<String, Object>();
+						map.put("id_group", s_ID_group);
+						map.put("group_name", s_group_name);
+						map.put("tag_group", i);
+						listItem.add(map); 
 						s_group_name_current = mCursor.getString(NUM_COL_GROUP_NAME);
-						
 						i++;
-					
 					}
-					
-		    		mCursor.moveToNext();
-		    			
+					mCursor.moveToNext();
 		    	}
 				mCursor.close();
+								
+				lVGroup = new ListView(this.getApplicationContext());
+		        lVGroup = (ListView) findViewById(R.id.listViewContactsGroup_s);
 				
-				String[] array_spinner = new String[i];
-				
-				for (int j=0;j<i;j++){
-					array_spinner[j] = list_spinner.get(j).toString();
-				}
-				
-				ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, array_spinner);
-				spinnerGroupName.setAdapter(adapter);
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
+		        mSchedule = null;
+		        
+		        mSchedule = new MyListAdapterGroup (this.getBaseContext(), listItem, R.layout.affichageitem_group,
+		                new String[] { "group_name", "tag_group"}, 
+		                new int[] { R.id.group_name, R.id.tag_group});
+		        	        
+		        lVGroup.setAdapter(mSchedule);
+								
 				groupBdd.close();
 				return true;
 			}
 			else {
 				return false;
-			}
-				
-			
+			}							
 		}
-		
 
 		public HashMap<String,Object> getContact(String id_phone_contact){
 			
@@ -275,7 +259,4 @@ import android.widget.Spinner;
 				return null;
 			}
 		}
-		
-		
-
 }

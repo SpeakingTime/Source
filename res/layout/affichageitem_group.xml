@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/item_group"
+    android:orientation="horizontal"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/listview_background"
+    android:onClick="myClickHandlerGroup"
+    android:tag="@+id/tag_group" 
+    
+    >
+    
+   	<TextView
+		android:id="@+id/group_name"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+	   	android:layout_gravity="center_vertical"
+	   	android:padding="10px"
+	   	android:textSize="16px"
+	    android:textStyle="bold"
+    	android:textColor="@android:color/white"
+	/>
+ 
+</LinearLayout>

@@ -14,30 +14,33 @@
     	android:layout_weight="1"
       	android:gravity="top">
     
-	    <com.example.observationreunion.MyListView
+	    <ListView
 	    	android:id="@+id/listViewContactsGroup_s"
 	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content" 
 	        android:divider="@null">
-	    </com.example.observationreunion.MyListView>
+	    </ListView>
 	      	
 	</LinearLayout>
-	
+    
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal" 
         android:gravity="center" 
-        android:layout_alignParentBottom="true">
-		
-		<Spinner
-		    android:id="@+id/spinnerGroupName"
-		    android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
-			android:layout_gravity="center" >
-	    </Spinner>
-	</LinearLayout>
+        android:layout_alignParentBottom="true"> 
     
+        <TextView
+			android:id="@+id/textView_group_name"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+	   		android:layout_gravity="center_vertical"
+	   		android:textSize="16px"
+	        android:textStyle="bold"
+            android:textColor="@android:color/white"
+            android:text="Select a group" 
+		/>
+   	</LinearLayout>
 	    
     <LinearLayout
         android:layout_width="fill_parent"

@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -912,16 +913,20 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
     	}
     	mCursor.close();
     	
-    	Chronometer chronometerTotalTime = (Chronometer) findViewById(R.id.chronometerTotalTime);
+    	/*Chronometer chronometerTotalTime = (Chronometer) findViewById(R.id.chronometerTotalTime);
 		String timetotalstring = chronometerTotalTime.getText().toString();
 		    if (timetotalstring.length()==5){
 		    	timetotalstring = "00:" + timetotalstring;
 	    }
 	    else if (timestring.length()==7){
 	    	timetotalstring = "0" + timetotalstring;
-	    }
+	    }*/
     	
-    	output.append("end: participants list  \r\n \r\nbegin: meeting " + timetotalstring /* getCurrentTimeStamp()*/ + "\r\n"); 
+    	Calendar c = Calendar.getInstance();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String formattedDate = df.format(c.getTime());
+    	
+    	output.append("end: participants list  \r\n \r\nbegin: meeting " + formattedDate /*timetotalstring  getCurrentTimeStamp()*/ + "\r\n"); 
     	
         mScheduleEcoute = new /*SimpleAdapter*/MyListAdapterCheckmarkEcoute (this.getBaseContext(), listItemEcoute, R.layout.affichageitem_with_chekmark_ecoute,
                 new String[] { "img", "display_name", "company_and_title", "chronometre", "tag2"}, 
