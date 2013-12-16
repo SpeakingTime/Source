@@ -48,6 +48,7 @@ public class SelectionGroupToEdit extends Activity{
 						intent.putExtra("groupName", GetGroupName());
 						intent.putExtra("groupID", GetGroupID());
 						startActivity(intent);
+						finish();
 					}
 				});
 		
@@ -157,7 +158,5 @@ public class SelectionGroupToEdit extends Activity{
 	public String GetGroupID(){
 		return s_group_id_choiced;
 	}
-	
-	
-	
+
 }

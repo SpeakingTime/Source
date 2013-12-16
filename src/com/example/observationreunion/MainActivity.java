@@ -1498,7 +1498,7 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
 		   	
 		   	mScheduleParole.notifyDataSetChanged();
 		   	
-		   	int position = listItemParole.size()-1;
+		   	/*int position = listItemParole.size()-1;
 		   	View convertView = null;
  		    LinearLayout linearlayout = (LinearLayout) mScheduleParole.getView(position, convertView, lVDataParole);
  		    LinearLayout linearlayout2 = (LinearLayout) linearlayout.getChildAt(1);
@@ -1509,7 +1509,7 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
 		    }
 		    else if (timestring.length()==7){
 		    	timestring = "0" + timestring;
-		    }
+		    }*/
  		    
  		    Chronometer chronometerTotalTime = (Chronometer) findViewById(R.id.chronometerTotalTime);
  		    String timetotalstring = chronometerTotalTime.getText().toString();
@@ -1520,7 +1520,7 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
 		    	timetotalstring = "0" + timetotalstring;
 		    }
  		    
- 		    output.append("    " + /*getCurrentTimeStamp()*/ timetotalstring + ";" + timestring + ";" + map_modified.get("display_name") + ";speaker;" + "\r\n");
+ 		    output.append("    " + /*getCurrentTimeStamp()*/ timetotalstring + ";" + /*timestring + ";" + */map_modified.get("display_name") + ";speaker;" + "\r\n");
 		   	  	
 	    }
 	}
@@ -1556,7 +1556,7 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
 		   	
 		   	mScheduleEcoute.notifyDataSetChanged();
 		   	
-		   	int position = listItemEcoute.size()-1;
+		   	/*int position = listItemEcoute.size()-1;
 		   	View convertView = null;
  		    LinearLayout linearlayout = (LinearLayout) mScheduleEcoute.getView(position, convertView, lVDataEcoute);
  		    LinearLayout linearlayout2 = (LinearLayout) linearlayout.getChildAt(1);
@@ -1567,7 +1567,7 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
 		    }
 		    else if (timestring.length()==7){
 		    	timestring = "0" + timestring;
-		    }
+		    }*/
  		    
  		    Chronometer chronometerTotalTime = (Chronometer) findViewById(R.id.chronometerTotalTime);
 		    String timetotalstring = chronometerTotalTime.getText().toString();
@@ -1578,7 +1578,7 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
 		    	timetotalstring = "0" + timetotalstring;
 		    }
  		    
- 		    output.append("    " + timetotalstring /*getCurrentTimeStamp()*/ + ";" + timestring + ";" + map_modified.get("display_name") + ";listener;" + "\r\n");
+ 		    output.append("    " + timetotalstring /*getCurrentTimeStamp()*/ + ";" + /*timestring + ";" +*/ map_modified.get("display_name") + ";listener;" + "\r\n");
 		   				
 	    }
 	}
@@ -1613,7 +1613,7 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
 		   	
 			mScheduleInactif.notifyDataSetChanged();
 		   	
-			int position = listItemInactif.size()-1;
+			/*int position = listItemInactif.size()-1;
 		   	View convertView = null;
  		    LinearLayout linearlayout = (LinearLayout) mScheduleInactif.getView(position, convertView, lVDataInactif);
  		    LinearLayout linearlayout2 = (LinearLayout) linearlayout.getChildAt(1);
@@ -1624,7 +1624,7 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
 		    }
 		    else if (timestring.length()==7){
 		    	timestring = "0" + timestring;
-		    }
+		    }*/
  		    
  		    Chronometer chronometerTotalTime = (Chronometer) findViewById(R.id.chronometerTotalTime);
 		    String timetotalstring = chronometerTotalTime.getText().toString();
@@ -1635,7 +1635,7 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
 		    	timetotalstring = "0" + timetotalstring;
 		    }
  		    
- 		    output.append("    " + timetotalstring /*getCurrentTimeStamp()*/ + ";" + timestring + ";" + map_modified.get("display_name") + ";idle;" + "\r\n");
+ 		    output.append("    " + timetotalstring /*getCurrentTimeStamp()*/ + ";" + /*timestring + ";" +*/ map_modified.get("display_name") + ";idle;" + "\r\n");
  		    
  		    /*AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
 			alertDialog.setTitle("chronometre");
@@ -1677,7 +1677,7 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
 		   	
 		   	mScheduleInactif.notifyDataSetChanged();
 		   	
-		   	int position = listItemInactif.size()-1;
+		   	/*int position = listItemInactif.size()-1;
 		   	View convertView = null;
  		    LinearLayout linearlayout = (LinearLayout) mScheduleInactif.getView(position, convertView, lVDataInactif);
  		    LinearLayout linearlayout2 = (LinearLayout) linearlayout.getChildAt(1);
@@ -1688,7 +1688,7 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
 		    }
 		    else if (timestring.length()==7){
 		    	timestring = "0" + timestring;
-		    }
+		    }*/
  		    
  		    Chronometer chronometerTotalTime = (Chronometer) findViewById(R.id.chronometerTotalTime);
 		    String timetotalstring = chronometerTotalTime.getText().toString();
@@ -1699,7 +1699,7 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
 		    	timetotalstring = "0" + timetotalstring;
 		    }
  		    
- 		    output.append("    " + timetotalstring /*getCurrentTimeStamp()*/ + ";" + timestring + ";" + map_modified.get("display_name") + ";idle;" + "\r\n");
+ 		    output.append("    " + timetotalstring /*getCurrentTimeStamp()*/ + ";" + /*timestring + ";" +*/ map_modified.get("display_name") + ";idle;" + "\r\n");
  		    
 		   				
 	    }
@@ -1735,7 +1735,7 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
 		   	
 		   	mScheduleEcoute.notifyDataSetChanged();
 		   	
-		   	int position = listItemEcoute.size()-1;
+		   	/*int position = listItemEcoute.size()-1;
 		   	View convertView = null;
  		    LinearLayout linearlayout = (LinearLayout) mScheduleEcoute.getView(position, convertView, lVDataEcoute);
  		    LinearLayout linearlayout2 = (LinearLayout) linearlayout.getChildAt(1);
@@ -1746,7 +1746,7 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
 		    }
 		    else if (timestring.length()==7){
 		    	timestring = "0" + timestring;
-		    }
+		    }*/
  		    
  		    Chronometer chronometerTotalTime = (Chronometer) findViewById(R.id.chronometerTotalTime);
 		    String timetotalstring = chronometerTotalTime.getText().toString();
@@ -1757,7 +1757,7 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
 		    	timetotalstring = "0" + timetotalstring;
 		    }
  		    
- 		    output.append("    " + timetotalstring /*getCurrentTimeStamp()*/ + ";" + timestring + ";" + map_modified.get("display_name") + ";listener;" + "\r\n");
+ 		    output.append("    " + timetotalstring /*getCurrentTimeStamp()*/ + ";" + /*timestring + ";" +*/ map_modified.get("display_name") + ";listener;" + "\r\n");
 		   				
 	    }
 	}
@@ -1792,7 +1792,7 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
 		   	
 		   	mScheduleParole.notifyDataSetChanged();
 
-		   	int position = listItemParole.size()-1;
+		   	/*int position = listItemParole.size()-1;
 		   	View convertView = null;
  		    LinearLayout linearlayout = (LinearLayout) mScheduleParole.getView(position, convertView, lVDataParole);
  		    LinearLayout linearlayout2 = (LinearLayout) linearlayout.getChildAt(1);
@@ -1803,7 +1803,7 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
 		    }
 		    else if (timestring.length()==7){
 		    	timestring = "0" + timestring;
-		    }
+		    }*/
 		    	
 		    Chronometer chronometerTotalTime = (Chronometer) findViewById(R.id.chronometerTotalTime);
 			String timetotalstring = chronometerTotalTime.getText().toString();
@@ -1814,7 +1814,7 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
 			   	timetotalstring = "0" + timetotalstring;
 		    }
  		    
- 		    output.append("    " + timetotalstring /*getCurrentTimeStamp()*/ + ";" + timestring + ";" + map_modified.get("display_name") + ";speaker;" + "\r\n");
+ 		    output.append("    " + timetotalstring /*getCurrentTimeStamp()*/ + ";" + /*timestring + ";" +*/ map_modified.get("display_name") + ";speaker;" + "\r\n");
  		    
 		   	
 	    }

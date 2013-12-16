@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" 
+    android:background="@android:color/black"
+    android:gravity="bottom"
+    android:baselineAligned="false">
+    
+    
+    <LinearLayout 
+	    android:orientation="horizontal" 
+        android:layout_width="match_parent"
+    	android:layout_height="match_parent"
+    	android:layout_weight="1"
+      	android:gravity="top">
+    
+	    <LinearLayout 
+		    android:layout_width="match_parent"
+	    	android:layout_height="match_parent"
+	    	android:orientation="horizontal"
+	    	android:layout_weight="1" >
+	    
+	    	<EditText
+	        	android:id="@+id/txtStatistic"
+	        	android:layout_width="fill_parent"
+	        	android:layout_height="fill_parent"
+	        	android:layout_gravity="top"
+	        	android:inputType="textMultiLine" >
+	    	</EditText>
+	    	
+	    </LinearLayout>
+	    	
+		<LinearLayout 
+			android:layout_width="match_parent"
+		    android:layout_height="match_parent"
+		    android:orientation="horizontal"
+		    android:layout_weight="1" >
+		    	
+	    	<EditText
+	        	android:id="@+id/txtStatistic2"
+	        	android:layout_width="fill_parent"
+	        	android:layout_height="fill_parent"
+	        	android:layout_gravity="top"
+	        	android:inputType="textMultiLine" >
+	    	</EditText>
+	    	
+	    </LinearLayout>
+
+	 </LinearLayout>
+	 
+     <LinearLayout 
+	    android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" 
+        android:gravity="center" 
+        android:layout_alignParentBottom="true">
+		
+         <Button
+		    android:id="@+id/buttonGetValue"
+		    android:text="@string/buttonGetValue"
+		    android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center" >
+	    </Button>
+	    	
+        <Button
+		    android:id="@+id/buttonBarGraph"
+		    android:text="@string/buttonBarGraph"
+		    android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center" >
+	    </Button> 
+         
+	</LinearLayout>
+
+</LinearLayout>

@@ -1,26 +1,21 @@
 package com.example.observationreunion;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SimpleAdapter;
 
-public class MyListAdapterGroup extends SimpleAdapter{
+public class MyListAdapterStatistic extends SimpleAdapter{
 	private Context context;
 	private LayoutInflater mInflater;
  
  
-	public MyListAdapterGroup(Context context,
+	public MyListAdapterStatistic(Context context,
 			List<? extends Map<String, ?>> data, int resource, String[] from,
 			int[] to) {
 		super(context, data, resource, from, to);
@@ -37,9 +32,9 @@ public class MyListAdapterGroup extends SimpleAdapter{
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		
-		convertView = mInflater.inflate(R.layout.affichageitem_group, null);
+		convertView = mInflater.inflate(R.layout.affichageitem_statistic, null);
 		//récupére mon linearlayout
-		LinearLayout ll = (LinearLayout) convertView.findViewById(R.id.item_group);
+		LinearLayout ll = (LinearLayout) convertView.findViewById(R.id.item_statistic);
 		//affecte la position de l'item comme tag
 		ll.setTag(position);
 

@@ -62,6 +62,21 @@
 	    	android:gravity="center"	
   			android:padding="5dip" >
 			<Button
+		    	android:id="@+id/buttonStatistic"
+		    	android:text="@string/buttonStatistic"
+		    	android:layout_width="240px"
+				android:layout_height="120px"
+				android:textSize="16dp" >
+    		</Button>
+    	</LinearLayout>
+    	
+        <LinearLayout 
+	        android:layout_width="match_parent"
+	    	android:layout_height="match_parent"
+	    	android:layout_weight="1"
+	    	android:gravity="center"	
+  			android:padding="5dip" >
+			<Button
 		    	android:id="@+id/buttonQuit"
 		    	android:text="@string/buttonQuit"
 		    	android:layout_width="240px"

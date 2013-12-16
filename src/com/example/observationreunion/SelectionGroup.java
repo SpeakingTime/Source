@@ -51,6 +51,7 @@ import android.widget.TextView;
 								Intent intent = new Intent(SelectionGroup.this, MainActivity.class);
 								intent.putExtra("selectedContact", ValidateGroupSelection());
 								startActivity(intent);
+								finish();
 							}
 							else {
 								AlertDialog.Builder alertDialog = new AlertDialog.Builder(SelectionGroup.this);

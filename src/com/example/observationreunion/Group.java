@@ -40,7 +40,4 @@ public class Group {
 	public String toString(){
 		return "_ID_group : " + _ID_contact + "\ngroup_name : " + group_name + "\n_ID_contact : " + _ID_contact;
 	}
-	
 }
-	
-
