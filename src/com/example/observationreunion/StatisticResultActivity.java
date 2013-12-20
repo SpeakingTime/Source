@@ -31,7 +31,7 @@ public class StatisticResultActivity extends Activity{
 		Bundle b = getIntent().getExtras();
     	final String filename = b.getString("selectedFile");
 		
-		Button buttonGetValue = (Button) findViewById(R.id.buttonGetValue);
+		/*Button buttonGetValue = (Button) findViewById(R.id.buttonGetValue);
 		buttonGetValue.setOnClickListener( 
     			new Button.OnClickListener(){
     				
@@ -41,7 +41,7 @@ public class StatisticResultActivity extends Activity{
     			    	txtStatistic2.setText(getParticipantsListValue(filename));
     				}
     			}
-    	);
+    	);*/
 
 		Button buttonBarGraph = (Button) findViewById(R.id.buttonBarGraph);
 		buttonBarGraph.setOnClickListener( 
@@ -50,6 +50,20 @@ public class StatisticResultActivity extends Activity{
     				@Override
     				public void onClick(View v) {
     					BarGraph bar = new BarGraph(getParticipantsWithSpeakingTime(filename));
+    					Intent barIntent = bar.getIntent(StatisticResultActivity.this);
+    					//barIntent.putExtra("SelectedParticipantsWithSpeakingTime", getParticipantsWithListValue(filename));
+    					startActivity(barIntent);
+    				}
+    			}
+    	);
+		
+		Button buttonBarGraph1 = (Button) findViewById(R.id.buttonBarGraph1);
+		buttonBarGraph1.setOnClickListener( 
+    			new Button.OnClickListener(){
+    				
+    				@Override
+    				public void onClick(View v) {
+    					BarGraph1 bar = new BarGraph1(getParticipantsWithSpeakingTime(filename));
     					Intent barIntent = bar.getIntent(StatisticResultActivity.this);
     					//barIntent.putExtra("SelectedParticipantsWithSpeakingTime", getParticipantsWithListValue(filename));
     					startActivity(barIntent);

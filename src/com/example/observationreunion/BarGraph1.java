@@ -1,4 +1,5 @@
 package com.example.observationreunion;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -7,70 +8,33 @@ import org.achartengine.ChartFactory;
 import org.achartengine.chart.BarChart.Type;
 import org.achartengine.model.CategorySeries;
 import org.achartengine.model.XYMultipleSeriesDataset;
-import org.achartengine.renderer.SimpleSeriesRenderer;
 import org.achartengine.renderer.XYMultipleSeriesRenderer;
-import org.achartengine.renderer.XYMultipleSeriesRenderer.Orientation;
 import org.achartengine.renderer.XYSeriesRenderer;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.Bundle;
-import android.view.Window;
 
-
-public class BarGraph{
+public class BarGraph1 {
 	
 	List<String> ParticipantsList = new ArrayList<String>();
 	List<Integer> SpeakingTimeList = new ArrayList<Integer>();
 	
-	public BarGraph(String participantsWithSpeakingTime) {
+	public BarGraph1(String participantsWithSpeakingTime) {
 		// TODO Auto-generated constructor stub
 		ParticipantsList =getListParticipants(participantsWithSpeakingTime);
 		SpeakingTimeList = getListValues(participantsWithSpeakingTime);
 	}
-
-
-	public Intent getIntent(Context context){
-		
-		/*int[] y = { 124, 135, 443, 456, 234, 123, 342, 134, 123, 643, 243, 274 };
-		
-		CategorySeries series = new CategorySeries("Demo Bar Graph");
-		for (int i = 0; i < y.length; i++) {
-			series.add("Bar " + (i+1), y[i]);
-		}
-		
-		XYMultipleSeriesDataset dataset = new XYMultipleSeriesDataset();
-		dataset.addSeries(series.toXYSeries());
-		
-		XYMultipleSeriesRenderer mRenderer = new XYMultipleSeriesRenderer();
-		XYSeriesRenderer renderer = new XYSeriesRenderer();
-		
-		mRenderer.setBarSpacing(1);
-		mRenderer.addXTextLabel(1, "Sun");
-		mRenderer.addXTextLabel(2, "Mon");
-		mRenderer.addXTextLabel(3, "Tue");
-		mRenderer.addXTextLabel(4, "Wed");
-		mRenderer.addXTextLabel(5, "Thu");
-	    mRenderer.addXTextLabel(6, "Fri");
-	    mRenderer.addXTextLabel(7, "Sat");
-		
-	    mRenderer.addSeriesRenderer(renderer);
-		
-		Intent intent = ChartFactory.getBarChartIntent(context, dataset, mRenderer, 
-														Type.DEFAULT);*/
-		
+	
+public Intent getIntent(Context context){
 		
 		List<Integer> MyListValue = new ArrayList<Integer>();
-		for (int i = 0; i < SpeakingTimeList.size(); i++){
-			MyListValue.add(SpeakingTimeList.get(i));
-		}
 		
-		/*MyList.add(25);
-		MyList.add(10);
-		MyList.add(15);
-		MyList.add(20);*/
+		MyListValue = getRangeSpeakingTimeList();
+		
+		/*for (int i = 0; i < SpeakingTimeList.size(); i++){
+			MyListValue.add(SpeakingTimeList.get(i));
+		}*/
 				
 		int[] y = new int[MyListValue.size()];
 		for (int i = 0; i < MyListValue.size(); i++) 
@@ -78,7 +42,7 @@ public class BarGraph{
 		
 		//int y[] = {25,10,15,20};
 	       
-        CategorySeries series = new CategorySeries("Speaking time in secondes");
+        CategorySeries series = new CategorySeries("Time class in secondes");
         for(int i=0; i < y.length; i++){
             series.add("Bar"+(i+1),y[i]);
         }
@@ -97,9 +61,9 @@ public class BarGraph{
        
         XYMultipleSeriesRenderer mRenderer = new XYMultipleSeriesRenderer();   // collection multiple values for one renderer or series
         mRenderer.addSeriesRenderer(renderer);
-        mRenderer.setChartTitle("Speaking time per participant");
+        mRenderer.setChartTitle("Number of partipants per time class");
 //        mRenderer.setXTitle("xValues");
-        mRenderer.setYTitle("Time in secondes");
+        mRenderer.setYTitle("Number of partipants");
         mRenderer.setZoomButtonsVisible(true);    mRenderer.setShowLegend(true);
         mRenderer.setShowGridX(true);      // this will show the grid in  graph
         mRenderer.setShowGridY(true);             
@@ -112,14 +76,21 @@ public class BarGraph{
         //mRenderer.setXAxisMax(5);
         mRenderer.setXAxisMax(ParticipantsList.size()+1);
         //mRenderer.setYAxisMax(100);
-        mRenderer.setYAxisMax(Math.round(getMaxValue()/10)*10+10);
+        mRenderer.setYAxisMax(Math.round(getRangeMax()/10)*10+10);
 //   
         
         mRenderer.setXLabels(0);
         
-        for (int i = 0; i < ParticipantsList.size(); i++){
-			mRenderer.addXTextLabel(i+1, ParticipantsList.get(i));
+        for (int i = 0; i < getRangeMax(); i++){
+        	String minRange = String.valueOf(i*120);
+        	String maxRange = String.valueOf(i*120 + 120);
+			mRenderer.addXTextLabel(i+1, "[" + minRange + " - " + maxRange + "]");
 		}
+        
+        
+        /*for (int i = 0; i < ParticipantsList.size(); i++){
+			mRenderer.addXTextLabel(i+1, ParticipantsList.get(i));
+		}*/
         
         /*mRenderer.addXTextLabel(1,"Income");
         mRenderer.addXTextLabel(2,"Saving");
@@ -160,18 +131,44 @@ public class BarGraph{
 			listSelectedValues.add(i_value);
 		}	
     	return listSelectedValues;
-		
 	}
 	
-	public int getMaxValue(){
-		int MaxValue = 0;
+	public int getRangeMax(){
+		int RangeMaxFinal = 0;
 		for (int i =0; i < SpeakingTimeList.size(); i++){
-			if (SpeakingTimeList.get(i) > MaxValue){
-				MaxValue = SpeakingTimeList.get(i);
+			int RangeMax = 1;
+			int j = 120;
+			while (SpeakingTimeList.get(i) > j) {
+				j = j + 120;	
+				RangeMax = RangeMax + 1;
+			}
+			if (RangeMax > RangeMaxFinal){
+				RangeMaxFinal = RangeMax;
 			}
 		}
-		return MaxValue;
+		return RangeMaxFinal;
 	}
-
 	
+	public List<Integer> getRangeSpeakingTimeList(){
+		List<Integer> listRangeSpeakingTime = new ArrayList<Integer>();
+		int nbRange = getRangeMax();
+		//System.out.println("getRangeMax() = " + getRangeMax());
+		//Initialisation de la liste de Range
+		for (int i = 0; i < nbRange; i++){
+			listRangeSpeakingTime.add(0);
+		}
+		
+		for (int i =0; i < SpeakingTimeList.size(); i++){
+			int range = 0;
+			int j = 120;
+			while (SpeakingTimeList.get(i) > j) {
+				j = j + 120;
+				range = range + 1;
+			}
+			//listRangeSpeakingTime.add(range, listRangeSpeakingTime.get(range) + 1);
+			listRangeSpeakingTime.set(range, listRangeSpeakingTime.get(range) + 1);
+			//System.out.println("listRangeSpeakingTime.get(" + String.valueOf(range) +") = " + String.valueOf(listRangeSpeakingTime.get(range)));
+		}
+		return listRangeSpeakingTime;
+	}
 }

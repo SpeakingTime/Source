@@ -37,7 +37,8 @@
 	<string name="title_statistic_activity">Statisitic</string>
 	<string name="title_statistic_result_activity">Statistic Result</string>
 	<string name="buttonGetValue">Get Value</string>
-	<string name="buttonBarGraph">Bar Graph</string>
+	<string name="buttonBarGraph">Speaking time per participant</string>
 	<string name="title_statistic_bar_graph">Bar Graph</string>
+	<string name="buttonBarGraph1">Number of partipants per time class</string>
 	
 </resources>

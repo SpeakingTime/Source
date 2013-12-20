@@ -82,12 +82,8 @@ public class StatisticActivity extends Activity{
 		intent.putExtra("selectedFile", filename);
 		startActivity(intent);
 		
-		
 		//TextView textViewGroupName = (TextView) findViewById (R.id.textView_group_name);	
 		//textViewGroupName.setText(groupname);
 		
 	}
-
-	
-
 }

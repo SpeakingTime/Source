@@ -11,13 +11,13 @@
 	    	android:layout_height="match_parent"
 	    	android:layout_weight="1"
 	    	android:gravity="center"
-   			android:padding="5dip"
+   			
    			>
 			<Button
     		    android:id="@+id/buttonSelectGroup"
     		    android:text="@string/buttonSelectGroup"
-    		    android:layout_width="240px"
-				android:layout_height="120px"
+    		    android:layout_width="match_parent"
+				android:layout_height="match_parent"
 				android:textSize="16dp"
 		    	>
     		</Button>
@@ -28,13 +28,13 @@
 	    	android:layout_height="match_parent"
 	    	android:layout_weight="1"
 	    	android:gravity="center"
-   			android:padding="5dip"
+   			
    			>
 			<Button
     		    android:id="@+id/buttonEditGroup"
     		    android:text="@string/buttonEditGroup"
-    		    android:layout_width="240px"
-				android:layout_height="120px"
+    		    android:layout_width="match_parent"
+				android:layout_height="match_parent"
 				android:textSize="16dp"
 		    	>
     		</Button>
@@ -45,12 +45,12 @@
 	    	android:layout_height="match_parent"
 	    	android:layout_weight="1"
 	    	android:gravity="center"	
-  			android:padding="5dip" >
+  			 >
 			<Button
 		    	android:id="@+id/buttonCreateGroupOrSelectContacts"
 		    	android:text="@string/buttonCreateGroupOrSelectContacts"
-		    	android:layout_width="240px"
-				android:layout_height="120px"
+		    	android:layout_width="match_parent"
+				android:layout_height="match_parent"
 				android:textSize="16dp" >
     		</Button>
     	</LinearLayout>
@@ -60,12 +60,12 @@
 	    	android:layout_height="match_parent"
 	    	android:layout_weight="1"
 	    	android:gravity="center"	
-  			android:padding="5dip" >
+  			 >
 			<Button
 		    	android:id="@+id/buttonStatistic"
 		    	android:text="@string/buttonStatistic"
-		    	android:layout_width="240px"
-				android:layout_height="120px"
+		    	android:layout_width="match_parent"
+				android:layout_height="match_parent"
 				android:textSize="16dp" >
     		</Button>
     	</LinearLayout>
@@ -75,12 +75,12 @@
 	    	android:layout_height="match_parent"
 	    	android:layout_weight="1"
 	    	android:gravity="center"	
-  			android:padding="5dip" >
+  			 >
 			<Button
 		    	android:id="@+id/buttonQuit"
 		    	android:text="@string/buttonQuit"
-		    	android:layout_width="240px"
-				android:layout_height="120px"
+		    	android:layout_width="match_parent"
+				android:layout_height="match_parent"
 				android:textSize="16dp" >
     		</Button>
     	</LinearLayout>
