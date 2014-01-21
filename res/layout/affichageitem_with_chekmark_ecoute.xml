@@ -5,10 +5,8 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/listview_background"
-   	android:tag="@+id/tag3_ecoute" 
-	
-    
-    >
+   	android:tag="@+id/tag3_ecoute"
+   	>
     
     <LinearLayout
 	    android:orientation="vertical"
@@ -24,9 +22,7 @@
 			android:layout_height="wrap_content"
 	   		android:layout_gravity="center_vertical"
 	   		android:padding="10px"
-
 		/>
- 
    	</LinearLayout>
  
 	<LinearLayout
@@ -36,7 +32,7 @@
 	   	android:layout_gravity="center_vertical"
 	   	android:paddingLeft="10px"
 	    android:layout_weight="1"
-	    >
+    >
  
 	    <TextView android:id="@+id/DISPLAY_NAME_ecoute"
 	         android:layout_width="fill_parent"
@@ -44,23 +40,21 @@
 	         android:textSize="16px"
 	         android:textStyle="bold"
 	         android:textColor="@android:color/white"
-	         />
+         />
  
 	    <TextView android:id="@+id/COMPANY_AND_TITLE_ecoute"
 	         android:layout_width="fill_parent"
 	         android:layout_height="fill_parent"
 	         android:textSize="16px"
 	         android:textColor="@android:color/white"
-	         />
+         />
 	    
 	    <Chronometer android:id="@+id/CHRONOMETRE_ecoute"
 	         android:layout_width="wrap_content"
 	         android:layout_height="wrap_content"
 	         android:textSize="20px"
 	         android:textColor="@android:color/white"
-	         />
-
- 
+         />
     </LinearLayout>
     
 	<LinearLayout
@@ -69,8 +63,7 @@
 	    android:layout_height="wrap_content"
 	   	android:layout_gravity="top"
 	   	android:paddingLeft="10px"
-	    >
-
+    >
     
    		<CheckBox
 	    	android:id="@+id/selection_chekbox_ecoute"

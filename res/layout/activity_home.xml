@@ -77,6 +77,21 @@
 	    	android:gravity="center"	
   			 >
 			<Button
+		    	android:id="@+id/buttonPreferences"
+		    	android:text="@string/buttonPreferences"
+		    	android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:textSize="16dp" >
+    		</Button>
+    	</LinearLayout>        
+        
+        <LinearLayout 
+	        android:layout_width="match_parent"
+	    	android:layout_height="match_parent"
+	    	android:layout_weight="1"
+	    	android:gravity="center"	
+  			 >
+			<Button
 		    	android:id="@+id/buttonQuit"
 		    	android:text="@string/buttonQuit"
 		    	android:layout_width="match_parent"

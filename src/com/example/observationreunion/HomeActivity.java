@@ -68,6 +68,19 @@ public class HomeActivity extends Activity{
 				
 		});
 		
+		Button buttonPreferences = (Button) findViewById(R.id.buttonPreferences);
+		buttonPreferences.setOnClickListener( 
+				new Button.OnClickListener(){
+					
+					@Override
+					public void onClick(View v) {
+						// TODO Auto-generated method stub
+						Intent intent = new Intent(HomeActivity.this, PreferencesActivity.class);
+						startActivity(intent);
+					}
+				
+		});
+		
 		Button buttonQuit = (Button) findViewById(R.id.buttonQuit);
 		buttonQuit.setOnClickListener( 
 				new Button.OnClickListener(){

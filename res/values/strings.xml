@@ -40,5 +40,9 @@
 	<string name="buttonBarGraph">Speaking time per participant</string>
 	<string name="title_statistic_bar_graph">Bar Graph</string>
 	<string name="buttonBarGraph1">Number of partipants per time class</string>
+	<string name="buttonPreferences">Preferences</string>
+	<string name="title_preferences_activity">Preferences</string>
+	<string name="buttonSavePreferences">Save Preferences</string>
+	<string name="buttonCancelPreferences">Cancel</string>
 	
 </resources>

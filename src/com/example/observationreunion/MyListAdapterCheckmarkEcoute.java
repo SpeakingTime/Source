@@ -9,7 +9,9 @@ import android.content.Context;
 import android.graphics.Color;
 import android.os.SystemClock;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.Chronometer;
@@ -20,8 +22,7 @@ import android.widget.SimpleAdapter;
 public class MyListAdapterCheckmarkEcoute extends SimpleAdapter{
 	private Context context;
 	private LayoutInflater mInflater;
- 
- 
+ 	
 	public MyListAdapterCheckmarkEcoute(Context context,
 			List<? extends Map<String, ?>> data, int resource, String[] from,
 			int[] to) {
@@ -54,6 +55,12 @@ public class MyListAdapterCheckmarkEcoute extends SimpleAdapter{
 		CheckBox cb = (CheckBox) convertView.findViewById(R.id.selection_chekbox_ecoute);
 		//affecte la position de l'item comme tag
 		cb.setTag(position);
+		
+		LinearLayout ll = (LinearLayout) convertView.findViewById(R.id.item_ecoute);
+		ll.setTag(position);
+		
+		/*convertView.setTag(position);
+		System.out.println("position = " + position);*/
 		
 		HashMap<String, Object> map = (HashMap<String, Object>) getItem(position);
 		if ((Boolean) map.get("isSelected") == true ){

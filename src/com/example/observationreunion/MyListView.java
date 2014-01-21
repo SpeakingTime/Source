@@ -9,6 +9,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 
 public class MyListView extends ListView {
@@ -85,6 +86,8 @@ public class MyListView extends ListView {
 					mView = v;
 					mEvent = event;
 					
+					/*LinearLayout ll = (LinearLayout)v.findViewById(R.id.item_ecoute);
+					System.out.println("ll : " + Integer.valueOf(ll.getTag().toString()));	*/	
 					
 					mMessage = mMessage == null? new Message() : mHandler.obtainMessage();
 					

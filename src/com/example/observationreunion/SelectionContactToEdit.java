@@ -18,6 +18,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.provider.ContactsContract;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -28,6 +30,7 @@ import android.widget.ListView;
 public class SelectionContactToEdit extends Activity{
 	ListView lvContact;
 	ArrayList<HashMap<String, Object>> listItemContact = new ArrayList<HashMap<String, Object>>();
+	ArrayList<HashMap<String, Object>> listItemContactForFilter = new ArrayList<HashMap<String, Object>>();
 	MyListAdapter mSchedule = null;
 
 	@Override
@@ -84,6 +87,37 @@ public class SelectionContactToEdit extends Activity{
 					}
 				
 		});
+		
+		EditText editTextNameFilter = (EditText) findViewById(R.id.nameFilterToEdit);
+		editTextNameFilter.addTextChangedListener(new TextWatcher() {
+		
+	        @Override
+	        public void onTextChanged(CharSequence s, int start, int before,  int count) {
+	        	
+	        	listItemContact.clear(); 
+	        	mSchedule.notifyDataSetChanged();
+	        	
+	        	for (int i = 0; i < listItemContactForFilter.size() ; i++){
+	        		HashMap<String, Object> mapItemContact = (HashMap<String, Object>) listItemContactForFilter.get(i);
+	        		String contactName = mapItemContact.get("nom_contact").toString();
+	        		System.out.println(contactName.substring(0, s.length()) + " -- s = " + s.toString().toLowerCase());
+	        		if (contactName.toLowerCase().substring(0, s.length()).equals(s.toString().toLowerCase())) {
+	        			listItemContact.add(listItemContactForFilter.get(i));
+	        		}
+	        	}
+	        }
+	        
+	        @Override
+	        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+	        
+	        }
+	        
+	        @Override
+			public void afterTextChanged(Editable arg0) {
+				
+			}
+	        
+	    });
 		
 	}
 
@@ -149,6 +183,7 @@ public class SelectionContactToEdit extends Activity{
     		
     		map.put("tag", i);
     		listItemContact.add(map); 
+    		listItemContactForFilter.add(map); 
     		
     		i++;
     		mCursor.moveToNext();
@@ -209,9 +244,9 @@ public class SelectionContactToEdit extends Activity{
 			
 		}*/
 		
-		for (int i=0;i<listItemContact.size();i++){
+		for (int i=0;i<listItemContactForFilter.size();i++){
 			
-			HashMap<String, Object> mapItemContact = (HashMap<String, Object>) listItemContact.get(i);
+			HashMap<String, Object> mapItemContact = (HashMap<String, Object>) listItemContactForFilter.get(i);
 	    	
 	    	if ((Boolean) mapItemContact.get("isSelected") == true){
 
@@ -237,8 +272,10 @@ public class SelectionContactToEdit extends Activity{
 			
 			HashMap<String, Object> mapItemContact = (HashMap<String, Object>) lvContact.getItemAtPosition(position);
 			listItemContact.remove(mapItemContact);		
+			listItemContactForFilter.remove(mapItemContact);
 			mapItemContact.put("isSelected", true);
 			listItemContact.add(position, mapItemContact);	
+			listItemContactForFilter.add(position, mapItemContact);
 			mSchedule.notifyDataSetChanged();
 			//Log.i("id_contact", mapItemContact.get("id_contact").toString());
 			//Log.i("nom_contact", mapItemContact.get("nom_contact").toString());
@@ -250,8 +287,10 @@ public class SelectionContactToEdit extends Activity{
 			//cb.setBackgroundResource(/*R.color.blue*/Color.BLUE);
 			HashMap<String, Object> mapItemContact = (HashMap<String, Object>) lvContact.getItemAtPosition(position);
 			listItemContact.remove(mapItemContact);		
+			listItemContactForFilter.remove(mapItemContact);
 			mapItemContact.put("isSelected", false);
 			listItemContact.add(position, mapItemContact);	
+			listItemContactForFilter.add(position, mapItemContact);
 			mSchedule.notifyDataSetChanged();
 			//Log.i("id_contact", mapItemContact.get("id_contact").toString());
 			//Log.i("nom_contact", mapItemContact.get("nom_contact").toString());
@@ -276,14 +315,14 @@ public class SelectionContactToEdit extends Activity{
 	    	groupBdd.close();
 	    	
 	    	//for (int i=0; i<listSelectedContact.size(); i++){
-	    	for (int i=0; i<listItemContact.size(); i++){
+	    	for (int i=0; i<listItemContactForFilter.size(); i++){
 	    	
-	    		if ((Boolean) listItemContact.get(i).get("isSelected") == true) {
+	    		if ((Boolean) listItemContactForFilter.get(i).get("isSelected") == true) {
 	    		
 	    			/*HashMap map = new HashMap<String,Object>();
 	    			map = listItemContact.get(i);*/
 	    			
-	    			HashMap<String, Object> mapItemContact = (HashMap<String, Object>) listItemContact.get(i);
+	    			HashMap<String, Object> mapItemContact = (HashMap<String, Object>) listItemContactForFilter.get(i);
 	    			
 	    			//récupération du group sélectionné
 	    			

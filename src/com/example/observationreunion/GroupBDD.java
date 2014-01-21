@@ -20,16 +20,16 @@ public class GroupBDD {
  
 	private SQLiteDatabase bdd;
  
-	private MyBaseGroupSQLite myBaseGroupSQLite;
+	private MyBaseSQLite myBaseSQLite;
  
 	public GroupBDD(Context context){
 		//On créer la BDD et sa table
-		myBaseGroupSQLite = new MyBaseGroupSQLite(context, NOM_BDD, null, VERSION_BDD);
+		myBaseSQLite = new MyBaseSQLite(context, NOM_BDD, null, VERSION_BDD);
 	}
  
 	public void open(){
 		//on ouvre la BDD en écriture
-		bdd = myBaseGroupSQLite.getWritableDatabase();
+		bdd = myBaseSQLite.getWritableDatabase();
 	}
  
 	public void close(){

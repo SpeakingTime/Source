@@ -1,13 +1,8 @@
 package com.example.observationreunion;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -16,23 +11,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
-
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
-
 import com.example.observationreunion.MyListView.OnItemDoubleTapLister;
 import com.example.observationreunion.MyListView.OnItemMoveTapLister;
 
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
 import android.os.StrictMode;
 import android.os.SystemClock;
 import android.provider.ContactsContract;
@@ -42,26 +26,21 @@ import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.CursorLoader;
-import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Rect;
-import android.graphics.drawable.BitmapDrawable;
-import android.text.format.Time;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.Chronometer;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -99,8 +78,23 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
     
     private static ProgressDialog dialog;
     int position = 0;
+    int itemEcoutePosition = -2;
     
     long totalTimeWhenStopped = 0;
+    
+    /*OnTouchListener itemTouch = new OnTouchListener() {
+	    private int position;
+	    @Override
+	    public boolean onTouch(View v, MotionEvent event) {
+	       LinearLayout ll = (LinearLayout)v.findViewById(R.id.item_ecoute);
+	       String itemTag = ll.getTag().toString();
+	       itemEcoutePosition = Integer.parseInt(itemTag);
+	       return false;
+
+	    }
+
+	};*/
+	
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -209,9 +203,6 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
 	    					playStatus = false;
     					}
     					
-    					//ModalDialog modalDialog = new ModalDialog();
-						//modalDialog.showWarningDialog(MainActivity.this, "SpeakingTime is on pause !");
-    					
     				}
     			}
     	);
@@ -298,25 +289,28 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
 			    					
 			    				finish();
     						}
-	    					
-    					}
-    					
+	    				}
     				}
-    					
-    					
-    					
     			}
     	);			
-    
-    	
-        
-        
-        lVDataEcoute = new MyListView(this.getApplicationContext());
+    	    	
+    	lVDataEcoute = new MyListView(this.getApplicationContext());
         lVDataEcoute = (MyListView) findViewById(R.id.listViewEcoute);
-                
+        /*lVDataEcoute.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        	@Override
+	        public void onItemClick(AdapterView<?> parent, View view,
+	                int position, long id) {
+	            //use POSITION to get item clicked
+	        	itemEcoutePosition = position;
+	        	AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
+				alertDialog.setTitle("Warning");
+				alertDialog.setMessage("itemEcoutePosition : " + itemEcoutePosition);
+				alertDialog.show();
+	        }
+		});*/
+        
         InitContact(savedInstanceState, this);
         
-        //lVDataEcoute.setClickable(true);
         lVDataEcoute.setOnItemDoubleClickListener(this);
         lVDataEcoute.setOnTouchListener(this);
         
@@ -344,8 +338,7 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
         lVDataInactif.setOnItemDoubleClickListener(this);
         lVDataInactif.setOnTouchListener(this);
         
-        
-        
+                
         //On commence le dÃ©compte du chronometre principal
         Chronometer chronometerTotalTime = (Chronometer) findViewById(R.id.chronometerTotalTime);
         chronometerTotalTime.start();
@@ -353,50 +346,19 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
         
     }
 
-    /*@Override
+    @Override
     public void OnDoubleTap(AdapterView<?> parent, View view, int position, long id) {
-    	HashMap<String, Object> original_map = (HashMap<String, Object>) parent.getItemAtPosition(position);
-        
-    	HashMap<String, Object> modified_map = new HashMap<String, Object>();
-    	modified_map.put("display_name", original_map.get("display_name"));
-    	modified_map.put("company_and_title", original_map.get("company_and_title"));
-    	modified_map.put("img", original_map.get("img"));
-    	
-    	if (parent.getAdapter() == mScheduleEcoute){
-    		listItemEcoute.remove(original_map);
-    		mScheduleEcoute.notifyDataSetChanged();
     		
-    		modified_map.put("chronometre", new ChronoData((ChronoData) original_map.get("chronometre"), "start"));
-    		
-    		listItemParole.add(modified_map);
-    		mScheduleParole.notifyDataSetChanged();
-    	}
-    	else if (parent.getAdapter() == mScheduleParole){
-    		listItemParole.remove(original_map);
-    		mScheduleParole.notifyDataSetChanged();
-    		
-    		modified_map.put("chronometre", new ChronoData((ChronoData) original_map.get("chronometre"), "stop"));
-    		
-    		listItemEcoute.add(modified_map);
-    		mScheduleEcoute.notifyDataSetChanged();
-    		
-    	}
-    	else if (parent.getAdapter() == mScheduleInactif){
-    		listItemInactif.remove(original_map);
-    		mScheduleInactif.notifyDataSetChanged();
-    		
-    		modified_map.put("chronometre", new ChronoData((ChronoData) original_map.get("chronometre"), "start"));
-    		
-    		listItemParole.add(modified_map);
-    		mScheduleParole.notifyDataSetChanged();
-    	}
-    	
-    }*/
+    }
     
-    /*@Override
+    @Override
     public void OnSingleTap(AdapterView<?> parent, View view, int position, long id) {
-
-    }*/
+    	/*itemEcoutePosition = position;
+    	AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
+		alertDialog.setTitle("Warning");
+		alertDialog.setMessage("itemEcoutePosition : " + itemEcoutePosition);
+		alertDialog.show();*/
+    }
     
     private void Select(ListView listView, ArrayList<HashMap<String, Object>> listItem, 
     					SimpleAdapter mSchedule, Boolean bSelectAll){
@@ -414,220 +376,7 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
     
     @Override
     public void OnMoveTap(View view, MotionEvent event) {
-    	
-		/*long width = view.getWidth();
-		int first = 0;
-        int last = 0;
-        int itemHeight = 0;
-        int position = 0;
-        
-        int statusBarHeight = 0;
-        int titleBarHeight = 0;
-        
-        if (event.getAction() == MotionEvent.ACTION_UP) {
-			
-        	if ((event.getX() > width*2) && (event.getX() < width*3) && flagActionDownModeInactif == false){
-				//System.out.println("event.getX() : " + event.getX());
-
-				
-        		if (flagActionDownModeEcoute == true) {
-        			listItemEcoute.remove(original_map_onmove);
-       			
-        			mScheduleEcoute.notifyDataSetChanged();
-	    		
-        			modified_map_onmove.put("chronometre", new ChronoData((ChronoData) original_map_onmove.get("chronometre"), "no_change"));
-	    		
-        			listItemInactif.add(modified_map_onmove);
-        			mScheduleInactif.notifyDataSetChanged();
-        		}
-        		else if (flagActionDownModeParole == true) {
-        			listItemParole.remove(original_map_onmove);
-        			
-        			mScheduleParole.notifyDataSetChanged();
-	    		
-        			modified_map_onmove.put("chronometre", new ChronoData((ChronoData) original_map_onmove.get("chronometre"), "stop"));
-	    		
-        			listItemInactif.add(modified_map_onmove);
-        			mScheduleInactif.notifyDataSetChanged();
-        		}
-        		
-        		output.append("    " + getCurrentTimeStamp() + ";" + timestring + ";" + modified_map_onmove.get("display_name") + ";idle;" + "\r\n");
-		    		
-		    }
-        	else if ((event.getX() > width) && (event.getX() < width*2)  && flagActionDownModeParole == false){
-				//System.out.println("event.getX() : " + event.getX());
-
-				if (flagActionDownModeEcoute == true) {
-					listItemEcoute.remove(original_map_onmove);
-					
-					mScheduleEcoute.notifyDataSetChanged();
-	    		
-					modified_map_onmove.put("chronometre", new ChronoData((ChronoData) original_map_onmove.get("chronometre"), "start"));
-	    		
-					listItemParole.add(modified_map_onmove);
-					mScheduleParole.notifyDataSetChanged();
-				}
-				else if (flagActionDownModeInactif == true) {
-					listItemInactif.remove(original_map_onmove);
-					mScheduleInactif.notifyDataSetChanged();
-	    		
-					modified_map_onmove.put("chronometre", new ChronoData((ChronoData) original_map_onmove.get("chronometre"), "start"));
-	    		
-					listItemParole.add(modified_map_onmove);
-					mScheduleParole.notifyDataSetChanged();
-					
-				}
-				
-				output.append("    " + getCurrentTimeStamp() + ";" + timestring + ";" + modified_map_onmove.get("display_name")  + ";speaker;" + "\r\n");
-					
-		    		
-		    }
-			else if ((event.getX() < width)  && flagActionDownModeEcoute == false){
-				//System.out.println("event.getX() : " + event.getX());
-			
-				if (flagActionDownModeParole == true) {
-					listItemParole.remove(original_map_onmove);
-					mScheduleParole.notifyDataSetChanged();
-	    		
-					modified_map_onmove.put("chronometre", new ChronoData((ChronoData) original_map_onmove.get("chronometre"), "stop"));
-	    		
-					listItemEcoute.add(modified_map_onmove);
-					mScheduleEcoute.notifyDataSetChanged();
-				}
-				else if (flagActionDownModeInactif == true) {
-					listItemInactif.remove(original_map_onmove);
-					mScheduleInactif.notifyDataSetChanged();
-	    		
-					modified_map_onmove.put("chronometre", new ChronoData((ChronoData) original_map_onmove.get("chronometre"), "no_change"));
-	    		
-					listItemEcoute.add(modified_map_onmove);
-					mScheduleEcoute.notifyDataSetChanged();
-				}
-				
-				output.append("    " + getCurrentTimeStamp() + ";" + timestring + ";" + modified_map_onmove.get("display_name") + ";listener;" + "\r\n");
-		    		
-		    }
-			
-			flagActionDownModeEcoute = false;
-			flagActionDownModeParole = false;
-			flagActionDownModeInactif = false;
-			
-			
-        }
-		else if (event.getAction() == MotionEvent.ACTION_DOWN) {
-		
-			
-			AdapterView adapterView = (AdapterView) view;
-			
-			statusBarHeight = getStatusBarHeight();
-	        titleBarHeight = getTitleBarHeight();
-			System.out.println("statusBarHeight : " + String.valueOf(statusBarHeight));
-			System.out.println("titleBarHeight : " + String.valueOf(titleBarHeight));
-				        
-			if (adapterView.getAdapter() == mScheduleEcoute){
-				
-				first = lVDataEcoute.getFirstVisiblePosition();
-		     	last = lVDataEcoute.getLastVisiblePosition();
-		        itemHeight = lVDataEcoute.getHeight() / (last - first + 1) + lVDataEcoute.getDividerHeight();
-				position = (int) ((event.getY() - statusBarHeight - titleBarHeight) / itemHeight) //- 1;
-		        
-				
-				
-		        //Log.i("TAG", "position : " + String.valueOf(position));
-		        
-		        original_map_onmove = (HashMap<String, Object>) lVDataEcoute.getItemAtPosition(position);
-								
-		    	modified_map_onmove = new HashMap<String, Object>();
-		    	modified_map_onmove.put("display_name", original_map_onmove.get("display_name"));
-		    	modified_map_onmove.put("company_and_title", original_map_onmove.get("company_and_title"));
-		    	modified_map_onmove.put("img", original_map_onmove.get("img"));
-		    	
-		    	View convertView = null;
-     		    LinearLayout linearlayout = (LinearLayout) mScheduleEcoute.getView(position, convertView, lVDataEcoute);
-     		    LinearLayout linearlayout2 = (LinearLayout) linearlayout.getChildAt(1);
-     		    Chronometer mychronometer= (Chronometer) linearlayout2.getChildAt(2);
-     		    timestring = mychronometer.getText().toString();
-     		    if (timestring.length()==5){
-     		    	timestring = "00:" + timestring;
-    		    }
-    		    else if (timestring.length()==7){
-    		    	//timestring = "0:" + timestring;
-    		    	timestring = "0" + timestring;
-    		    }
-     		    //output.append("    " + getCurrentTimeStamp() + ";" + timestring + ";" + modified_map_onmove.get("display_name") + ";listener;" + "\r\n");
-				
-		    	flagActionDownModeEcoute = true;
-
-			}
-			else if (adapterView.getAdapter() == mScheduleParole){
-				
-				first = lVDataParole.getFirstVisiblePosition();
-		        last = lVDataParole.getLastVisiblePosition();
-		        itemHeight = lVDataParole.getHeight() / (last - first + 1) + lVDataParole.getDividerHeight();
-		        position = (int) ((event.getY()  - statusBarHeight - titleBarHeight) / itemHeight) //-1;
-				
-		        original_map_onmove = (HashMap<String, Object>) lVDataParole.getItemAtPosition(position);
-		        
-		        modified_map_onmove = new HashMap<String, Object>();
-		        modified_map_onmove.put("display_name", original_map_onmove.get("display_name"));
-		        modified_map_onmove.put("company_and_title", original_map_onmove.get("company_and_title"));
-		        modified_map_onmove.put("img", original_map_onmove.get("img"));
-		        
-		        View convertView = null;
-     		    LinearLayout linearlayout = (LinearLayout) mScheduleParole.getView(position, convertView, lVDataParole);
-     		    LinearLayout linearlayout2 = (LinearLayout) linearlayout.getChildAt(1);
-     		    Chronometer mychronometer= (Chronometer) linearlayout2.getChildAt(2);
-     		    timestring = mychronometer.getText().toString();
-     		    if (timestring.length()==5){
-     		    	timestring = "00:" + timestring;
-    		    }
-    		    else if (timestring.length()==7){
-    		    	//timestring = "0:" + timestring;
-    		    	timestring = "0" + timestring;
-    		    }
-     		    //output.append("    " + getCurrentTimeStamp() + ";" + timestring + ";" + modified_map_onmove.get("display_name")  + ";speaker;" + "\r\n");
-		        
-		        flagActionDownModeParole = true;
-		    }
-			else if (adapterView.getAdapter() == mScheduleInactif){
-				
-				first = lVDataInactif.getFirstVisiblePosition();
-		        last = lVDataInactif.getLastVisiblePosition();
-		        itemHeight = lVDataInactif.getHeight() / (last - first + 1) + lVDataInactif.getDividerHeight();
-		        position = (int) ((event.getY() - statusBarHeight - titleBarHeight) / itemHeight) //- 1;
-		        
-		        //Log.i("TAG", "position : " + String.valueOf(position));
-		        
-		        original_map_onmove = (HashMap<String, Object>) lVDataInactif.getItemAtPosition(position);
-		        
-		    	modified_map_onmove = new HashMap<String, Object>();
-		    	modified_map_onmove.put("display_name", original_map_onmove.get("display_name"));
-		    	modified_map_onmove.put("company_and_title", original_map_onmove.get("company_and_title"));
-		    	modified_map_onmove.put("img", original_map_onmove.get("img"));
-		    	
-		    	View convertView = null;
-     		    LinearLayout linearlayout = (LinearLayout) mScheduleInactif.getView(position, convertView, lVDataInactif);
-     		    LinearLayout linearlayout2 = (LinearLayout) linearlayout.getChildAt(1);
-     		    Chronometer mychronometer= (Chronometer) linearlayout2.getChildAt(2);
-     		    timestring = mychronometer.getText().toString();
-     		    if (timestring.length()==5){
-     		    	timestring = "00:" + timestring;
-    		    }
-    		    else if (timestring.length()==7){
-    		    	//timestring = "0:" + timestring;
-    		    	timestring = "0" + timestring;
-    		    }
-     		    //output.append("    " + getCurrentTimeStamp() + ";" + timestring + ";" + modified_map_onmove.get("display_name") + ";idle;" + "\r\n");
-				
-		    	flagActionDownModeInactif = true;
-			}
-			
-		}
-		else if (event.getAction() == MotionEvent.ACTION_MOVE) {
-			AdapterView adapterView = (AdapterView) view;
-			
-		}*/
-    	
+    	    	
     	long width = view.getWidth();
     	ArrayList<HashMap<String, Object>> listItem = new ArrayList<HashMap<String, Object>>();
     	HashMap<String, Object> map_original = null;
@@ -635,180 +384,79 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
     	
     	if (event.getAction() == MotionEvent.ACTION_UP) {
     		
-    		//if (listItem.size()>0){
-    		
     		AdapterView adapterView = (AdapterView) view;
-    		
+    	
     		if ((event.getX() > width*2) && (event.getX() < width*3)){
-    			
-	    		if (flagActionDownModeEcoute == true){
-	    				
-	    			/*int i = 0;
-	    			for (i = 0; i<lVDataEcoute.getCount();i++){
-		    			HashMap<String, Object> map = (HashMap<String, Object>) lVDataEcoute.getItemAtPosition(i);
-		    				
-		    			View convertView = null;
-		         		LinearLayout linearlayout = (LinearLayout) mScheduleEcoute.getView(i, convertView, lVDataEcoute);
-		         		LinearLayout linearlayout2 = (LinearLayout) linearlayout.getChildAt(0);
-		         		CheckBox checkMark= (CheckBox) linearlayout2.getChildAt(1);
-		         		    		    				
-		    			if ((Boolean) map.get("isSelected") == false){
-		    				listItem.add(map);
-		    				System.out.println("display_name : " +  map.get("display_name").toString());
-		    			}
-		    		}
-	    				
-	    			for (i=0; i<listItem.size(); i++){
-	    					
-	    				listItemEcoute.remove(listItem.get(i));
-	    				listItem.get(i).put("chronometre", new ChronoData((ChronoData) listItem.get(i).get("chronometre"), "no_change"));
-	    				listItem.get(i).put("isSelected", false);
-	    							
-	            		listItemInactif.add(listItem.get(i));
-	            			
-	    			}
-	    				
-	    			//mScheduleEcoute.notifyDataSetChanged();
-	    			//mScheduleInactif.notifyDataSetChanged();*/
-	    			
+    			if (flagActionDownModeEcoute == true){
 	    			ListeningToIdle();
-	    			
-	    				
 	    		}
 	    		else if (flagActionDownModeParole == true) {
-	        		
-	    			SpeakingToIdle();
-	    			
+	        		SpeakingToIdle();
 	    		}
-	    		/*int i = 0;
-	    		for (i=0; i<listItem.size() ;i++){
-	    			listItemEcoute.remove((HashMap<String, Object>) listItem.get(i));
-	    			System.out.println();
-	    			AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
-					alertDialog.setTitle("listItem.get(" + String.valueOf(i) + ")");
-					alertDialog.setMessage("display_name : " + listItem.get(i).get("display_name").toString());
-					alertDialog.show();
-	    				
-	    		}
-	    			
-	    		mScheduleEcoute.notifyDataSetChanged();*/
-	    		
 	    	}
 	    	else if ((event.getX() > width) && (event.getX() < width*2)){
     			if (flagActionDownModeEcoute == true) {
-	    				
-	    			/*int i = 0;
-	    			for (i = 0; i<lVDataEcoute.getCount();i++){
-	    				HashMap<String, Object> map = (HashMap<String, Object>) lVDataEcoute.getItemAtPosition(i);
-		    			
-	    				View convertView = null;
-	    				LinearLayout linearlayout = (LinearLayout) mScheduleEcoute.getView(i, convertView, lVDataEcoute);
-		         		LinearLayout linearlayout2 = (LinearLayout) linearlayout.getChildAt(0);
-		         		CheckBox checkMark= (CheckBox) linearlayout2.getChildAt(1);
-		         		    		    				
-		    			if ((Boolean) map.get("isSelected") == false){
-		         		//if (checkMark.isChecked() == false){
-		    				listItem.add(map);
-		    				System.out.println("display_name : " +  map.get("display_name").toString());
-		    			}
-		    		}
-	    				
-	    					
-	    				
-	    		    for (i=0; i<listItem.size(); i++){
-	    		    	
-	    		    	listItemEcoute.remove(listItem.get(i));
-	    					
-	    				map_original = new HashMap<String, Object>();
-	    				map_original = (HashMap<String, Object>) listItem.get(i);
-	    				map_modified = new HashMap<String, Object>();
-	    				map_modified = (HashMap<String, Object>) listItem.get(i);
-	    				map_modified.put("chronometre", new ChronoData((ChronoData) map_original.get("chronometre"), "start"));
-	    				map_modified.put("isSelected", false);
-	    				listItemParole.add(map_modified);
-	    				
-	    				String chronoDataStatement = ((ChronoData) map_modified.get("chronometre")).GetStatement();
-	    					
-		    		    mScheduleParole.notifyDataSetChanged();
-		    		    
-	    				
-	    		    }*/
-    				
-    				
-    				/*map_original = (HashMap<String, Object>) lVDataEcoute.getItemAtPosition(position);
-    				listItemEcoute.remove(map_original);
-					map_modified = new HashMap<String, Object>();
-    				map_modified = (HashMap<String, Object>) map_original;
-    				map_modified.put("chronometre", new ChronoData((ChronoData) map_original.get("chronometre"), "start"));
-    				//map_modified.put("isSelected", false);
-    				listItemParole.add(map_modified);*/
     				
     				ListeningToSpeaking();
-    				
-    						
-	    		}
-	    					    				
-	    		//mScheduleEcoute.notifyDataSetChanged();
-	    		//mScheduleParole.notifyDataSetChanged();
-    			else if (flagActionDownModeInactif == true) {
-    				
-    				IdleToSpeaking();
-    				
-    			}	
-	    				
-    		}
-    			
-    				
-	    		
-	    	else if ((event.getX() < width)){
-	    		
-	    		if (flagActionDownModeParole == true) {
- 				
-    				SpeakingToListening();
-   						
-	    		}
- 
-    			else if (flagActionDownModeInactif == true) {
-    				
-    				IdleToListening();
-    				
     			}
-    			
+	    		else if (flagActionDownModeInactif == true) {
+    				IdleToSpeaking();
+    			}	
 	    	}
+    		else if ((event.getX() < width)){
+	    		if (flagActionDownModeParole == true) {
+ 					SpeakingToListening();
+   				}
+    			else if (flagActionDownModeInactif == true) {
+    				IdleToListening();
+    			}
+ 	    	}
 	    		
 	    	flagActionDownModeEcoute = false;
 			flagActionDownModeParole = false;
 			flagActionDownModeInactif = false;
-	    //}
-    	}
+	    }
+ 
     	else if (event.getAction() == MotionEvent.ACTION_DOWN) {
 					
 			AdapterView adapterView = (AdapterView) view;
 			
     		if (adapterView.getAdapter() == mScheduleEcoute){
+	    		flagActionDownModeEcoute = true;
 	    		
-    			flagActionDownModeEcoute = true;
-    			
-    				
+	    		/*if (!isListViewCheck(lVDataEcoute)){
+					
+					//LinearLayout ll = (LinearLayout) view.findViewById(R.id.item_ecoute);
+					//itemEcoutePosition = Integer.valueOf(ll.getTag().toString());
+					//view.getTag().toString();
+					//itemEcoutePosition = ((AdapterView<ListAdapter>) view).getSelectedItemPosition();
+					//LinearLayout ll = (LinearLayout)view;
+					//view.getTag().toString();
+					//itemEcoutePosition = Integer.valueOf(ll.getTag().toString());
+					
+					//LinearLayout ll = (LinearLayout)view.findViewById(R.id.item_ecoute);
+					//itemEcoutePosition = Integer.valueOf(ll.getTag().toString());
+					//ll.setOnTouchListener(itemTouch);
+										
+					AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
+					alertDialog.setTitle("Warning");
+					alertDialog.setMessage("itemEcoutePosition : " + String.valueOf(itemEcoutePosition));
+					alertDialog.show();
+										
+				}*/
+	    		
     		}
     		else if (adapterView.getAdapter() == mScheduleParole){
-    		
     			flagActionDownModeParole = true;
-    				
     		}
     		else if (adapterView.getAdapter() == mScheduleInactif){
-    			
     			flagActionDownModeInactif = true;
     		}
-    		
     	}
+    	
     	else if (event.getAction() == MotionEvent.ACTION_MOVE) {
 			AdapterView adapterView = (AdapterView) view;
-			
 		}
-    	
-    	
-    	
     	
     }
 
@@ -862,6 +510,7 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
 	            map.put("display_name", mCursor.getString(1));
 	            map.put("isSelected", false);
 	        	map.put("tag2", i);
+	        	map.put("tag3", i);
 	        	map.put("onPause", false);
 	            
 	            output.append( "    " + mCursor.getString(1) + "\r\n");
@@ -929,8 +578,8 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
     	output.append("end: participants list  \r\n \r\nbegin: meeting " + formattedDate /*timetotalstring  getCurrentTimeStamp()*/ + "\r\n"); 
     	
         mScheduleEcoute = new /*SimpleAdapter*/MyListAdapterCheckmarkEcoute (this.getBaseContext(), listItemEcoute, R.layout.affichageitem_with_chekmark_ecoute,
-                new String[] { "img", "display_name", "company_and_title", "chronometre", "tag2"}, 
-                new int[] { R.id.IMG_ecoute, R.id.DISPLAY_NAME_ecoute, R.id.COMPANY_AND_TITLE_ecoute, R.id.CHRONOMETRE_ecoute, R.id.tag2_ecoute});
+                new String[] { "img", "display_name", "company_and_title", "chronometre", "tag2", "tag3"}, 
+                new int[] { R.id.IMG_ecoute, R.id.DISPLAY_NAME_ecoute, R.id.COMPANY_AND_TITLE_ecoute, R.id.CHRONOMETRE_ecoute, R.id.tag2_ecoute,  R.id.tag3_ecoute});
         
         mScheduleEcoute.setViewBinder(new MyViewBinder()); // VOICI LA CLE!!!!
   	    
@@ -962,287 +611,15 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
     }
     
     public boolean SendToDatabase(String meeting_name, String meeting_total_time){
-    	
-    	Integer _idmax = 0;    	
-    	
+    		
     	try{
-    		//http post
- 		    /*String S_Id = "_id3";
- 		    String SDisplay_Name = "test_display_name3";//ETNom.getText().toString();
- 		    String SCompany_and_Title = "test_company_and_title3";//ETPrenom.getText().toString();
- 		    String SChronometre = "01:01:01";//ETAge.getText().toString();
-    			
- 		    ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
- 		    		
- 		    nameValuePairs.add(new BasicNameValuePair("_ID", S_Id));
- 		    nameValuePairs.add(new BasicNameValuePair("display_name", SDisplay_Name));
- 		    nameValuePairs.add(new BasicNameValuePair("company_and_title", SCompany_and_Title));
- 		    nameValuePairs.add(new BasicNameValuePair("chronometre", SChronometre));*/
-    		
-    		//http post
-    		
-    		/*for (int i=0; i<listItemEcoute.size(); i++){
-    			
-    			HashMap<String, Object> map = (HashMap<String, Object>) listItemEcoute.get(i);		
-    			
-     		    ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-     		    		
-     		    nameValuePairs.add(new BasicNameValuePair("_ID", String.valueOf(i+100)));
-     		    nameValuePairs.add(new BasicNameValuePair("display_name", map.get("display_name").toString()));
-     		    nameValuePairs.add(new BasicNameValuePair("company_and_title", map.get("company_and_title").toString()));
-     		    nameValuePairs.add(new BasicNameValuePair("chronometre", map.get("chronometre").toString()));
-        		
-     		    HttpClient httpclient = new DefaultHttpClient();
-     		    //HttpPost httppost = new HttpPost("http://88.161.78.93:8080/add.php");
-     		    
-     		    HttpPost httppost = new HttpPost("http://213.186.33.3/~datamysq/timespeaking/add.php");
-     		    httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));                                  
-     		    Log.i("Connexion", "Wait...");
-     		    HttpResponse response = httpclient.execute(httppost);
-     		    Log.i("Connexion", "Done");
-     		    
-    		}*/
- 		    
-    		/*for (int i=0; i<lVDataEcoute.getCount(); i++){
-    			
-    			HashMap<String, Object> map = (HashMap<String, Object>) lVDataEcoute.getItemAtPosition(i);		
-    			
-     		    ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-     		    		
-     		    nameValuePairs.add(new BasicNameValuePair("_ID", String.valueOf(i+500)));
-     		    nameValuePairs.add(new BasicNameValuePair("display_name", map.get("display_name").toString()));
-     		    nameValuePairs.add(new BasicNameValuePair("company_and_title", map.get("company_and_title").toString()));
-     		    
-     		    MyViewBinder myviewbinder = (MyViewBinder) lVDataEcoute.getItemAtPosition(i);// findViewById(R.id.CHRONOMETRE);
-     		    String timestring = "test";//chronometer.getText().toString();
-    		    
-     		    
-     		    /*LinearLayout linearlayout = (LinearLayout) lVDataEcoute.getItemAtPosition(i);
-     		    LinearLayout linearlayout2 = (LinearLayout) linearlayout.getChildAt(1);
-     		    Chronometer mychronometer= (Chronometer) linearlayout2.getChildAt(2);
-     		    String timestring = mychronometer.getText().toString();*/
-     		    /*nameValuePairs.add(new BasicNameValuePair("chronometre", timestring) );
-        		
-     		    HttpClient httpclient = new DefaultHttpClient();
-     		    //HttpPost httppost = new HttpPost("http://88.161.78.93:8080/add.php");
-     		    
-     		    HttpPost httppost = new HttpPost("http://213.186.33.3/~datamysq/timespeaking/add.php");
-     		    httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));                                  
-     		    Log.i("Connexion", "Wait...");
-     		    HttpResponse response = httpclient.execute(httppost);
-     		    Log.i("Connexion", "Done");
-     		    
-    		}*/
-    		
-    		
- 		    
-    		
-    		//rÃ©cupÃ©ration de l'_id max
-			InputStream is = null;
-			/*HttpClient httpclient_idmax = new DefaultHttpClient();
-			
-			//HttpPost httppost_idmax = new HttpPost("http://213.186.33.3/~datamysq/timespeaking/last_id.php"); //OVH
-			HttpPost httppost_idmax = new HttpPost("http://195.221.173.83/speakingtime/last_id.php"); //CentOs Cirad
-			//HttpPost httppost_idmax = new HttpPost("http://195.221.173.83/timespeaking/last_id.php"); //CentOs Perso
- 		    HttpResponse response_idmax = httpclient_idmax.execute(httppost_idmax);//httpclient_idmax.execute(httppost_idmax);
-			
- 		    HttpEntity entity_idmax = response_idmax.getEntity();
-			is = entity_idmax.getContent();
-			BufferedReader reader = new BufferedReader(new InputStreamReader(is,"iso-8859-1"),8);
-			
-			_idmax = Integer.valueOf(reader.readLine().toString().trim());
-			
-			
-			Log.i("_idmax", "max _id : " + String.valueOf(_idmax));
-			
-			
-			is.close();*/
-			
-    		/*for (int i=0; i<mScheduleEcoute.getCount(); i++){
-    			
-    			_idmax = _idmax +1;
-    			
-    			HashMap<String, Object> map = (HashMap<String, Object>) mScheduleEcoute.getItem(i);		
-    			
-     		    ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-     		    		
-     		    nameValuePairs.add(new BasicNameValuePair("_ID", String.valueOf(_idmax)));
-     		    nameValuePairs.add(new BasicNameValuePair("display_name", map.get("display_name").toString()));
-     		    nameValuePairs.add(new BasicNameValuePair("company_and_title", map.get("company_and_title").toString()));
-     		    
-     		    View convertView = null;
-     		    LinearLayout linearlayout = (LinearLayout) mScheduleEcoute.getView(i, convertView, lVDataEcoute);
-     		    LinearLayout linearlayout2 = (LinearLayout) linearlayout.getChildAt(1);
-     		    Chronometer mychronometer= (Chronometer) linearlayout2.getChildAt(2);
-     		    String timestring = mychronometer.getText().toString();
-     		    if (timestring.length()==5){
-     		    	timestring = "00:" + timestring;
-    		    }
-    		    else if (timestring.length()==7){
-    		    	//timestring = "0:" + timestring;
-    		    	timestring = "0" + timestring;
-    		    }
-     		    nameValuePairs.add(new BasicNameValuePair("chronometre", timestring) );
-        		
-     		    HttpClient httpclient = new DefaultHttpClient();
-     		    //HttpPost httppost = new HttpPost("http://213.186.33.3/~datamysq/timespeaking/add.php"); //OVH
-     		    HttpPost httppost = new HttpPost("http://195.221.173.83/speakingtime/add.php"); //CentOs Cirad
-     		    //HttpPost httppost = new HttpPost("http://195.221.173.83/timespeaking/add.php"); //CentOs Perso
-     		    //!httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));                                  
-     		    Log.i("Connexion add.php", "Wait...");
-        		Log.i("Connexion", nameValuePairs.get(0).toString());
-    		    Log.i("Connexion", nameValuePairs.get(1).toString());
-    		    Log.i("Connexion", nameValuePairs.get(2).toString());
-    		    HttpResponse response = httpclient.execute(httppost);
-    		    Log.i("Connexion add.php", "Done");
-     		    
-     		    //Envoi de l'image associÃ©e
-     		    try{
-     		    	ImageView imageview = (ImageView) linearlayout.getChildAt(0);
-     		    	
-     		    	Bitmap bitmapOrg = ((BitmapDrawable) imageview.getDrawable()).getBitmap();
-
-     		    	
-     		    	//Bitmap bitmapOrg = BitmapFactory.decodeResource(getResources(), R.drawable.logo_contact);
-     		    	ByteArrayOutputStream bao = new ByteArrayOutputStream();
-		            bitmapOrg.compress(Bitmap.CompressFormat.JPEG, 90, bao);
-		            byte [] ba = bao.toByteArray();
-		            String ba1 = Base64.encodeBytes(ba);
-		            ArrayList<NameValuePair> nameValuePairsImage = new ArrayList<NameValuePair>();
- 		            nameValuePairsImage.add(new BasicNameValuePair("image",ba1));
- 		            nameValuePairsImage.add(new BasicNameValuePair("id", String.valueOf(_idmax)));
-     		    	
- 		           try{
-		            	//HttpClient httpclient = new DefaultHttpClient();
-		            	//HttpPost httppost2 = new HttpPost("http://10.0.2.2/img/base.php");
-		            	//HttpPost httppost_image = new HttpPost("http://213.186.33.3/~datamysq/timespeaking/img/image.php"); //OVH  
- 		        	    
- 		        	    HttpPost httppost_image = new HttpPost("http://195.221.173.83/timespeaking/img/image.php"); //CentOs Cirad
-        	        	//HttpPost httppost_image = new HttpPost("http://195.221.173.83/timespeaking/img/image.php"); //CentOs Perso
- 		        	    httppost_image.setEntity(new UrlEncodedFormEntity(nameValuePairsImage));			 		        	  
-		        	    HttpResponse response_image = httpclient.execute(httppost_image);
-		        	   
-		        	    //HttpEntity entity_image = response_image.getEntity();
-		        	    //is = entity.getContent();
-
-		           }
- 		           catch(Exception e){
-		        		  Log.i("image_exception", "IMAGE EXCEPTION : " + e.toString());
-		           }
-     		    	
-     		    	
-     		    	
-     		    }
-     		    catch (Exception e){
-     		    	
-     		    }
-     		    
-     		    
-    		
-    		}*/
-    		
-    		/*for (int i=0; i<mScheduleParole.getCount(); i++){
-    			
-    			_idmax = _idmax +1;
-    			
-    			HashMap<String, Object> map = (HashMap<String, Object>) mScheduleParole.getItem(i);		
-    			
-     		    ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-     		    		
-     		    nameValuePairs.add(new BasicNameValuePair("_ID", String.valueOf(_idmax)));
-     		    nameValuePairs.add(new BasicNameValuePair("display_name", map.get("display_name").toString()));
-     		    nameValuePairs.add(new BasicNameValuePair("company_and_title", map.get("company_and_title").toString()));
-     		    
-     		    View convertView = null;
-     		    LinearLayout linearlayout = (LinearLayout) mScheduleParole.getView(i, convertView, lVDataParole);
-     		    LinearLayout linearlayout2 = (LinearLayout) linearlayout.getChildAt(1);
-     		    Chronometer mychronometer= (Chronometer) linearlayout2.getChildAt(2);
-     		    String timestring = mychronometer.getText().toString();
-     		    if (timestring.length()==5){
-     		    	timestring = "00:" + timestring;
-    		    }
-    		    else if (timestring.length()==7){
-    		    	//timestring = "0:" + timestring;
-    		    	timestring = "0" + timestring;
-    		    }
-     		    nameValuePairs.add(new BasicNameValuePair("chronometre", timestring) );
-     		    
-     		    output.append("    " +  getCurrentTimeStamp() + ";" + timestring + ";" + map.get("display_name").toString() + ";speaker;" + "\r\n"); 
-     		    
-     		    HttpClient httpclient = new DefaultHttpClient();
-     		    //HttpPost httppost = new HttpPost("http://213.186.33.3/~datamysq/timespeaking/add.php"); //OVH
-        		HttpPost httppost = new HttpPost("http://195.221.173.83/timespeaking/add.php"); //CentOs Cirad
-                //HttpPost httppost = new HttpPost("http://195.221.173.83/timespeaking/add.php"); //CentOs Perso
-     		    httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));                                  
-     		    Log.i("Connexion", "Wait...");
-     		    Log.i("Connexion", nameValuePairs.get(0).toString());
-     		    Log.i("Connexion", nameValuePairs.get(1).toString());
-     		    Log.i("Connexion", nameValuePairs.get(2).toString());
-     		    HttpResponse response = httpclient.execute(httppost);
-     		    Log.i("Connexion", "Done"); 
-     		    
-     		    //Envoi de l'image associÃ©e
-     		    try{
-     		    	ImageView imageview = (ImageView) linearlayout.getChildAt(0);
-     		    	
-     		    	Bitmap bitmapOrg = ((BitmapDrawable) imageview.getDrawable()).getBitmap();
-     		    	
-     		    	//Bitmap bitmapOrg = BitmapFactory.decodeResource(getResources(), R.drawable.logo_contact);
-     		    	ByteArrayOutputStream bao = new ByteArrayOutputStream();
-		            bitmapOrg.compress(Bitmap.CompressFormat.JPEG, 90, bao);
-		            byte [] ba = bao.toByteArray();
-		            String ba1 = Base64.encodeBytes(ba);
-
-		            Log.i("Connexion", "Image=" + ba1);
-		            
-		            ArrayList<NameValuePair> nameValuePairsImage = new ArrayList<NameValuePair>();
- 		            nameValuePairsImage.add(new BasicNameValuePair("image",ba1));
- 		            nameValuePairsImage.add(new BasicNameValuePair("id", String.valueOf(_idmax)));
-     		    	
- 		            try{
-		            	//HttpClient httpclient = new DefaultHttpClient();
-		            	//HttpPost httppost2 = new HttpPost("http://10.0.2.2/img/base.php");
-		            	//HttpPost httppost_image = new HttpPost("http://213.186.33.3/~datamysq/timespeaking/img/image.php"); //OVH
- 		        	    HttpPost httppost_image = new HttpPost("http://195.221.173.83/speakingtime/img/image.php"); //CentOs Cirad
- 		            	//HttpPost httppost_image = new HttpPost("http://195.221.173.83/timespeaking/img/image.php"); //CentOs Perso
-		            	httppost_image.setEntity(new UrlEncodedFormEntity(nameValuePairsImage));			 		        	  
-		        	    HttpResponse response_image = httpclient.execute(httppost_image);
-		        	    //HttpEntity entity_image = response_image.getEntity();
-		        	    //is = entity.getContent();
-		            }
- 		            catch(Exception e){
-		        		  Log.i("image_exception", "IMAGE EXCEPTION : " + e.toString());
- 		            }
-     		     }
-     		     catch (Exception e){
-     		    	
-     		     }
-     		    
-     		    
-     		    
-    		}*/
-    		
     		
     		StringBuilder meeting_result = new StringBuilder();
     		meeting_result.append("meeting_name: " + meeting_name + "\r\n\r\n");
     		meeting_result.append(output.toString() + "end: meeting \r\n\r\n");
     		meeting_result.append("total_time: " + meeting_total_time);
     		    		
-    		/*ArrayList<NameValuePair> nameValuePairs_output = new ArrayList<NameValuePair>();
-    		nameValuePairs_output.add(new BasicNameValuePair("meeting_name", meeting_name));
- 		    nameValuePairs_output.add(new BasicNameValuePair("meeting_total_time", meeting_total_time));
- 		    nameValuePairs_output.add(new BasicNameValuePair("output", meeting_result.toString()));
- 		    HttpClient httpclient = new DefaultHttpClient();
-    		//HttpPost httppost_result_file = new HttpPost("http://213.186.33.3/~datamysq/timespeaking/result_file.php"); //OVH
- 		    //HttpPost httppost_result_file = new HttpPost("http://195.221.173.83/timespeaking/result_file.php"); //CentOs Cirad
-            HttpPost httppost_result_file = new HttpPost("http://193.51.119.104/speakingtime/result_file.php"); //CentOs Perso
- 		    httppost_result_file.setEntity(new UrlEncodedFormEntity(nameValuePairs_output));                                  
-		    Log.i("Connexion result_file.php", "Wait...");
-		    Log.i("Connexion result_file.php", "Result_file : " + output.toString());
-		    HttpResponse response_result_file = httpclient.execute(httppost_result_file);
-		    Log.i("Connexion result_file.php", "Done");*/
-		    
-		    File myFile = new File(Environment.getExternalStorageDirectory() + File.separator + "SpeakingTime",meeting_name.toString() + ".txt"); //on déclare notre futur fichier
+    		File myFile = new File(Environment.getExternalStorageDirectory() + File.separator + "SpeakingTime",meeting_name.toString() + ".txt"); //on déclare notre futur fichier
             File myDir = new File(Environment.getExternalStorageDirectory() + File.separator + "SpeakingTime"); //pour créer le repertoire dans lequel on va mettre notre fichier
             Boolean success=true;
             if (!myDir.exists()) {
@@ -1251,73 +628,9 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
             if (success){
                	//String data= "Ce que je veux ecrire dans mon fichier \r\n";
                	FileOutputStream output = new FileOutputStream(myFile,true); //le true est pour écrire en fin de fichier, et non l'écraser
-               	//output.write(data.getBytes());
                	output.write(meeting_result.toString().getBytes());
             }
             else {Log.e("TEST1","ERROR DE CREATION DE DOSSIER");}
-    				    		    
-    		/*for (int i=0; i<lVDataParole.getCount(); i++){
-    			
-    			HashMap<String, Object> map = (HashMap<String, Object>) lVDataParole.getItemAtPosition(i);		
-    			
-     		    ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-     		    		
-     		    nameValuePairs.add(new BasicNameValuePair("_ID", String.valueOf(i+600)));
-     		    nameValuePairs.add(new BasicNameValuePair("display_name", map.get("display_name").toString()));
-     		    nameValuePairs.add(new BasicNameValuePair("company_and_title", map.get("company_and_title").toString()));
-     		    
-     		    /*LinearLayout linearlayout = (LinearLayout) lVDataParole.getItemAtPosition(i);
-     		    LinearLayout linearlayout2 = (LinearLayout) linearlayout.getChildAt(1);
-     		    Chronometer mychronometer= (Chronometer) linearlayout2.getChildAt(2);
-     		    String timestring = mychronometer.getText().toString();
-     		    nameValuePairs.add(new BasicNameValuePair("chronometre", timestring) );*/
-        		
-     		    /*HttpClient httpclient = new DefaultHttpClient();
-     		    //HttpPost httppost = new HttpPost("http://88.161.78.93:8080/add.php");
-     		    
-     		    HttpPost httppost = new HttpPost("http://213.186.33.3/~datamysq/timespeaking/add.php");
-     		    httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));                                  
-     		    Log.i("Connexion", "Wait...");
-     		    HttpResponse response = httpclient.execute(httppost);
-     		    Log.i("Connexion", "Done");
-     		    
-    		}*/
-
- 		            
- 		    /*try{
- 		          Bitmap bitmapOrg = BitmapFactory.decodeResource(getResources(), R.drawable.sermon);
- 		          ByteArrayOutputStream bao = new ByteArrayOutputStream();
- 		          bitmapOrg.compress(Bitmap.CompressFormat.JPEG, 90, bao);
- 		          byte [] ba = bao.toByteArray();
- 		          String ba1 = Base64.encodeBytes(ba);
- 		          ArrayList<NameValuePair> nameValuePairsImage = new ArrayList<NameValuePair>();
-	 		      nameValuePairsImage.add(new BasicNameValuePair("image",ba1));
-	 		            
-	 		      nameValuePairsImage.add(new BasicNameValuePair("Nom", SNom + "_" + SPrenom));
-	 		            
-	 		            
-	 		      try{
-	 		      	  //HttpClient httpclient = new DefaultHttpClient();
-	 		          //HttpPost httppost2 = new HttpPost("http://10.0.2.2/img/base.php");
-	 		          HttpPost httppost2 = new HttpPost("http://88.161.78.93:8080/img/base.php");
-	 		          httppost2.setEntity(new UrlEncodedFormEntity(nameValuePairsImage));			 		        	  
-	 		       	  HttpResponse response2 = httpclient.execute(httppost2);
-	 		          HttpEntity entity = response.getEntity();
-	 		       	  is = entity.getContent();
-
-	 		       }
-	 		       catch(Exception e){
-	 		          AlertDialog.Builder alert2 = new AlertDialog.Builder(Activity2.this);
-	 		          alert2.setTitle("Erreur");
-	 		       	  alert2.setMessage("Base64.encodeBase64String");
-	 		          alert2.show();	
-     	           }
-	 		            
-	 		            
- 		    }
- 		    catch (Exception e){
- 		            	
- 		    }*/
     		
     		return true;
     	}
@@ -1328,6 +641,78 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
     	}
     	
     }
+    
+
+    /*public boolean createFile(String meeting_name){
+    	
+    	try{
+    		
+    		StringBuilder meeting_result = new StringBuilder();
+    		meeting_result.append("meeting_name: " + meeting_name + "\r\n\r\n");
+    		//meeting_result.append(output.toString() + "end: meeting \r\n\r\n");
+    		//meeting_result.append("total_time: " + meeting_total_time);
+    		    		
+    		File myFile = new File(Environment.getExternalStorageDirectory() + File.separator + "SpeakingTime",meeting_name.toString() + ".txt"); //on déclare notre futur fichier
+            File myDir = new File(Environment.getExternalStorageDirectory() + File.separator + "SpeakingTime"); //pour créer le repertoire dans lequel on va mettre notre fichier
+            Boolean success=true;
+            if (!myDir.exists()) {
+            	success = myDir.mkdir(); //On crée le répertoire (s'il n'existe pas!!)
+            }
+            if (success){
+               	//String data= "Ce que je veux ecrire dans mon fichier \r\n";
+               	FileOutputStream output = new FileOutputStream(myFile,true); //le true est pour écrire en fin de fichier, et non l'écraser
+               	output.write(meeting_result.toString().getBytes());
+            }
+            else {Log.e("TEST1","ERROR DE CREATION DE DOSSIER");}
+    		
+    		return true;
+
+    	}    	
+    	catch (Exception e){
+    		
+    		Log.i("exception", "Write error : " + e.toString());
+    		return false;
+    	}
+    	
+    	
+    }
+    
+    
+    public boolean writeFile(String meeting_name, String text){
+    	
+    	try{
+    		StringBuilder meeting_result = new StringBuilder();
+    		meeting_result.append(output.toString());
+    		File myFile = new File(Environment.getExternalStorageDirectory() + File.separator + "SpeakingTime",meeting_name.toString() + ".txt"); //on déclare notre futur fichier
+    		FileOutputStream output = new FileOutputStream(myFile,true); //le true est pour écrire en fin de fichier, et non l'écraser
+           	output.write(meeting_result.toString().getBytes());
+    		return true;
+    	}    	
+    	catch (Exception e){
+    		
+    		Log.i("exception", "Write error : " + e.toString());
+    		return false;
+    	}
+    	   	
+    }
+    
+    public boolean endFile(String meeting_name, String text, String meeting_total_time){
+    	
+    	try{
+    		StringBuilder meeting_result = new StringBuilder();
+    		meeting_result.append("end: meeting \r\n\r\n");
+    		meeting_result.append("total_time: " + meeting_total_time);
+    		File myFile = new File(Environment.getExternalStorageDirectory() + File.separator + "SpeakingTime",meeting_name.toString() + ".txt"); //on déclare notre futur fichier
+    		FileOutputStream output = new FileOutputStream(myFile,true); //le true est pour écrire en fin de fichier, et non l'écraser
+           	output.write(meeting_result.toString().getBytes());
+    		return true;
+    	}    	
+    	catch (Exception e){
+    		Log.i("exception", "Write error : " + e.toString());
+    		return false;
+    	}
+    	   	
+    }*/
     
     public static String getCurrentTimeStamp() {
         SimpleDateFormat sdfDate = new SimpleDateFormat("HH:mm:ss");
@@ -1381,6 +766,36 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
 		
 	}
     
+    /*public void myClickHandlerLinearLayoutEcoute(View v) {
+    	
+    	LinearLayout ll = (LinearLayout)v;
+    	LinearLayout ll2 = (LinearLayout) ll.getChildAt(2);
+    	CheckBox cb= (CheckBox) ll2.getChildAt(0);
+		int position = Integer.parseInt(ll.getTag().toString());
+		
+		if (cb.isChecked()){
+			//cb.setBackgroundResource(Color.GREEN);
+				
+			HashMap<String, Object> mapItemContact = (HashMap<String, Object>) lVDataEcoute.getItemAtPosition(position);
+			listItemEcoute.remove(mapItemContact);		
+			mapItemContact.put("isSelected", false);
+			listItemEcoute.add(position, mapItemContact);	
+			mScheduleEcoute.notifyDataSetChanged();
+			//cb.setChecked(false);	
+				
+		}
+		else{
+			//cb.setBackgroundResource(Color.BLUE);
+			HashMap<String, Object> mapItemContact = (HashMap<String, Object>) lVDataEcoute.getItemAtPosition(position);
+			listItemEcoute.remove(mapItemContact);		
+			mapItemContact.put("isSelected", true);
+			listItemEcoute.add(position, mapItemContact);	
+			mScheduleEcoute.notifyDataSetChanged();
+			//cb.setChecked(true);
+		}
+		
+	}*/
+    
     public void myClickHandlerParole(View v) {
 		
     	CheckBox cb = (CheckBox)v;
@@ -1394,16 +809,17 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
 			mapItemContact.put("isSelected", true);
 			listItemParole.add(position, mapItemContact);	
 			mScheduleParole.notifyDataSetChanged();
-				
+		
 		}
 		else{
 			//cb.setBackgroundResource(Color.BLUE);
+		
 			HashMap<String, Object> mapItemContact = (HashMap<String, Object>) lVDataParole.getItemAtPosition(position);
 			listItemParole.remove(mapItemContact);		
 			mapItemContact.put("isSelected", false);
 			listItemParole.add(position, mapItemContact);	
 			mScheduleParole.notifyDataSetChanged();
-				
+		
 		}
 		
 	}
@@ -1453,7 +869,7 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
 		
 	}
 
-	@Override
+	/*@Override
 	public void OnDoubleTap(AdapterView<?> parent, View view, int position,
 			long id) {
 		// TODO Auto-generated method stub
@@ -1465,7 +881,7 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
 			long id) {
 		// TODO Auto-generated method stub
 		
-	}
+	}*/
 	
 	
 	public void ListeningToSpeaking(){
@@ -1815,13 +1231,40 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
 		    }
  		    
  		    output.append("    " + timetotalstring /*getCurrentTimeStamp()*/ + ";" + /*timestring + ";" +*/ map_modified.get("display_name") + ";speaker;" + "\r\n");
- 		    
 		   	
 	    }
 	}
 	
 	protected void onDestroy() {
-        super.onDestroy(); }
-   
+        super.onDestroy();
+	}
+	
+	public boolean isListViewCheck(MyListView lV){
+		boolean isCheck = false;
+		//System.out.println("Sentinelle");
+		for (int i = 0; i < lV.getCount(); i++ ){
+			
+			HashMap<String, Object> map = (HashMap<String, Object>) lV.getItemAtPosition(i);
+			
+			if ((Boolean) map.get("isSelected") == true){
+				isCheck = true;
+				break;
+			}
+			
+		}
+		
+		return isCheck;
+		
+	}
+	
+	/*public void myClickHandlerListViewEcoute(View v) {
+		
+    	LinearLayout ll = (LinearLayout)v;
+    	itemEcoutePosition = Integer.valueOf(ll.getTag().toString());
+    	AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
+		alertDialog.setTitle("Warning");
+		alertDialog.setMessage("itemEcoutePosition : " + itemEcoutePosition);
+		alertDialog.show();
+		
+	}*/
 }
-
