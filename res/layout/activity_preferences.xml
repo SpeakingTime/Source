@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/black"
+    android:orientation="vertical" >
+    
+    <LinearLayout 
+        android:orientation="vertical" 
+        android:layout_width="match_parent"
+    	android:layout_height="match_parent"
+    	android:layout_weight="1"
+      	android:gravity="top">
+    
+    	<TextView android:layout_width="wrap_content"
+		          android:layout_height="wrap_content"
+		          android:text="SSH parameters"
+		          android:textSize="32px"
+		          android:textStyle="bold"
+		          android:textColor="@android:color/white"
+		/>
+    
+	    <TextView android:layout_width="wrap_content"
+		          android:layout_height="wrap_content"
+		          android:text="Host"
+		          android:textStyle="bold"
+		          android:textColor="@android:color/white"
+		/>
+	    
+	    <EditText android:id="@+id/host"
+		         android:layout_width="fill_parent"
+		         android:layout_height="wrap_content"
+		         android:textStyle="bold"
+		         android:textColor="@android:color/black"
+		         />
+	    
+	    <TextView android:layout_width="wrap_content"
+		          android:layout_height="wrap_content"
+		          android:text="Username"
+		          android:textStyle="bold"
+		          android:textColor="@android:color/white"
+		/>
+	    
+	    <EditText android:id="@+id/username"
+		         android:layout_width="fill_parent"
+		         android:layout_height="wrap_content"
+		         android:textStyle="bold"
+		         android:textColor="@android:color/black"
+		         />
+	    
+	    <TextView android:layout_width="wrap_content"
+		          android:layout_height="wrap_content"
+		          android:text="Password"
+		          android:textStyle="bold"
+		          android:textColor="@android:color/white"
+		/>
+	    
+	    <EditText android:id="@+id/password"
+		         android:layout_width="fill_parent"
+		         android:layout_height="wrap_content"
+		         android:textStyle="bold"
+		         android:textColor="@android:color/black"
+		         />
+    </LinearLayout>
+    
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" 
+        android:gravity="center" 
+        android:layout_alignParentBottom="true">
+	    
+        <Button
+		    android:id="@+id/buttonCancelPreferences"
+		    android:text="@string/buttonCancelPreferences"
+		    android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center" >
+	    </Button>
+	   
+        <Button
+		    android:id="@+id/buttonSavePreferences"
+		    android:text="@string/buttonSavePreferences"
+		    android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center" >
+	    </Button>
+        
+	</LinearLayout>
+	
+    
+    
+</LinearLayout>
