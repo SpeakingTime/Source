@@ -7,12 +7,12 @@
     <string name="buttonTakePhoto_text">Prendre la photo</string>
     <string name="title_selection_contact">SpeakingTime</string>
     <string name="buttonSendToDatabase">Send to database</string>
-    <string name="buttonSelectGroup">Select a group</string>
+    <string name="buttonSelectGroup">Select a group and start meeting</string>
     <string name="buttonCreateGroup">Create a group</string>
     <string name="title_selection_group">SpeakingTime</string>
     <string name="buttonCreateTheGroup">Create the group</string>
     <string name="buttonSelectContacts">Select these contacts and debute meeting</string>
-    <string name="buttonSelectGroupAndDebuteMeeting">Select group and debute meeting</string>
+    <string name="buttonSelectGroupAndDebuteMeeting">Select group and start meeting</string>
     <string name="buttonCreateAndSaveToLocalDatabase">Create group and save it to local database</string>
     <string name="buttonCreateGroupOrSelectContacts">Start meeting : \n -create a group \n -select contacts</string>
     <string name="title_create_group_activity">Create a group activity</string>
@@ -33,8 +33,8 @@
 	<string name="buttonUnselectAll_ecoute">Unselect All</string>
 	<string name="buttonUnselectAll_parole">Unselect All</string>
 	<string name="buttonUnselectAll_inactif">Unselect All</string>
-	<string name="buttonStatistic">Statistic</string>
-	<string name="title_statistic_activity">Statisitic</string>
+	<string name="buttonStatistic">Statistics</string>
+	<string name="title_statistic_activity">Statistics</string>
 	<string name="title_statistic_result_activity">Statistic Result</string>
 	<string name="buttonGetValue">Get Value</string>
 	<string name="buttonBarGraph">Speaking time per participant</string>
@@ -44,5 +44,8 @@
 	<string name="title_preferences_activity">Preferences</string>
 	<string name="buttonSavePreferences">Save Preferences</string>
 	<string name="buttonCancelPreferences">Cancel</string>
+	<string name="buttonQuitBoxPlot">Quit</string>
+	<string name="buttonBarGraph2">Box Plot (Internet needed)</string>
+	<string name="title_boxplot">Box Plot</string>
 	
 </resources>

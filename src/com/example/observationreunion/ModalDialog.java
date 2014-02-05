@@ -1,9 +1,17 @@
 package com.example.observationreunion;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
+
+import com.jcraft.jsch.Channel;
+import com.jcraft.jsch.ChannelSftp;
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.Session;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -11,6 +19,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -174,7 +183,9 @@ public class ModalDialog {
 		return mEditText;
 	}
 	
-	public String showSSHDialog(Context context, String info) {
+	public String showSSHDialog(Context context, String info, 
+								final String host, final String username, 
+								final String password, final String meeting_name, final String file) {
 		
 		if (!prepareModal()) {
 			return "Cancel";
@@ -195,6 +206,9 @@ public class ModalDialog {
 		
 		builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int id) {
+				
+				SendToSSH(host, username, password, meeting_name, file);
+				
 				ModalDialog.this.mQuitModal = true;
 				
 				final EditText editTextAlertDialogPerso = (EditText) alertDialogView.findViewById(R.id.EditTextAlertDialogHost);
@@ -218,6 +232,13 @@ public class ModalDialog {
 		
 		
 		AlertDialog alert = builder.create();
+		
+		EditText editTextHost = (EditText) alertDialogView.findViewById(R.id.EditTextAlertDialogHost);
+	    editTextHost.setText(host); 
+	    EditText editTextUsername = (EditText) alertDialogView.findViewById(R.id.EditTextAlertDialogUsername);
+	    editTextUsername.setText(username);
+	    EditText editTextPassword = (EditText) alertDialogView.findViewById(R.id.EditTextAlertDialogPassword);
+	    editTextPassword.setText(password);
 		
 		alert.show();
 		
@@ -320,6 +341,54 @@ public class ModalDialog {
 				msg.recycle();
 	
 			}
+		}
+	}
+	
+	private Boolean SendToSSH(String host, String username, String password, String meeting_name, String file){
+		
+		JSch jsch=new JSch();
+                	 
+        try {
+			Session session=jsch.getSession(username, host, 22);
+			
+			java.util.Properties config = new java.util.Properties(); 
+			config.put("StrictHostKeyChecking", "no");
+			session.setConfig(config);					
+				
+			session.setPassword(password);
+				
+			session.connect(30000);
+				
+			Channel channel=session.openChannel("shell");
+			channel.setInputStream(System.in);
+			channel.setOutputStream(System.out);
+			channel.connect(3*1000);
+				
+			File myFile = new File(Environment.getExternalStorageDirectory() + File.separator + "SpeakingTime",meeting_name.toString() + ".txt"); //on déclare notre futur fichier
+            File myDir = new File(Environment.getExternalStorageDirectory() + File.separator + "SpeakingTime");
+            Boolean success=true;
+		    if (!myDir.exists()) {
+		        success = myDir.mkdir(); //On crée le répertoire (s'il n'existe pas!!)
+		    }
+		    if (success){
+		       	//String data= "Ce que je veux ecrire dans mon fichier \r\n";
+		       	FileOutputStream output = new FileOutputStream(myFile,true); //le true est pour écrire en fin de fichier, et non l'écraser
+		       	//output.write(data.getBytes());
+		       	//output.write(file.getBytes());
+		    }
+		    else {
+		    	System.out.println ("ERREUR DE CREATION DE DOSSIER");
+		    }
+				
+			ChannelSftp sftpChannel = (ChannelSftp) session.openChannel("sftp");
+		    sftpChannel.connect();
+		    sftpChannel.put(new FileInputStream(myFile), myFile.getName());
+			
+			return true;
+		}
+		catch (Exception e){
+			System.out.println(e.toString());
+			return false;
 		}
 	}
 	

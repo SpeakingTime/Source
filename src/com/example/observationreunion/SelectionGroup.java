@@ -62,17 +62,6 @@ import android.widget.TextView;
 						}
 					});
 			
-			Button buttonDeleteGroup = (Button) findViewById(R.id.buttonDeleteGroup);
-			buttonDeleteGroup.setOnClickListener(
-					new Button.OnClickListener(){
-
-						@Override
-						public void onClick(View v) {
-							RemoveGroup();	
-						}
-						
-						
-					});
 
 			GroupBDD groupBdd = new GroupBDD(this);
 			groupBdd.open();

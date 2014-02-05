@@ -13,5 +13,6 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry kind="lib" path="C:/eclipse-adt/adt-bundle-windows-x86-20130219/docs AChartEngine/achartengine-1.1.0.jar"/>
+	<classpathentry kind="lib" path="C:/eclipse-adt/adt-bundle-windows-x86-20130219/eclipse/plugins/jsch-0.1.50.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

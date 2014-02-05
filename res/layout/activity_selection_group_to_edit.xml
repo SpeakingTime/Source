@@ -58,6 +58,15 @@
 			android:layout_gravity="center" >
 	    </Button>
 	    
+		<Button
+		    android:id="@+id/buttonDeleteGroup"
+		    android:text="@string/buttonDeleteGroup"
+		    android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center" >
+	    
+	    </Button>
+	    
 	</LinearLayout>
     	
         

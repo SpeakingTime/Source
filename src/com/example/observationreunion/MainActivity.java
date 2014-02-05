@@ -40,6 +40,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.Chronometer;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -81,6 +82,11 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
     int itemEcoutePosition = -2;
     
     long totalTimeWhenStopped = 0;
+    
+	private static final int NUM_COL_ID_PREFERENCES = 0;
+	private static final int NUM_COL_HOST = 1;
+	private static final int NUM_COL_USERNAME = 2;
+	private static final int NUM_COL_PASSWORD = 3;
     
     /*OnTouchListener itemTouch = new OnTouchListener() {
 	    private int position;
@@ -280,8 +286,9 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
 			    					
 			    				if (ssh == true){
 			    					
-			    					ModalDialog modalDialogSSH = new ModalDialog();
-			    					modalDialogSSH.showSSHDialog(MainActivity.this, "Remote Server Connexion...");
+			    					/*ModalDialog modalDialogSSH = new ModalDialog();
+			    					modalDialogSSH.showSSHDialog(MainActivity.this, "Remote Server Connexion...");*/
+			    					SendToSSH(meeting_name, output.toString());
 			    					
 			    				}
 			    				
@@ -641,6 +648,40 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
     	}
     	
     }
+    
+    public boolean SendToSSH(String meeting_name, String file){
+		try{
+			PreferencesBDD preferencesBdd = new PreferencesBDD(this);
+			preferencesBdd.open();
+			
+			try{
+			
+				Cursor mCursor = preferencesBdd.getCursor();
+				
+				mCursor.moveToLast();
+							
+				String s_ID_preferences =  mCursor.getString(NUM_COL_ID_PREFERENCES);
+				String s_host =  mCursor.getString(NUM_COL_HOST);
+				String s_username =  mCursor.getString(NUM_COL_USERNAME);
+				String s_password =  mCursor.getString(NUM_COL_PASSWORD);
+			
+				ModalDialog modalDialogSSH = new ModalDialog();
+				modalDialogSSH.showSSHDialog(MainActivity.this, "Remote Server Connexion...",
+											s_host, s_username, s_password, meeting_name, file);
+			
+			}
+			catch(Exception e){
+				System.out.println(e);
+			}
+			
+			preferencesBdd.close();
+			
+			return true;
+		}
+		catch (Exception e){
+    		return false;
+    	}
+	}
     
 
     /*public boolean createFile(String meeting_name){

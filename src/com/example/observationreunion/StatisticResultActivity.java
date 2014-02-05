@@ -71,6 +71,19 @@ public class StatisticResultActivity extends Activity{
     			}
     	);
 		
+		Button buttonBarGraph2 = (Button) findViewById(R.id.buttonBarGraph2);
+		buttonBarGraph2.setOnClickListener( 
+    			new Button.OnClickListener(){
+    				
+    				@Override
+    				public void onClick(View v) {
+    					Intent intent = new Intent(StatisticResultActivity.this, BarGraph2.class);
+    					intent.putExtra("participantsWithSpeakingTime", getParticipantsWithSpeakingTime(filename));
+						startActivity(intent);
+    				}
+    			}
+    	);
+		
     	EditText txtStatistic = (EditText) findViewById (R.id.txtStatistic);
     	txtStatistic.setText(uploadFile(filename));
     	
@@ -415,5 +428,6 @@ public class StatisticResultActivity extends Activity{
 		return objBuffer.toString();
 		
 	}
+
 
 }
