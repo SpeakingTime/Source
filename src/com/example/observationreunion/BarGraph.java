@@ -1,5 +1,6 @@
 package com.example.observationreunion;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 
@@ -16,19 +17,22 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Paint.Align;
 import android.os.Bundle;
 import android.view.Window;
 
 
 public class BarGraph{
 	
-	List<String> ParticipantsList = new ArrayList<String>();
-	List<Integer> SpeakingTimeList = new ArrayList<Integer>();
+	/*List<String> ParticipantsList = new ArrayList<String>();
+	List<Integer> SpeakingTimeList = new ArrayList<Integer>();*/
+	List<ParticipantAndSpeakingTime> participantAndSpeakingTimeList = new ArrayList<ParticipantAndSpeakingTime>();
 	
-	public BarGraph(String participantsWithSpeakingTime) {
+	public BarGraph(String participantsWithSpeakingTime, int order) {
 		// TODO Auto-generated constructor stub
-		ParticipantsList =getListParticipants(participantsWithSpeakingTime);
-		SpeakingTimeList = getListValues(participantsWithSpeakingTime);
+		/*ParticipantsList =getListParticipants(participantsWithSpeakingTime);
+		SpeakingTimeList = getListValues(participantsWithSpeakingTime);*/
+		participantAndSpeakingTimeList = getParticipantsAndSpeakingTimes(participantsWithSpeakingTime, order);
 	}
 
 
@@ -63,8 +67,11 @@ public class BarGraph{
 		
 		
 		List<Integer> MyListValue = new ArrayList<Integer>();
-		for (int i = 0; i < SpeakingTimeList.size(); i++){
+		/*for (int i = 0; i < SpeakingTimeList.size(); i++){
 			MyListValue.add(SpeakingTimeList.get(i));
+		}*/
+		for (int i = 0; i < participantAndSpeakingTimeList.size(); i++){
+			MyListValue.add(participantAndSpeakingTimeList.get(i).getValue());
 		}
 		
 		/*MyList.add(25);
@@ -89,7 +96,7 @@ public class BarGraph{
         //customization of the chart
    
         XYSeriesRenderer renderer = new XYSeriesRenderer();     // one renderer for one series
-        renderer.setColor(Color.RED);
+        renderer.setColor(Color.parseColor("#0099FF"));
         renderer.setDisplayChartValues(true);
         renderer.setChartValuesSpacing((float) 5.5d);
         renderer.setLineWidth((float) 10.5d);
@@ -110,15 +117,22 @@ public class BarGraph{
         mRenderer.setXAxisMin(0);
         mRenderer.setYAxisMin(0);
         //mRenderer.setXAxisMax(5);
-        mRenderer.setXAxisMax(ParticipantsList.size()+1);
+        /*mRenderer.setXAxisMax(ParticipantsList.size()+1);*/
+        mRenderer.setXAxisMax(participantAndSpeakingTimeList.size()+1);
         //mRenderer.setYAxisMax(100);
         mRenderer.setYAxisMax(Math.round(getMaxValue()/10)*10+10);
 //   
         
         mRenderer.setXLabels(0);
         
-        for (int i = 0; i < ParticipantsList.size(); i++){
+        mRenderer.setXLabelsAngle(90);
+        mRenderer.setXLabelsAlign(Align.LEFT);
+        
+        /*for (int i = 0; i < ParticipantsList.size(); i++){
 			mRenderer.addXTextLabel(i+1, ParticipantsList.get(i));
+		}*/
+        for (int i = 0; i < participantAndSpeakingTimeList.size(); i++){
+			mRenderer.addXTextLabel(i+1, participantAndSpeakingTimeList.get(i).getName());
 		}
         
         /*mRenderer.addXTextLabel(1,"Income");
@@ -134,7 +148,7 @@ public class BarGraph{
 	
 	}
 	
-	public List<String> getListParticipants(String participantsWithSpeakingTime){
+	/*public List<String> getListParticipants(String participantsWithSpeakingTime){
 		List<String> listSelectedParticipants = new ArrayList<String>();
 		Scanner scanner = new Scanner(participantsWithSpeakingTime);
 		//System.out.println("var : " + participantsWithSpeakingTime);
@@ -161,13 +175,49 @@ public class BarGraph{
 		}	
     	return listSelectedValues;
 		
+	}*/
+	
+	public List<ParticipantAndSpeakingTime> getParticipantsAndSpeakingTimes(String participantsWithSpeakingTime, int order){
+		
+		List<ParticipantAndSpeakingTime> listParticipantAndSpeakingTime = new ArrayList<ParticipantAndSpeakingTime>();
+		Scanner scanner = new Scanner(participantsWithSpeakingTime);
+		
+		while (scanner.hasNextLine()) {
+			String line = scanner.nextLine();
+			String participant = line.substring(0, line.indexOf(";", 0));
+			int pos = line.indexOf(";", 0);
+			String value = line.substring(pos+1, line.length()-1);
+			//System.out.println("value : " + value);
+			int i_value = Integer.valueOf(value);
+			ParticipantAndSpeakingTime participantAndSpeakingTime = new ParticipantAndSpeakingTime(participant, i_value);
+			listParticipantAndSpeakingTime.add(participantAndSpeakingTime);
+		}
+		
+		if (order == 0){
+			Collections.sort(listParticipantAndSpeakingTime, new SpeakingTimeComparator());
+		}
+		else if (order == 1){
+			Collections.sort(listParticipantAndSpeakingTime, new SpeakingTimeComparator2());
+		}
+		
+		return listParticipantAndSpeakingTime;
 	}
 	
-	public int getMaxValue(){
+	/*public int getMaxValue(){
 		int MaxValue = 0;
 		for (int i =0; i < SpeakingTimeList.size(); i++){
 			if (SpeakingTimeList.get(i) > MaxValue){
 				MaxValue = SpeakingTimeList.get(i);
+			}
+		}
+		return MaxValue;
+	}*/
+	
+	public int getMaxValue(){
+		int MaxValue = 0;
+		for (int i =0; i < participantAndSpeakingTimeList.size(); i++){
+			if (participantAndSpeakingTimeList.get(i).getValue() > MaxValue){
+				MaxValue = participantAndSpeakingTimeList.get(i).getValue();
 			}
 		}
 		return MaxValue;

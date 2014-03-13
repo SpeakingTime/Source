@@ -17,8 +17,8 @@ public class PreferencesBDD {
 	private static final int NUM_COL_HOST = 1;
 	private static final String COL_USERNAME = "username";
 	private static final int NUM_COL_USERNAME = 2;
-	private static final String COL_PASSWORD = "password";
-	private static final int NUM_COL_PASSWORD = 3;
+	private static final String COL_TIME_INTERVAL_FOR_SAVE_FILE = "timeintervalforsavefile";
+	private static final int NUM_COL_TIME_INTERVAL_FOR_SAVE_FILE = 3;
 	
 	private SQLiteDatabase bdd;
  
@@ -49,7 +49,7 @@ public class PreferencesBDD {
 		//on lui ajoute une valeur associée à une clé (qui est le nom de la colonne dans laquelle on veut mettre la valeur)
 		values.put(COL_HOST, preferences.gethost());
 		values.put(COL_USERNAME, preferences.getusername());
-		values.put(COL_PASSWORD, preferences.getpassword());
+		values.put(COL_TIME_INTERVAL_FOR_SAVE_FILE, preferences.gettimeintervalforsavefile());
 		//on insère l'objet dans la BDD via le ContentValues
 		return bdd.insert(TABLE_PREFERENCES, null, values);
 	}
@@ -60,7 +60,7 @@ public class PreferencesBDD {
 		ContentValues values = new ContentValues();
 		values.put(COL_HOST, preferences.gethost());
 		values.put(COL_USERNAME, preferences.getusername());
-		values.put(COL_PASSWORD, preferences.getpassword());
+		values.put(COL_TIME_INTERVAL_FOR_SAVE_FILE, preferences.gettimeintervalforsavefile());
 		return bdd.update(TABLE_PREFERENCES, values, COL_ID_PREFERENCES + " = " + _ID_preferences, null);
 	}
  
@@ -71,7 +71,7 @@ public class PreferencesBDD {
 	
 	public Cursor getCursor(){		
 		Cursor c = bdd.query(TABLE_PREFERENCES,
-				new String[] {COL_ID_PREFERENCES, COL_HOST, COL_USERNAME, COL_PASSWORD}, null, null, null, null, null);		
+				new String[] {COL_ID_PREFERENCES, COL_HOST, COL_USERNAME, COL_TIME_INTERVAL_FOR_SAVE_FILE}, null, null, null, null, null);		
 		return c;
 	}
 	

@@ -3,9 +3,10 @@ package com.example.observationreunion;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Scanner;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.CursorLoader;
@@ -25,54 +26,57 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 
-public class SelectionContact extends Activity{
+public class SelectionContactToAdd extends Activity{
 	
 	ListView lvContact;
 	ArrayList<HashMap<String, Object>> listItemContact = new ArrayList<HashMap<String, Object>>();
 	ArrayList<HashMap<String, Object>> listItemContactForFilter = new ArrayList<HashMap<String, Object>>();
-	MyListAdapter mSchedule = null;
-
+	MyListAdapter mSchedule = null;	
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_selection_contact);
+		setContentView(R.layout.activity_selection_contact_to_add);
 		
 		StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
-		
-		lvContact = (ListView) findViewById(R.id.ListViewCheckBox);
+        
+        lvContact = (ListView) findViewById(R.id.ListViewCheckBox);
 		
 		InitContact(this);
-				
-		/*Button buttonSelectContacts = (Button) findViewById(R.id.buttonSelectContacts);
-		buttonSelectContacts.setOnClickListener( 
+		
+		Button buttonAddContact = (Button) findViewById(R.id.buttonAddContact);
+		buttonAddContact.setOnClickListener( 
 				new Button.OnClickListener(){
 					
 					@Override
 					public void onClick(View v) {
 						// TODO Auto-generated method stub
-						Intent intent = new Intent(SelectionContact.this, MainActivity.class);
-						intent.putExtra("selectedContact", ValidateSelection());
-						startActivity(intent);
+						
+						Intent returnIntent = new Intent();
+						returnIntent.putExtra("result", ValidateSelection());
+						System.out.println(ValidateSelection());
+						setResult(RESULT_OK,returnIntent);     
 						finish();
+						
 					}
 				
-		});*/
+		});	
 		
-		Button buttonCreateTheGroup = (Button) findViewById(R.id.buttonCreateTheGroup);
-		buttonCreateTheGroup.setOnClickListener( 
+		Button buttonCancelAddContact = (Button) findViewById(R.id.buttonCancelAddContact);
+		buttonCancelAddContact.setOnClickListener( 
 				new Button.OnClickListener(){
 					
 					@Override
 					public void onClick(View v) {
 						// TODO Auto-generated method stub
-						Intent intent = new Intent(SelectionContact.this, CreateGroupActivity.class);
-						intent.putExtra("selectedContact", ValidateSelection());
-						startActivity(intent);
+						
+						Intent returnIntent = new Intent();
+						setResult(RESULT_CANCELED, returnIntent);        
 						finish();
+						
 					}
 				
 		});
@@ -109,10 +113,19 @@ public class SelectionContact extends Activity{
 	    });
 		
 	}
-
 	
 	public void InitContact(Activity activity){
     	
+		//On enlève les personnes déjà présentes dans la réunion
+		List<String> listSelectedContact = new ArrayList<String>();
+		Bundle b = getIntent().getExtras();
+        String s = b.getString("selectedContact");
+    	Scanner scanner = new Scanner(s);
+    	while (scanner.hasNextLine()) {
+			String id_contact = scanner.nextLine();
+			listSelectedContact.add(id_contact);
+		}
+		
     	Uri uri = ContactsContract.Contacts.CONTENT_URI;
         String[] projection = new String[] { ContactsContract.Contacts._ID,
                                         ContactsContract.Contacts.DISPLAY_NAME};
@@ -138,23 +151,25 @@ public class SelectionContact extends Activity{
     	
     	while (mCursor.isAfterLast() == false){
     		
-    		HashMap<String, Object> map = new HashMap<String, Object>();
-    		map.put("id_contact", mCursor.getString(0));
-    		map.put("nom_contact", mCursor.getString(1));
-    		System.out.println(mCursor.getString(0));
-    		
-    		Bitmap bitmap = getPhoto(mCursor.getInt(0));
-    		bitmap = Bitmap.createScaledBitmap (bitmap, 64, 64, true);
-    		
-    		//Bitmap bitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.logo_contact);
-    		
-    		map.put("photo", bitmap);
-    		
-    		map.put("isSelected", false);
-        	map.put("tag", i);
-    		listItemContact.add(map); 
-    		listItemContactForFilter.add(map); 
-    		
+	    	if (listSelectedContact.indexOf(mCursor.getString(0)) == -1) {
+    			HashMap<String, Object> map = new HashMap<String, Object>();
+	    		map.put("id_contact", mCursor.getString(0));
+	    		map.put("nom_contact", mCursor.getString(1));
+	    		System.out.println(mCursor.getString(0));
+	    		
+	    		Bitmap bitmap = getPhoto(mCursor.getInt(0));
+	    		bitmap = Bitmap.createScaledBitmap (bitmap, 64, 64, true);
+	    		
+	    		//Bitmap bitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.logo_contact);
+	    		
+	    		map.put("photo", bitmap);
+	    		
+	    		map.put("isSelected", false);
+	        	map.put("tag", i);
+	    		listItemContact.add(map); 
+	    		listItemContactForFilter.add(map); 
+	    	}
+	    	
     		i++;
     		mCursor.moveToNext();
     	}
@@ -225,9 +240,7 @@ public class SelectionContact extends Activity{
 	    	}
 			
 		}
-		Log.i("ValidateSelection()", "ValidateSelection() : ");
-		System.out.println("ValidateSelection() : " + out.toString());
-		
+				
 		return out.toString();
 
 	}
@@ -278,5 +291,8 @@ public class SelectionContact extends Activity{
 		
 		
 	}
+
+
+	
 
 }

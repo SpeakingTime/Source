@@ -20,7 +20,7 @@
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:textSize="14dip"
-	        android:textColor="#ff0000"
+	        android:textColor="#0099FF"
 	        android:textStyle="bold"
 	        android:text="Listening" />
 	    
@@ -64,7 +64,7 @@
 	       	android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:textSize="14dip"
-	        android:textColor="#ff0000"
+	        android:textColor="#0099FF"
 	        android:textStyle="bold"
 	        android:text="Speaking" />
 	    
@@ -108,7 +108,7 @@
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:textSize="14dip"
-	        android:textColor="#ff0000"
+	        android:textColor="#0099FF"
 	        android:textStyle="bold"
 	        android:text="Idle" />
 	    

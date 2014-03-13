@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Scanner;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.CursorLoader;
@@ -80,10 +81,31 @@ public class SelectionContactToEdit extends Activity{
 						// TODO Auto-generated method stub
 						
 						EditGroup();
-						Intent intent = new Intent(SelectionContactToEdit.this, MainActivity.class);
-						intent.putExtra("selectedContact", ValidateSelection());
-						startActivity(intent);
-						finish();
+						
+						ModalDialog modalDialog = new ModalDialog();
+						String meeting_name = modalDialog.showModalDialogReunionName(SelectionContactToEdit.this, "Give a name to this meeting");    					
+						
+						if (meeting_name != "Cancel"){
+							if (meeting_name.equalsIgnoreCase("")){
+								
+								AlertDialog.Builder alertDialog = new AlertDialog.Builder(SelectionContactToEdit.this);
+								alertDialog.setTitle("Warning");
+								alertDialog.setMessage("GIVE A VALID NAME !");
+								alertDialog.show();
+								
+							}
+							else {
+								
+								Bundle b = getIntent().getExtras();
+						    	String SGroupName = b.getString("groupName");								
+								Intent intent = new Intent(SelectionContactToEdit.this, MainActivity.class);
+								intent.putExtra("selectedContact", ValidateSelection());
+								intent.putExtra("meetingName", meeting_name);
+								intent.putExtra("groupName",  SGroupName);
+								startActivity(intent);
+								finish();
+							}
+						}
 					}
 				
 		});

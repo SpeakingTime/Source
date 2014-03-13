@@ -31,6 +31,7 @@
         <activity android:name=".CreateGroupActivity" android:label="@string/title_create_group_activity" android:theme="@style/SmallTitleTheme" ></activity>
         <activity android:name=".SelectionGroupToEdit" android:label="@string/title_selection_group_to_edit" android:theme="@style/SmallTitleTheme" ></activity>
         <activity android:name=".SelectionContactToEdit" android:label="@string/title_selection_contact_to_edit" android:theme="@style/SmallTitleTheme" ></activity>
+        <activity android:name=".SelectionContactToAdd" android:label="@string/title_selection_contact_to_add" android:theme="@style/SmallTitleTheme" ></activity>
         <activity android:name=".StatisticActivity" android:label="@string/title_statistic_activity" android:theme="@style/SmallTitleTheme" ></activity>
         <activity android:name=".StatisticResultActivity" android:label="@string/title_statistic_result_activity" android:theme="@style/SmallTitleTheme" ></activity>
         <activity android:name=".PreferencesActivity" android:label="@string/title_preferences_activity" android:theme="@style/SmallTitleTheme" ></activity>

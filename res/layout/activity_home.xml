@@ -27,6 +27,21 @@
 	        android:layout_width="match_parent"
 	    	android:layout_height="match_parent"
 	    	android:layout_weight="1"
+	    	android:gravity="center"	
+  			 >
+			<Button
+		    	android:id="@+id/buttonCreateGroup_Home"
+		    	android:text="@string/buttonCreateGroup_Home"
+		    	android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:textSize="16dp" >
+    		</Button>
+    	</LinearLayout>
+       	
+       	<LinearLayout 
+	        android:layout_width="match_parent"
+	    	android:layout_height="match_parent"
+	    	android:layout_weight="1"
 	    	android:gravity="center"
    			
    			>
@@ -40,21 +55,6 @@
     		</Button>
     	</LinearLayout>
         
-        <LinearLayout 
-	        android:layout_width="match_parent"
-	    	android:layout_height="match_parent"
-	    	android:layout_weight="1"
-	    	android:gravity="center"	
-  			 >
-			<Button
-		    	android:id="@+id/buttonCreateGroupOrSelectContacts"
-		    	android:text="@string/buttonCreateGroupOrSelectContacts"
-		    	android:layout_width="match_parent"
-				android:layout_height="match_parent"
-				android:textSize="16dp" >
-    		</Button>
-    	</LinearLayout>
-    	
         <LinearLayout 
 	        android:layout_width="match_parent"
 	    	android:layout_height="match_parent"

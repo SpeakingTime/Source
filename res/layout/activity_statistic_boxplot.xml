@@ -11,22 +11,7 @@
         android:layout_weight="1"
       	android:gravity="top"
     />
-    
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        >
 
-	    <Button android:id="@+id/buttonQuitBoxPlot"
-	    	android:layout_width="wrap_content"
-	    	android:layout_height="wrap_content"
-	    	android:layout_alignParentBottom="true"
-	    	android:layout_gravity="center"
-	    	android:text="@string/buttonQuitBoxPlot"
-	    	/>
-    </LinearLayout>
  
     
     

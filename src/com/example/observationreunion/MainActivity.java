@@ -6,17 +6,22 @@ import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Timer;
+import java.util.TimerTask;
 
-import com.example.observationreunion.MyListView.OnItemDoubleTapLister;
-import com.example.observationreunion.MyListView.OnItemMoveTapLister;
+import com.example.observationreunion.MyListAdapterCheckmarkEcoute.IListAdapterCheckmarkEcouteCallback;
+import com.example.observationreunion.MyListAdapterCheckmarkInactif.IListAdapterCheckmarkInactifCallback;
+import com.example.observationreunion.MyListAdapterCheckmarkParole.IListAdapterCheckmarkParoleCallback;
 
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Looper;
 import android.os.StrictMode;
 import android.os.SystemClock;
 import android.provider.ContactsContract;
@@ -26,28 +31,36 @@ import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.CursorLoader;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Rect;
+import android.text.format.DateFormat;
 import android.util.Log;
+import android.view.GestureDetector;
+import android.view.GestureDetector.OnGestureListener;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.Chronometer;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
-public class MainActivity extends Activity implements OnItemDoubleTapLister, OnItemMoveTapLister{
+public class MainActivity extends Activity implements /*OnItemDoubleTapLister, OnItemMoveTapLister,*/ IListAdapterCheckmarkEcouteCallback, IListAdapterCheckmarkParoleCallback, IListAdapterCheckmarkInactifCallback{
 	
 	//Création de la ArrayList qui nous permettra de remplir la listView d'écoute
     ArrayList<HashMap<String, Object>> listItemEcoute = new ArrayList<HashMap<String, Object>>();
@@ -64,6 +77,8 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
     MyListView lVDataInactif;
     /*SimpleAdapter*/MyListAdapterCheckmarkInactif mScheduleInactif = null;
     
+    List<String> listSelectedContact = new ArrayList<String>();
+    
     HashMap<String, Object> original_map_onmove = null; 
     HashMap<String, Object> modified_map_onmove = null;
     boolean flagActionDownModeEcoute = false;
@@ -72,36 +87,36 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
     boolean playStatus = true;
     boolean ssh = false;
     
+    String meeting_name;
     String meeting_total_time;
     
 	StringBuilder output = new StringBuilder();
 	public String timestring = null;
     
     private static ProgressDialog dialog;
-    int position = 0;
     int itemEcoutePosition = -2;
     
     long totalTimeWhenStopped = 0;
     
+    boolean newParticipant = false;
+    
+    Timer timer;             
+    TimerTask tache;
+    
 	private static final int NUM_COL_ID_PREFERENCES = 0;
 	private static final int NUM_COL_HOST = 1;
 	private static final int NUM_COL_USERNAME = 2;
-	private static final int NUM_COL_PASSWORD = 3;
-    
-    /*OnTouchListener itemTouch = new OnTouchListener() {
-	    private int position;
-	    @Override
-	    public boolean onTouch(View v, MotionEvent event) {
-	       LinearLayout ll = (LinearLayout)v.findViewById(R.id.item_ecoute);
-	       String itemTag = ll.getTag().toString();
-	       itemEcoutePosition = Integer.parseInt(itemTag);
-	       return false;
-
-	    }
-
-	};*/
+	private static final int NUM_COL_TIME_INTERVAL_FOR_SAVE_FILE = 3;
 	
-    
+	//public static Integer position = -1;
+	
+	private class ViewHolder {
+        ImageView imageView;
+        TextView txtDISPLAY_NAME;
+        TextView txtCOMPANY_AND_TITLE;
+        TextView txtCHRONOMETRE;
+    }
+	
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -240,6 +255,27 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
     					}
     				}
     			}
+    	); 
+    	
+    	Button buttonAddMember = (Button) findViewById(R.id.buttonAddMember);
+    	buttonAddMember.setOnClickListener( 
+    			new Button.OnClickListener(){
+    				
+    				@Override
+    				public void onClick(View v) {
+    					// TODO Auto-generated method stub
+    					
+    					Intent intent = new Intent(MainActivity.this, SelectionContactToAdd.class);
+    					
+    					StringBuilder selectedContact = new StringBuilder();
+    					for (int i = 0; i<listSelectedContact.size(); i++){
+    						selectedContact.append(listSelectedContact.get(i) + '\n');
+    					}
+    					intent.putExtra("selectedContact", selectedContact.toString());
+    					startActivityForResult(intent, 1);
+    					
+    				}
+    			}
     	);
         
     	Button buttonSendToDatabase = (Button) findViewById(R.id.buttonSendToDatabase);
@@ -251,52 +287,35 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
     					// TODO Auto-generated method stub
     					
     					ModalDialog modalDialog = new ModalDialog();
-    					String meeting_name = modalDialog.showEditTextDialog(MainActivity.this, "Give a name to this meeting");    					
+    					String modalResult = modalDialog.showSaveFile(MainActivity.this, "Do you want to save file and quit meeting ?");    					
     					
-    					if (meeting_name != "Cancel"){
+    					if (modalResult == "Yes"){
     						
-    						if (meeting_name.equalsIgnoreCase("")){
-    							
-    							AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
-    							alertDialog.setTitle("Warning : GIVE A VALID NAME");
-    							alertDialog.setMessage("DATA NOT SEND !");
-    							alertDialog.show();
-    							
-    						}
-    						else {
-    						
-	    						TextView textViewTotalTime = (TextView) findViewById (R.id.chronometerTotalTime);
-			    				meeting_total_time = textViewTotalTime.getText().toString();
-			    	     		if (meeting_total_time.length()==5){
-			    	     		   	meeting_total_time = "00:" + meeting_total_time;
-			    	    		}
-			    	    		else if (meeting_total_time.length()==7){
-			    	    		  	//timestring = "0:" + timestring;
-			    	    		   	meeting_total_time = "0" + meeting_total_time;
-			    	    		}
+    						TextView textViewTotalTime = (TextView) findViewById (R.id.chronometerTotalTime);
+			    			meeting_total_time = textViewTotalTime.getText().toString();
+			    	     	if (meeting_total_time.length()==5){
+			    	     		meeting_total_time = "00:" + meeting_total_time;
+			    	    	}
+			    	    	else if (meeting_total_time.length()==7){
+			    	    		//timestring = "0:" + timestring;
+			    	    		meeting_total_time = "0" + meeting_total_time;
+			    	    	}
 			    	     		
-			    	     		dialog = ProgressDialog.show(MainActivity.this, "Send Data", "sending");
-			    					    					
-			    				if (SendToDatabase(meeting_name, meeting_total_time)){
-			    					Log.i("SEND", "- DATA SEND -");
-			    				}
-			    				else{
-			    					Log.i("SEND", "- DATA NOT SEND - BIG ERROR !!! -");
-			    				}
+			    	     	if (SendToDatabase(meeting_name, meeting_total_time)){
+			    	     		Log.i("SEND", "- DATA SEND -");
+			    			}
+			    	     	else{
+			    				Log.i("SEND", "- DATA NOT SEND - BIG ERROR !!! -");
+			    			}
+			    	     				    	     	
+			    			if (ssh == true){
 			    					
-			    				if (ssh == true){
+			    				SendToSSH(meeting_name, output.toString());
 			    					
-			    					/*ModalDialog modalDialogSSH = new ModalDialog();
-			    					modalDialogSSH.showSSHDialog(MainActivity.this, "Remote Server Connexion...");*/
-			    					SendToSSH(meeting_name, output.toString());
-			    					
-			    				}
-			    				
-			    				dialog.dismiss();
-			    					
-			    				finish();
-    						}
-	    				}
+			    			}
+			    						    					
+			    			finish();
+    					}
     				}
     			}
     	);			
@@ -318,54 +337,88 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
         
         InitContact(savedInstanceState, this);
         
-        lVDataEcoute.setOnItemDoubleClickListener(this);
-        lVDataEcoute.setOnTouchListener(this);
+        Bundle b = getIntent().getExtras();
+        meeting_name = b.getString("meetingName");
+        
+        /*lVDataEcoute.setOnItemDoubleClickListener(this);
+        lVDataEcoute.setOnTouchListener(this);*/
         
 
         lVDataParole = new MyListView(this.getApplicationContext());
         lVDataParole = (MyListView) findViewById(R.id.listViewParole);
-        mScheduleParole = new /*SimpleAdapter*/MyListAdapterCheckmarkParole (this.getBaseContext(), listItemParole, R.layout.affichageitem_with_chekmark_parole,
+        mScheduleParole = new /*SimpleAdapter*/MyListAdapterCheckmarkParole (MainActivity.this, this.getBaseContext(), listItemParole, R.layout.affichageitem_with_chekmark_parole,
                 new String[] {"img", "display_name", "company_and_title", "chronometre", "tag2"}, new int[] {R.id.IMG_parole, R.id.DISPLAY_NAME_parole, R.id.COMPANY_AND_TITLE_parole, R.id.CHRONOMETRE_parole, R.id.tag2_parole});
        
         mScheduleParole.setViewBinder(new MyViewBinder()); // VOICI LA CLE!!!!
+        
   	    //On attribut Ã  notre listView l'adapter que l'on vient de crÃ©er
         lVDataParole.setAdapter(mScheduleParole);
-        lVDataParole.setOnItemDoubleClickListener(this);
-        lVDataParole.setOnTouchListener(this);
+        /*lVDataParole.setOnItemDoubleClickListener(this);
+        lVDataParole.setOnTouchListener(this);*/
         
         
         lVDataInactif = new MyListView(this.getApplicationContext());
         lVDataInactif = (MyListView) findViewById(R.id.listViewInactif);
-        mScheduleInactif = new /*SimpleAdapter*/MyListAdapterCheckmarkInactif (this.getBaseContext(), listItemInactif, R.layout.affichageitem_with_chekmark_inactif,
+        mScheduleInactif = new /*SimpleAdapter*/MyListAdapterCheckmarkInactif (MainActivity.this, this.getBaseContext(), listItemInactif, R.layout.affichageitem_with_chekmark_inactif,
                 new String[] {"img", "display_name", "company_and_title", "chronometre", "tag2"}, new int[] {R.id.IMG_inactif, R.id.DISPLAY_NAME_inactif, R.id.COMPANY_AND_TITLE_inactif, R.id.CHRONOMETRE_inactif, R.id.tag2_inactif});
        
         mScheduleInactif.setViewBinder(new MyViewBinder()); // VOICI LA CLE!!!!
   	    //On attribut Ã  notre listView l'adapter que l'on vient de crÃ©er
         lVDataInactif.setAdapter(mScheduleInactif);
-        lVDataInactif.setOnItemDoubleClickListener(this);
-        lVDataInactif.setOnTouchListener(this);
+        /*lVDataInactif.setOnItemDoubleClickListener(this);
+        lVDataInactif.setOnTouchListener(this); */   					
+		
+		timer = new Timer();             
+        tache = new TimerTask() {     
+            @Override
+                public void run() {
+            	
+            		MainActivity.this.runOnUiThread(new Runnable() {
+	            	    public void run() {
+	            	    
+	            	    	TextView textViewTotalTime = (TextView) findViewById (R.id.chronometerTotalTime);
+	    					meeting_total_time = textViewTotalTime.getText().toString();
+	    		     		if (meeting_total_time.length()==5){
+	    		     		   	meeting_total_time = "00:" + meeting_total_time;
+	    		    		}
+	    		    		else if (meeting_total_time.length()==7){
+	    		    		  	//timestring = "0:" + timestring;
+	    		    		   	meeting_total_time = "0" + meeting_total_time;
+	    		    		}
+	    		     			    					
+	    					if (SendToDatabase(meeting_name, meeting_total_time)){
+	    						Log.i("SEND", "- DATA SEND -");
+	    					}
+	    					else{
+	    						Log.i("SEND", "- DATA NOT SEND - BIG ERROR !!! -");
+	    					}
+	            	    	
+	            	    	// update UI here
+	            	    }
+            		});
+	            	
+            	
+                }
+        };
+        timer.scheduleAtFixedRate(tache,0,getTimeIntervalForSaveFile());
+        //timer.schedule(tache,60000);
         
-                
-        //On commence le dÃ©compte du chronometre principal
+      //On commence le dÃ©compte du chronometre principal
         Chronometer chronometerTotalTime = (Chronometer) findViewById(R.id.chronometerTotalTime);
         chronometerTotalTime.start();
-        
+      
         
     }
-
-    @Override
+    
+    /*@Override
     public void OnDoubleTap(AdapterView<?> parent, View view, int position, long id) {
     		
     }
     
     @Override
     public void OnSingleTap(AdapterView<?> parent, View view, int position, long id) {
-    	/*itemEcoutePosition = position;
-    	AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
-		alertDialog.setTitle("Warning");
-		alertDialog.setMessage("itemEcoutePosition : " + itemEcoutePosition);
-		alertDialog.show();*/
-    }
+
+    }*/
     
     private void Select(ListView listView, ArrayList<HashMap<String, Object>> listItem, 
     					SimpleAdapter mSchedule, Boolean bSelectAll){
@@ -381,9 +434,11 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
     	
     }
     
-    @Override
+    /*@Override
     public void OnMoveTap(View view, MotionEvent event) {
-    	    	
+    	
+    	int position = -1;
+    	
     	long width = view.getWidth();
     	ArrayList<HashMap<String, Object>> listItem = new ArrayList<HashMap<String, Object>>();
     	HashMap<String, Object> map_original = null;
@@ -392,7 +447,7 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
     	if (event.getAction() == MotionEvent.ACTION_UP) {
     		
     		AdapterView adapterView = (AdapterView) view;
-    	
+    		
     		if ((event.getX() > width*2) && (event.getX() < width*3)){
     			if (flagActionDownModeEcoute == true){
 	    			ListeningToIdle();
@@ -404,7 +459,14 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
 	    	else if ((event.getX() > width) && (event.getX() < width*2)){
     			if (flagActionDownModeEcoute == true) {
     				
-    				ListeningToSpeaking();
+    				    				
+    				if (position == -1){
+    					ListeningToSpeaking();
+    				}
+    				else{
+    					ListeningToSpeaking(position);
+    					position = -1;
+    				}
     			}
 	    		else if (flagActionDownModeInactif == true) {
     				IdleToSpeaking();
@@ -431,26 +493,6 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
     		if (adapterView.getAdapter() == mScheduleEcoute){
 	    		flagActionDownModeEcoute = true;
 	    		
-	    		/*if (!isListViewCheck(lVDataEcoute)){
-					
-					//LinearLayout ll = (LinearLayout) view.findViewById(R.id.item_ecoute);
-					//itemEcoutePosition = Integer.valueOf(ll.getTag().toString());
-					//view.getTag().toString();
-					//itemEcoutePosition = ((AdapterView<ListAdapter>) view).getSelectedItemPosition();
-					//LinearLayout ll = (LinearLayout)view;
-					//view.getTag().toString();
-					//itemEcoutePosition = Integer.valueOf(ll.getTag().toString());
-					
-					//LinearLayout ll = (LinearLayout)view.findViewById(R.id.item_ecoute);
-					//itemEcoutePosition = Integer.valueOf(ll.getTag().toString());
-					//ll.setOnTouchListener(itemTouch);
-										
-					AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
-					alertDialog.setTitle("Warning");
-					alertDialog.setMessage("itemEcoutePosition : " + String.valueOf(itemEcoutePosition));
-					alertDialog.show();
-										
-				}*/
 	    		
     		}
     		else if (adapterView.getAdapter() == mScheduleParole){
@@ -465,12 +507,12 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
 			AdapterView adapterView = (AdapterView) view;
 		}
     	
-    }
+    }*/
 
     
     public void InitContact(Bundle savedInstanceState, Activity activity){
     	
-    	List<String> listSelectedContact = new ArrayList<String>();
+    	//List<String> listSelectedContact = new ArrayList<String>();
     	Bundle b = getIntent().getExtras();
     	String s = b.getString("selectedContact");
     	Scanner scanner = new Scanner(s);
@@ -514,6 +556,7 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
    		    	Bitmap bitmap = getPhoto(mCursor.getInt(0));
 	    		bitmap = Bitmap.createScaledBitmap (bitmap, 64, 64, true);
 	    		map.put("img", bitmap);
+	    		map.put("id_contact", mCursor.getString(0));
 	            map.put("display_name", mCursor.getString(1));
 	            map.put("isSelected", false);
 	        	map.put("tag2", i);
@@ -584,7 +627,7 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
     	
     	output.append("end: participants list  \r\n \r\nbegin: meeting " + formattedDate /*timetotalstring  getCurrentTimeStamp()*/ + "\r\n"); 
     	
-        mScheduleEcoute = new /*SimpleAdapter*/MyListAdapterCheckmarkEcoute (this.getBaseContext(), listItemEcoute, R.layout.affichageitem_with_chekmark_ecoute,
+        mScheduleEcoute = new /*SimpleAdapter*/MyListAdapterCheckmarkEcoute (MainActivity.this, this.getBaseContext(), listItemEcoute, R.layout.affichageitem_with_chekmark_ecoute,
                 new String[] { "img", "display_name", "company_and_title", "chronometre", "tag2", "tag3"}, 
                 new int[] { R.id.IMG_ecoute, R.id.DISPLAY_NAME_ecoute, R.id.COMPANY_AND_TITLE_ecoute, R.id.CHRONOMETRE_ecoute, R.id.tag2_ecoute,  R.id.tag3_ecoute});
         
@@ -634,7 +677,7 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
             }
             if (success){
                	//String data= "Ce que je veux ecrire dans mon fichier \r\n";
-               	FileOutputStream output = new FileOutputStream(myFile,true); //le true est pour écrire en fin de fichier, et non l'écraser
+               	FileOutputStream output = new FileOutputStream(myFile,false); //le true est pour écrire en fin de fichier, et non l'écraser
                	output.write(meeting_result.toString().getBytes());
             }
             else {Log.e("TEST1","ERROR DE CREATION DE DOSSIER");}
@@ -650,24 +693,34 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
     }
     
     public boolean SendToSSH(String meeting_name, String file){
-		try{
-			PreferencesBDD preferencesBdd = new PreferencesBDD(this);
+		
+    	PreferencesBDD preferencesBdd = new PreferencesBDD(this);
+    	
+    	try{
+			
 			preferencesBdd.open();
 			
 			try{
 			
 				Cursor mCursor = preferencesBdd.getCursor();
 				
+		     	/*AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
+				alertDialog.setTitle("preferencesBdd.open()");
+				alertDialog.setMessage("preferencesBdd.open()");
+				alertDialog.show();	*/
+			
+				
 				mCursor.moveToLast();
 							
 				String s_ID_preferences =  mCursor.getString(NUM_COL_ID_PREFERENCES);
 				String s_host =  mCursor.getString(NUM_COL_HOST);
 				String s_username =  mCursor.getString(NUM_COL_USERNAME);
-				String s_password =  mCursor.getString(NUM_COL_PASSWORD);
-			
+				//String s_password =  mCursor.getString(NUM_COL_PASSWORD);
+				
+
 				ModalDialog modalDialogSSH = new ModalDialog();
 				modalDialogSSH.showSSHDialog(MainActivity.this, "Remote Server Connexion...",
-											s_host, s_username, s_password, meeting_name, file);
+											s_host, s_username/*, s_password*/, meeting_name, file);
 			
 			}
 			catch(Exception e){
@@ -935,7 +988,7 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
 			HashMap<String, Object> map = (HashMap<String, Object>) lVDataEcoute.getItemAtPosition(i);
 			
 			if ((Boolean) map.get("isSelected") == true){
-				listItem.add(map);
+				listItem.add(0, map);
 				System.out.println("display_name : " +  map.get("display_name").toString());
 			}
 		}
@@ -951,35 +1004,38 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
 			map_modified = (HashMap<String, Object>) listItem.get(i);
 			map_modified.put("chronometre", new ChronoData((ChronoData) map_original.get("chronometre"), "start"));
 			map_modified.put("isSelected", false);
-			listItemParole.add(map_modified);
+			listItemParole.add(0, map_modified);
 		   	
 		   	mScheduleParole.notifyDataSetChanged();
-		   	
-		   	/*int position = listItemParole.size()-1;
-		   	View convertView = null;
- 		    LinearLayout linearlayout = (LinearLayout) mScheduleParole.getView(position, convertView, lVDataParole);
- 		    LinearLayout linearlayout2 = (LinearLayout) linearlayout.getChildAt(1);
- 		    Chronometer mychronometer= (Chronometer) linearlayout2.getChildAt(2);
- 		    timestring = mychronometer.getText().toString();
- 		    if (timestring.length()==5){
- 		    	timestring = "00:" + timestring;
-		    }
-		    else if (timestring.length()==7){
-		    	timestring = "0" + timestring;
-		    }*/
  		    
- 		    Chronometer chronometerTotalTime = (Chronometer) findViewById(R.id.chronometerTotalTime);
- 		    String timetotalstring = chronometerTotalTime.getText().toString();
- 		    if (timetotalstring.length()==5){
- 		    	timetotalstring = "00:" + timetotalstring;
-		    }
-		    else if (timestring.length()==7){
-		    	timetotalstring = "0" + timetotalstring;
-		    }
- 		    
- 		    output.append("    " + /*getCurrentTimeStamp()*/ timetotalstring + ";" + /*timestring + ";" + */map_modified.get("display_name") + ";speaker;" + "\r\n");
-		   	  	
+ 		    output.append("    " + getTime() + ";" + /*timestring + ";" + */map_modified.get("display_name") + ";speaker;" + "\r\n");
 	    }
+	}
+	
+	public void ListeningToSpeaking(int position){
+		
+		ArrayList<HashMap<String, Object>> listItem = new ArrayList<HashMap<String, Object>>();
+    	HashMap<String, Object> map_original = null;
+		HashMap<String, Object> map_modified = null; 
+		
+		HashMap<String, Object> map = (HashMap<String, Object>) lVDataEcoute.getItemAtPosition(position);
+		listItem.add(map);
+		
+		listItemEcoute.remove(listItem.get(0));
+		mScheduleEcoute.notifyDataSetChanged();
+			
+		map_original = new HashMap<String, Object>();
+		map_original = (HashMap<String, Object>) listItem.get(0);
+		map_modified = new HashMap<String, Object>();
+		map_modified = (HashMap<String, Object>) listItem.get(0);
+		map_modified.put("chronometre", new ChronoData((ChronoData) map_original.get("chronometre"), "start"));
+		map_modified.put("isSelected", false);
+		listItemParole.add(0, map_modified);
+		   	
+		mScheduleParole.notifyDataSetChanged();
+ 		    
+ 		output.append("    " + getTime() + ";" + /*timestring + ";" + */map_modified.get("display_name") + ";speaker;" + "\r\n");
+	    
 	}
 	
 	
@@ -993,7 +1049,7 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
 			HashMap<String, Object> map = (HashMap<String, Object>) lVDataParole.getItemAtPosition(i);
 			
 			if ((Boolean) map.get("isSelected") == true){
-				listItem.add(map);
+				listItem.add(0, map);
 				System.out.println("display_name : " +  map.get("display_name").toString());
 			}
 		}
@@ -1009,35 +1065,37 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
 			map_modified = (HashMap<String, Object>) listItem.get(i);
 			map_modified.put("chronometre", new ChronoData((ChronoData) map_original.get("chronometre"), "stop"));
 			map_modified.put("isSelected", false);
-			listItemEcoute.add(map_modified);
+			listItemEcoute.add(0, map_modified);
 		   	
 		   	mScheduleEcoute.notifyDataSetChanged();
-		   	
-		   	/*int position = listItemEcoute.size()-1;
-		   	View convertView = null;
- 		    LinearLayout linearlayout = (LinearLayout) mScheduleEcoute.getView(position, convertView, lVDataEcoute);
- 		    LinearLayout linearlayout2 = (LinearLayout) linearlayout.getChildAt(1);
- 		    Chronometer mychronometer= (Chronometer) linearlayout2.getChildAt(2);
- 		    timestring = mychronometer.getText().toString();
- 		    if (timestring.length()==5){
- 		    	timestring = "00:" + timestring;
-		    }
-		    else if (timestring.length()==7){
-		    	timestring = "0" + timestring;
-		    }*/
  		    
- 		    Chronometer chronometerTotalTime = (Chronometer) findViewById(R.id.chronometerTotalTime);
-		    String timetotalstring = chronometerTotalTime.getText().toString();
-		    if (timetotalstring.length()==5){
-		    	timetotalstring = "00:" + timetotalstring;
-		    }
-		    else if (timestring.length()==7){
-		    	timetotalstring = "0" + timetotalstring;
-		    }
- 		    
- 		    output.append("    " + timetotalstring /*getCurrentTimeStamp()*/ + ";" + /*timestring + ";" +*/ map_modified.get("display_name") + ";listener;" + "\r\n");
-		   				
+ 		    output.append("    " + getTime() + ";" + map_modified.get("display_name") + ";listener;" + "\r\n");
 	    }
+	}
+	
+	public void SpeakingToListening(int position){
+		ArrayList<HashMap<String, Object>> listItem = new ArrayList<HashMap<String, Object>>();
+    	HashMap<String, Object> map_original = null;
+		HashMap<String, Object> map_modified = null; 
+		
+		HashMap<String, Object> map = (HashMap<String, Object>) lVDataParole.getItemAtPosition(position);
+		listItem.add(0, map);
+			
+		listItemParole.remove(listItem.get(0));
+		mScheduleParole.notifyDataSetChanged();
+		
+		map_original = new HashMap<String, Object>();
+		map_original = (HashMap<String, Object>) listItem.get(0);
+		map_modified = new HashMap<String, Object>();
+		map_modified = (HashMap<String, Object>) listItem.get(0);
+		map_modified.put("chronometre", new ChronoData((ChronoData) map_original.get("chronometre"), "stop"));
+		map_modified.put("isSelected", false);
+		listItemEcoute.add(0, map_modified);
+		   	
+		mScheduleEcoute.notifyDataSetChanged();
+ 		    
+ 		output.append("    " + getTime() + ";" + map_modified.get("display_name") + ";listener;" + "\r\n");
+	    
 	}
 	
 	public void ListeningToIdle(){
@@ -1050,7 +1108,7 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
 			HashMap<String, Object> map = (HashMap<String, Object>) lVDataEcoute.getItemAtPosition(i);
 			
 			if ((Boolean) map.get("isSelected") == true){
-				listItem.add(map);
+				listItem.add(0, map);
 				System.out.println("display_name : " +  map.get("display_name").toString());
 			}
 		}
@@ -1066,45 +1124,41 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
 			map_modified = (HashMap<String, Object>) listItem.get(i);
 			map_modified.put("chronometre", new ChronoData((ChronoData) map_original.get("chronometre"), "no_change"));
 			map_modified.put("isSelected", false);
-			listItemInactif.add(map_modified);
+			listItemInactif.add(0, map_modified);
 		   	
 			mScheduleInactif.notifyDataSetChanged();
-		   	
-			/*int position = listItemInactif.size()-1;
-		   	View convertView = null;
- 		    LinearLayout linearlayout = (LinearLayout) mScheduleInactif.getView(position, convertView, lVDataInactif);
- 		    LinearLayout linearlayout2 = (LinearLayout) linearlayout.getChildAt(1);
- 		    Chronometer mychronometer= (Chronometer) linearlayout2.getChildAt(2);
- 		    timestring = mychronometer.getText().toString();
- 		    if (timestring.length()==5){
- 		    	timestring = "00:" + timestring;
-		    }
-		    else if (timestring.length()==7){
-		    	timestring = "0" + timestring;
-		    }*/
  		    
- 		    Chronometer chronometerTotalTime = (Chronometer) findViewById(R.id.chronometerTotalTime);
-		    String timetotalstring = chronometerTotalTime.getText().toString();
-		    if (timetotalstring.length()==5){
-		    	timetotalstring = "00:" + timetotalstring;
-		    }
-		    else if (timestring.length()==7){
-		    	timetotalstring = "0" + timetotalstring;
-		    }
- 		    
- 		    output.append("    " + timetotalstring /*getCurrentTimeStamp()*/ + ";" + /*timestring + ";" +*/ map_modified.get("display_name") + ";idle;" + "\r\n");
- 		    
- 		    /*AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
-			alertDialog.setTitle("chronometre");
-			alertDialog.setMessage( map_modified.get("display_name").toString());
-			alertDialog.show();*/
-		   
-		   				
+ 		    output.append("    " + getTime() + ";" + map_modified.get("display_name") + ";idle;" + "\r\n");
 		}
 		
 	}
 	
-	public void SpeakingToIdle(/*int position*/){
+	public void ListeningToIdle(int position){
+		ArrayList<HashMap<String, Object>> listItem = new ArrayList<HashMap<String, Object>>();
+    	HashMap<String, Object> map_original = null;
+		HashMap<String, Object> map_modified = null; 
+		
+		HashMap<String, Object> map = (HashMap<String, Object>) lVDataEcoute.getItemAtPosition(position);
+		listItem.add(0, map);
+			
+		listItemEcoute.remove(listItem.get(0));
+		mScheduleEcoute.notifyDataSetChanged();
+			
+		map_original = new HashMap<String, Object>();
+		map_original = (HashMap<String, Object>) listItem.get(0);
+		map_modified = new HashMap<String, Object>();
+		map_modified = (HashMap<String, Object>) listItem.get(0);
+		map_modified.put("chronometre", new ChronoData((ChronoData) map_original.get("chronometre"), "no_change"));
+		map_modified.put("isSelected", false);
+		listItemInactif.add(0, map_modified);
+		   	
+		mScheduleInactif.notifyDataSetChanged();
+ 		    
+ 		output.append("    " + getTime() + ";" + map_modified.get("display_name") + ";idle;" + "\r\n");
+		
+	}
+	
+	public void SpeakingToIdle(){
 		ArrayList<HashMap<String, Object>> listItem = new ArrayList<HashMap<String, Object>>();
     	HashMap<String, Object> map_original = null;
 		HashMap<String, Object> map_modified = null; 
@@ -1114,7 +1168,7 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
 			HashMap<String, Object> map = (HashMap<String, Object>) lVDataParole.getItemAtPosition(i);
 			
 			if ((Boolean) map.get("isSelected") == true){
-				listItem.add(map);
+				listItem.add(0, map);
 				System.out.println("display_name : " +  map.get("display_name").toString());
 			}
 		}
@@ -1130,36 +1184,37 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
 			map_modified = (HashMap<String, Object>) listItem.get(i);
 			map_modified.put("chronometre", new ChronoData((ChronoData) map_original.get("chronometre"), "stop"));
 			map_modified.put("isSelected", false);
-			listItemInactif.add(map_modified);
+			listItemInactif.add(0, map_modified);
 		   	
 		   	mScheduleInactif.notifyDataSetChanged();
+ 		    
+ 		    output.append("    " + getTime() + ";" + map_modified.get("display_name") + ";idle;" + "\r\n");
+ 	    }
+	}
+	
+	public void SpeakingToIdle(int position){
+		ArrayList<HashMap<String, Object>> listItem = new ArrayList<HashMap<String, Object>>();
+    	HashMap<String, Object> map_original = null;
+		HashMap<String, Object> map_modified = null; 
+		
+		HashMap<String, Object> map = (HashMap<String, Object>) lVDataParole.getItemAtPosition(position);
+		listItem.add(0, map);
+			
+		listItemParole.remove(listItem.get(0));
+		mScheduleParole.notifyDataSetChanged();
+			
+		map_original = new HashMap<String, Object>();
+		map_original = (HashMap<String, Object>) listItem.get(0);
+		map_modified = new HashMap<String, Object>();
+		map_modified = (HashMap<String, Object>) listItem.get(0);
+		map_modified.put("chronometre", new ChronoData((ChronoData) map_original.get("chronometre"), "stop"));
+		map_modified.put("isSelected", false);
+		listItemInactif.add(0, map_modified);
 		   	
-		   	/*int position = listItemInactif.size()-1;
-		   	View convertView = null;
- 		    LinearLayout linearlayout = (LinearLayout) mScheduleInactif.getView(position, convertView, lVDataInactif);
- 		    LinearLayout linearlayout2 = (LinearLayout) linearlayout.getChildAt(1);
- 		    Chronometer mychronometer= (Chronometer) linearlayout2.getChildAt(2);
- 		    timestring = mychronometer.getText().toString();
- 		    if (timestring.length()==5){
- 		    	timestring = "00:" + timestring;
-		    }
-		    else if (timestring.length()==7){
-		    	timestring = "0" + timestring;
-		    }*/
+		mScheduleInactif.notifyDataSetChanged();
  		    
- 		    Chronometer chronometerTotalTime = (Chronometer) findViewById(R.id.chronometerTotalTime);
-		    String timetotalstring = chronometerTotalTime.getText().toString();
-		    if (timetotalstring.length()==5){
-		    	timetotalstring = "00:" + timetotalstring;
-		    }
-		    else if (timestring.length()==7){
-		    	timetotalstring = "0" + timetotalstring;
-		    }
- 		    
- 		    output.append("    " + timetotalstring /*getCurrentTimeStamp()*/ + ";" + /*timestring + ";" +*/ map_modified.get("display_name") + ";idle;" + "\r\n");
- 		    
-		   				
-	    }
+ 		output.append("    " + getTime() + ";" + map_modified.get("display_name") + ";idle;" + "\r\n");
+ 	    
 	}
 	
 	public void IdleToListening(){
@@ -1172,7 +1227,7 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
 			HashMap<String, Object> map = (HashMap<String, Object>) lVDataInactif.getItemAtPosition(i);
 			
 			if ((Boolean) map.get("isSelected") == true){
-				listItem.add(map);
+				listItem.add(0, map);
 				System.out.println("display_name : " +  map.get("display_name").toString());
 			}
 		}
@@ -1188,38 +1243,40 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
 			map_modified = (HashMap<String, Object>) listItem.get(i);
 			map_modified.put("chronometre", new ChronoData((ChronoData) map_original.get("chronometre"), "no_change"));
 			map_modified.put("isSelected", false);
-			listItemEcoute.add(map_modified);
+			listItemEcoute.add(0, map_modified);
 		   	
 		   	mScheduleEcoute.notifyDataSetChanged();
-		   	
-		   	/*int position = listItemEcoute.size()-1;
-		   	View convertView = null;
- 		    LinearLayout linearlayout = (LinearLayout) mScheduleEcoute.getView(position, convertView, lVDataEcoute);
- 		    LinearLayout linearlayout2 = (LinearLayout) linearlayout.getChildAt(1);
- 		    Chronometer mychronometer= (Chronometer) linearlayout2.getChildAt(2);
- 		    timestring = mychronometer.getText().toString();
- 		    if (timestring.length()==5){
- 		    	timestring = "00:" + timestring;
-		    }
-		    else if (timestring.length()==7){
-		    	timestring = "0" + timestring;
-		    }*/
  		    
- 		    Chronometer chronometerTotalTime = (Chronometer) findViewById(R.id.chronometerTotalTime);
-		    String timetotalstring = chronometerTotalTime.getText().toString();
-		    if (timetotalstring.length()==5){
-		    	timetotalstring = "00:" + timetotalstring;
-		    }
-		    else if (timestring.length()==7){
-		    	timetotalstring = "0" + timetotalstring;
-		    }
- 		    
- 		    output.append("    " + timetotalstring /*getCurrentTimeStamp()*/ + ";" + /*timestring + ";" +*/ map_modified.get("display_name") + ";listener;" + "\r\n");
+ 		    output.append("    " + getTime() + ";" + map_modified.get("display_name") + ";listener;" + "\r\n");
 		   				
 	    }
 	}
 	
-	public void IdleToSpeaking(/*int position*/){
+	public void IdleToListening(int position){
+		ArrayList<HashMap<String, Object>> listItem = new ArrayList<HashMap<String, Object>>();
+    	HashMap<String, Object> map_original = null;
+		HashMap<String, Object> map_modified = null; 
+		
+		HashMap<String, Object> map = (HashMap<String, Object>) lVDataInactif.getItemAtPosition(position);
+		listItem.add(0, map);
+			
+		listItemInactif.remove(listItem.get(0));
+		mScheduleInactif.notifyDataSetChanged();
+			
+		map_original = new HashMap<String, Object>();
+		map_original = (HashMap<String, Object>) listItem.get(0);
+		map_modified = new HashMap<String, Object>();
+		map_modified = (HashMap<String, Object>) listItem.get(0);
+		map_modified.put("chronometre", new ChronoData((ChronoData) map_original.get("chronometre"), "no_change"));
+		map_modified.put("isSelected", false);
+		listItemEcoute.add(0, map_modified);
+		   	
+		mScheduleEcoute.notifyDataSetChanged();
+ 		    
+ 		output.append("    " + getTime() + ";" + map_modified.get("display_name") + ";listener;" + "\r\n");
+	}
+	
+	public void IdleToSpeaking(){
 		ArrayList<HashMap<String, Object>> listItem = new ArrayList<HashMap<String, Object>>();
     	HashMap<String, Object> map_original = null;
 		HashMap<String, Object> map_modified = null; 
@@ -1229,7 +1286,7 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
 			HashMap<String, Object> map = (HashMap<String, Object>) lVDataInactif.getItemAtPosition(i);
 			
 			if ((Boolean) map.get("isSelected") == true){
-				listItem.add(map);
+				listItem.add(0, map);
 				System.out.println("display_name : " +  map.get("display_name").toString());
 			}
 		}
@@ -1245,44 +1302,62 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
 			map_modified = (HashMap<String, Object>) listItem.get(i);
 			map_modified.put("chronometre", new ChronoData((ChronoData) map_original.get("chronometre"), "start"));
 			map_modified.put("isSelected", false);
-			listItemParole.add(map_modified);
+			listItemParole.add(0, map_modified);
 		   	
 		   	mScheduleParole.notifyDataSetChanged();
 
-		   	/*int position = listItemParole.size()-1;
-		   	View convertView = null;
- 		    LinearLayout linearlayout = (LinearLayout) mScheduleParole.getView(position, convertView, lVDataParole);
- 		    LinearLayout linearlayout2 = (LinearLayout) linearlayout.getChildAt(1);
- 		    Chronometer mychronometer= (Chronometer) linearlayout2.getChildAt(2);
- 		    timestring = mychronometer.getText().toString();
- 		    if (timestring.length()==5){
- 		    	timestring = "00:" + timestring;
-		    }
-		    else if (timestring.length()==7){
-		    	timestring = "0" + timestring;
-		    }*/
-		    	
-		    Chronometer chronometerTotalTime = (Chronometer) findViewById(R.id.chronometerTotalTime);
-			String timetotalstring = chronometerTotalTime.getText().toString();
-			if (timetotalstring.length()==5){
-			   	timetotalstring = "00:" + timetotalstring;
-			}
-			else if (timestring.length()==7){
-			   	timetotalstring = "0" + timetotalstring;
-		    }
- 		    
- 		    output.append("    " + timetotalstring /*getCurrentTimeStamp()*/ + ";" + /*timestring + ";" +*/ map_modified.get("display_name") + ";speaker;" + "\r\n");
+ 		    output.append("    " + getTime()  + ";" + map_modified.get("display_name") + ";speaker;" + "\r\n");
 		   	
 	    }
 	}
 	
-	protected void onDestroy() {
-        super.onDestroy();
+	public void IdleToSpeaking(int position){
+		ArrayList<HashMap<String, Object>> listItem = new ArrayList<HashMap<String, Object>>();
+    	HashMap<String, Object> map_original = null;
+		HashMap<String, Object> map_modified = null; 
+		
+		HashMap<String, Object> map = (HashMap<String, Object>) lVDataInactif.getItemAtPosition(position);
+		listItem.add(0, map);
+
+		listItemInactif.remove(listItem.get(0));
+		mScheduleInactif.notifyDataSetChanged();
+			
+		map_original = new HashMap<String, Object>();
+		map_original = (HashMap<String, Object>) listItem.get(0);
+		map_modified = new HashMap<String, Object>();
+		map_modified = (HashMap<String, Object>) listItem.get(0);
+		map_modified.put("chronometre", new ChronoData((ChronoData) map_original.get("chronometre"), "start"));
+		map_modified.put("isSelected", false);
+		listItemParole.add(0, map_modified);
+		   	
+	   	mScheduleParole.notifyDataSetChanged();
+
+ 		output.append("    " + getTime()  + ";" + map_modified.get("display_name") + ";speaker;" + "\r\n");
+		   	
 	}
 	
-	public boolean isListViewCheck(MyListView lV){
+	public String getTime(){
+		
+		Chronometer chronometerTotalTime = (Chronometer) findViewById(R.id.chronometerTotalTime);
+		String timetotalstring = chronometerTotalTime.getText().toString();
+		if (timetotalstring.length()==5){
+		   	timetotalstring = "00:" + timetotalstring;
+		}
+		else if (timestring.length()==7){
+		   	timetotalstring = "0" + timetotalstring;
+	    }
+		return timetotalstring;
+	}
+	
+	protected void onDestroy() {
+        super.onDestroy();
+        timer.cancel();
+        tache.cancel();
+
+	}
+	
+	/*public boolean isListViewCheck(MyListView lV){
 		boolean isCheck = false;
-		//System.out.println("Sentinelle");
 		for (int i = 0; i < lV.getCount(); i++ ){
 			
 			HashMap<String, Object> map = (HashMap<String, Object>) lV.getItemAtPosition(i);
@@ -1296,6 +1371,48 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
 		
 		return isCheck;
 		
+	}*/
+	
+	public boolean islVDataEcouteCheck(){
+		boolean isCheck = false;
+		for (int i = 0; i < lVDataEcoute.getCount(); i++ ){
+			
+			HashMap<String, Object> map = (HashMap<String, Object>) lVDataEcoute.getItemAtPosition(i);
+			
+			if ((Boolean) map.get("isSelected") == true){
+				isCheck = true;
+				break;
+			}
+		}
+		return isCheck;
+	}
+	
+	public boolean islVDataParoleCheck(){
+		boolean isCheck = false;
+		for (int i = 0; i < lVDataParole.getCount(); i++ ){
+			
+			HashMap<String, Object> map = (HashMap<String, Object>) lVDataParole.getItemAtPosition(i);
+			
+			if ((Boolean) map.get("isSelected") == true){
+				isCheck = true;
+				break;
+			}
+		}
+		return isCheck;
+	}
+	
+	public boolean islVDataInactifCheck(){
+		boolean isCheck = false;
+		for (int i = 0; i < lVDataInactif.getCount(); i++ ){
+			
+			HashMap<String, Object> map = (HashMap<String, Object>) lVDataInactif.getItemAtPosition(i);
+			
+			if ((Boolean) map.get("isSelected") == true){
+				isCheck = true;
+				break;
+			}
+		}
+		return isCheck;
 	}
 	
 	/*public void myClickHandlerListViewEcoute(View v) {
@@ -1308,4 +1425,227 @@ public class MainActivity extends Activity implements OnItemDoubleTapLister, OnI
 		alertDialog.show();
 		
 	}*/
+	
+	private boolean back_answer = false;
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) 
+    {        
+       if (keyCode == KeyEvent.KEYCODE_BACK) {
+          AlertDialog.Builder builder = new AlertDialog.Builder(this);
+          builder.setMessage("Etes vous sûr de vouloir quitter ?")
+             .setCancelable(false)
+             .setPositiveButton("Oui", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                   back_answer = true;
+                   finish();
+                }
+             })
+             .setNegativeButton("Non", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                   back_answer = false;
+                }
+             });
+           AlertDialog alert = builder.create();
+           alert.show();
+        }
+       return back_answer;
+           
+     }
+    
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+    	if (requestCode == 1) {
+
+    		if(resultCode == RESULT_OK){      
+
+    			List<String> listSelectedContactToAdd = new ArrayList<String>();
+    	    	//Bundle b = getIntent().getExtras();
+    	    	String s = data.getStringExtra("result");
+    	    	Scanner scanner = new Scanner(s);
+    			while (scanner.hasNextLine()) {
+    				String id_contact = scanner.nextLine();
+    				listSelectedContactToAdd.add(id_contact);
+    			}			
+    	    	
+    	    	Uri uri = ContactsContract.Contacts.CONTENT_URI;
+    			String[] projection = new String[] { ContactsContract.Contacts._ID,
+    	                                        ContactsContract.Contacts.DISPLAY_NAME/*,
+    	                                        ContactsContract.Contacts.Data.DATA1*/};
+    	    	
+    	        // works in Honeycomb
+    	        String selection = null;
+    	        String[] selectionArgs = null;
+    	        String sortOrder = null;
+    	        
+    	        //output.append("begin: participants list \r\n"); 
+    	        
+    	        CursorLoader cursorLoader = new CursorLoader(
+    	        		this, 
+    	                uri, 
+    	                projection, 
+    	                selection, 
+    	                selectionArgs, 
+    	                sortOrder);
+
+    	        Cursor mCursor = cursorLoader.loadInBackground();
+    	        
+    	    	mCursor.moveToFirst();
+    	    	
+    	    	int i = 0;
+    	    	
+    	    	while (mCursor.isAfterLast() == false){
+    	    		
+    	    		if (listSelectedContactToAdd.indexOf(mCursor.getString(0)) != -1){
+    	    			
+    	    			HashMap<String, Object> map = new HashMap<String, Object>();
+    	   		    	Bitmap bitmap = getPhoto(mCursor.getInt(0));
+    		    		bitmap = Bitmap.createScaledBitmap (bitmap, 64, 64, true);
+    		    		map.put("img", bitmap);
+    		            map.put("display_name", mCursor.getString(1));
+    		            map.put("isSelected", false);
+    		        	map.put("tag2", i);
+    		        	map.put("tag3", i);
+    		        	map.put("onPause", false);
+    		            
+    		            //output.append( "    " + mCursor.getString(1) + "\r\n");
+    		        	AddContactToGroup(mCursor.getString(0));
+    		        	listSelectedContact.add(mCursor.getString(0));
+    		        	AddContactToFile(mCursor.getString(1));
+    		        	
+    		            Cursor orgCur = getContentResolver().query(ContactsContract.Data.CONTENT_URI,
+    		            									  new String[] {ContactsContract.CommonDataKinds.Organization.COMPANY,
+    		            													ContactsContract.CommonDataKinds.Organization.TITLE}, 
+    		            									  ContactsContract.Data.CONTACT_ID + " = " + mCursor.getString(0)
+    		            									  	+ " AND ContactsContract.Data.MIMETYPE = '"
+    		            									  	+ ContactsContract.CommonDataKinds.Organization.CONTENT_ITEM_TYPE
+    		            									  	+ "'",
+    		            									  null,
+    		            									  null);
+    		            String company = null;
+    		            String title = null;
+    		            if (orgCur.moveToFirst()) {
+    		            	company = orgCur.getString(0);
+    		            	title = orgCur.getString(1);
+    		            	
+    		            	Log.i("company", "company : " + orgCur.getString(0));
+    		            	Log.i("title", "title : " + orgCur.getString(1));
+    		            		            	
+    		            }
+    		            orgCur.close();
+    		            
+    		            if (company != null){
+    		            	if (title != null){
+    			            	map.put("company_and_title", company + " (" + title + ")");
+    			            }
+    			            else{
+    			            	map.put("company_and_title", company);
+    			            }	
+    		            }
+    		            else {
+    		            	map.put("company_and_title", "");
+    		            }
+    		            
+    		            map.put("chronometre", new ChronoData(SystemClock.elapsedRealtime(), 0, "modeEcoute"));
+    		            //map.put("chronometre", new ChronoData(SystemClock.elapsedRealtime(), 0, "start"));
+    		            
+    		            listItemEcoute.add(map); 
+    		            
+    		            
+    		            
+    		        }
+    	    		
+    	    		i++;
+    	    		mCursor.moveToNext();
+    	    	}
+    	    	mCursor.close();
+    	    	
+    	    	/*Calendar c = Calendar.getInstance();
+    	        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    	        String formattedDate = df.format(c.getTime());
+    	    	
+    	    	output.append("end: participants list  \r\n \r\nbegin: meeting " + formattedDate + "\r\n"); */
+    	    	
+    	        mScheduleEcoute = new /*SimpleAdapter*/MyListAdapterCheckmarkEcoute (MainActivity.this, this.getBaseContext(), listItemEcoute, R.layout.affichageitem_with_chekmark_ecoute,
+    	                new String[] { "img", "display_name", "company_and_title", "chronometre", "tag2", "tag3"}, 
+    	                new int[] { R.id.IMG_ecoute, R.id.DISPLAY_NAME_ecoute, R.id.COMPANY_AND_TITLE_ecoute, R.id.CHRONOMETRE_ecoute, R.id.tag2_ecoute,  R.id.tag3_ecoute});
+    	        
+    	        mScheduleEcoute.setViewBinder(new MyViewBinder()); // VOICI LA CLE!!!!
+    	  	    
+    	        //On attribut Ã  notre listView l'adapter que l'on vient de crÃ©er
+    	        lVDataEcoute.setAdapter(mScheduleEcoute);
+    			
+    	        
+    			
+    			
+    			
+    	    }
+    	    if (resultCode == RESULT_CANCELED) {    
+    	         //Write your code if there's no result
+    	    }
+    	    
+    	}
+    }
+    
+    public void AddContactToFile(String display_name){
+    	
+    	//Add contact in the file
+    	if (newParticipant == false){    	
+    		output.insert(output.indexOf("end: participants list") + 22, 
+    					  "\r\n\r\n" + 
+    					  "begin: new participant"  +
+    					  "\r\n    " + display_name + ";" +
+    					  getTime() + ";" +
+    					  "\r\n" +
+    					  "end: new participant");
+    		newParticipant = true;
+    	}
+    	else{
+    		output.insert(output.indexOf("end: new participant"),
+    					  "    " + display_name + ";" +
+      					  getTime() + ";" +
+      					  "\r\n");
+    	}
+     	
+    }
+    
+    public void AddContactToGroup(String id_contact){
+    	
+    	//CrÃ©ation d'une instance de ma classe GroupBDD
+	    GroupBDD groupBdd = new GroupBDD(this);
+	    groupBdd.open();
+	        	
+	    Bundle b = getIntent().getExtras();
+	    String SGroupName = b.getString("groupName");
+	    Group group = new Group(SGroupName, id_contact);
+	    		
+		groupBdd.insertGroup(group);
+	    groupBdd.close();
+    }
+    
+    public Integer getTimeIntervalForSaveFile(){
+    	
+    	PreferencesBDD preferencesBdd = new PreferencesBDD(this);
+    	
+    	try{
+			
+			preferencesBdd.open();
+			
+			Cursor mCursor = preferencesBdd.getCursor();
+			mCursor.moveToLast();
+							
+			int timeintervalforsavefile =  mCursor.getInt(NUM_COL_TIME_INTERVAL_FOR_SAVE_FILE);
+			
+			preferencesBdd.close();
+			
+			return timeintervalforsavefile * 60000;
+		}
+		catch (Exception e){
+			preferencesBdd.close();
+    		return 60000;
+    	}
+    			
+    }
+
+ 	
 }

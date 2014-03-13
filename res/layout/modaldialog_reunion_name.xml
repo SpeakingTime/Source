@@ -4,23 +4,19 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
     
-    <TextView 
-        android:id="@+id/TextViewAlertDialogPerso"
+	<TextView 
+        android:id="@+id/TextViewModalDialogReunionName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="And send it by ssh ?" 
+        android:text="Name of the reunion :" 
         android:textColor="@android:color/white"
     />
     
-
-    
-    <CheckBox
-        android:id="@+id/ChkAlertDialogPerso"
-        android:layout_width="wrap_content"
+    <EditText 
+        android:id="@+id/EditTextModalDialogReunionName"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="@string/checkBoxAlertDialogPerso" 
-        android:textColor="@android:color/white"
-        android:onClick="myClickHandlerSSH"
+        android:layout_below="@id/TextViewModalDialogReunionName"
     />
-
+    
 </LinearLayout>

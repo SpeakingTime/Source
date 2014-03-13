@@ -1,6 +1,7 @@
 package com.example.observationreunion;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 
@@ -17,13 +18,17 @@ import android.graphics.Color;
 
 public class BarGraph1 {
 	
-	List<String> ParticipantsList = new ArrayList<String>();
-	List<Integer> SpeakingTimeList = new ArrayList<Integer>();
+	/*List<String> ParticipantsList = new ArrayList<String>();
+	List<Integer> SpeakingTimeList = new ArrayList<Integer>();*/
+	List<ParticipantAndSpeakingTime> participantAndSpeakingTimeList = new ArrayList<ParticipantAndSpeakingTime>();
+	int timeIntervalInSec = -1;
 	
-	public BarGraph1(String participantsWithSpeakingTime) {
+	public BarGraph1(String participantsWithSpeakingTime, int timeIntervalInMin) {
 		// TODO Auto-generated constructor stub
-		ParticipantsList =getListParticipants(participantsWithSpeakingTime);
-		SpeakingTimeList = getListValues(participantsWithSpeakingTime);
+		/*ParticipantsList =getListParticipants(participantsWithSpeakingTime);
+		SpeakingTimeList = getListValues(participantsWithSpeakingTime);*/
+		participantAndSpeakingTimeList = getParticipantsAndSpeakingTimes(participantsWithSpeakingTime);
+		timeIntervalInSec = timeIntervalInMin * 60;
 	}
 	
 public Intent getIntent(Context context){
@@ -53,7 +58,7 @@ public Intent getIntent(Context context){
         //customization of the chart
    
         XYSeriesRenderer renderer = new XYSeriesRenderer();     // one renderer for one series
-        renderer.setColor(Color.RED);
+        renderer.setColor(Color.parseColor("#0099FF"));
         renderer.setDisplayChartValues(true);
         renderer.setChartValuesSpacing((float) 5.5d);
         renderer.setLineWidth((float) 10.5d);
@@ -74,7 +79,8 @@ public Intent getIntent(Context context){
         mRenderer.setXAxisMin(0);
         mRenderer.setYAxisMin(0);
         //mRenderer.setXAxisMax(5);
-        mRenderer.setXAxisMax(ParticipantsList.size()+1);
+        /*mRenderer.setXAxisMax(ParticipantsList.size()+1);*/
+        mRenderer.setXAxisMax(participantAndSpeakingTimeList.size()+1);
         //mRenderer.setYAxisMax(100);
         mRenderer.setYAxisMax(Math.round(getRangeMax()/10)*10+10);
 //   
@@ -82,8 +88,12 @@ public Intent getIntent(Context context){
         mRenderer.setXLabels(0);
         
         for (int i = 0; i < getRangeMax(); i++){
-        	String minRange = String.valueOf(i*120);
-        	String maxRange = String.valueOf(i*120 + 120);
+        	/*String minRange = String.valueOf(i*120);
+        	String maxRange = String.valueOf(i*120 + 120);*/
+        	//String minRange = String.valueOf(i*120/60);
+        	//String maxRange = String.valueOf(i*120/60 + 120/60);
+        	String minRange = String.valueOf(i*timeIntervalInSec/60);
+        	String maxRange = String.valueOf(i*timeIntervalInSec/60 + timeIntervalInSec/60);
 			mRenderer.addXTextLabel(i+1, "[" + minRange + " - " + maxRange + "]");
 		}
         
@@ -105,7 +115,7 @@ public Intent getIntent(Context context){
 	
 	}
 	
-	public List<String> getListParticipants(String participantsWithSpeakingTime){
+	/*public List<String> getListParticipants(String participantsWithSpeakingTime){
 		List<String> listSelectedParticipants = new ArrayList<String>();
 		Scanner scanner = new Scanner(participantsWithSpeakingTime);
 		//System.out.println("var : " + participantsWithSpeakingTime);
@@ -131,9 +141,29 @@ public Intent getIntent(Context context){
 			listSelectedValues.add(i_value);
 		}	
     	return listSelectedValues;
-	}
+	}*/
+
+
+	public List<ParticipantAndSpeakingTime> getParticipantsAndSpeakingTimes(String participantsWithSpeakingTime){
 	
-	public int getRangeMax(){
+	List<ParticipantAndSpeakingTime> listParticipantAndSpeakingTime = new ArrayList<ParticipantAndSpeakingTime>();
+	Scanner scanner = new Scanner(participantsWithSpeakingTime);
+	
+	while (scanner.hasNextLine()) {
+		String line = scanner.nextLine();
+		String participant = line.substring(0, line.indexOf(";", 0));
+		int pos = line.indexOf(";", 0);
+		String value = line.substring(pos+1, line.length()-1);
+		//System.out.println("value : " + value);
+		int i_value = Integer.valueOf(value);
+		ParticipantAndSpeakingTime participantAndSpeakingTime = new ParticipantAndSpeakingTime(participant, i_value);
+		listParticipantAndSpeakingTime.add(participantAndSpeakingTime);
+	}
+		
+	return listParticipantAndSpeakingTime;
+}
+	
+	/*public int getRangeMax(){
 		int RangeMaxFinal = 0;
 		for (int i =0; i < SpeakingTimeList.size(); i++){
 			int RangeMax = 1;
@@ -170,5 +200,49 @@ public Intent getIntent(Context context){
 			//System.out.println("listRangeSpeakingTime.get(" + String.valueOf(range) +") = " + String.valueOf(listRangeSpeakingTime.get(range)));
 		}
 		return listRangeSpeakingTime;
+	}*/
+	
+	public int getRangeMax(){
+		int RangeMaxFinal = 0;
+		for (int i =0; i < participantAndSpeakingTimeList.size(); i++){
+			int RangeMax = 1;
+			//int j = 120;
+			int j = timeIntervalInSec;
+			while (participantAndSpeakingTimeList.get(i).getValue() > j) {
+				//j = j + 120;	
+				j = j + timeIntervalInSec;
+				RangeMax = RangeMax + 1;
+			}
+			if (RangeMax > RangeMaxFinal){
+				RangeMaxFinal = RangeMax;
+			}
+		}
+		return RangeMaxFinal;
 	}
+	
+	public List<Integer> getRangeSpeakingTimeList(){
+		List<Integer> listRangeSpeakingTime = new ArrayList<Integer>();
+		int nbRange = getRangeMax();
+		//System.out.println("getRangeMax() = " + getRangeMax());
+		//Initialisation de la liste de Range
+		for (int i = 0; i < nbRange; i++){
+			listRangeSpeakingTime.add(0);
+		}
+		
+		for (int i =0; i < participantAndSpeakingTimeList.size(); i++){
+			int range = 0;
+			//int j = 120;
+			int j = timeIntervalInSec;
+			while (participantAndSpeakingTimeList.get(i).getValue() > j) {
+				//j = j + 120;
+				j = j + timeIntervalInSec;
+				range = range + 1;
+			}
+			//listRangeSpeakingTime.add(range, listRangeSpeakingTime.get(range) + 1);
+			listRangeSpeakingTime.set(range, listRangeSpeakingTime.get(range) + 1);
+			//System.out.println("listRangeSpeakingTime.get(" + String.valueOf(range) +") = " + String.valueOf(listRangeSpeakingTime.get(range)));
+		}
+		return listRangeSpeakingTime;
+	}
+	
 }

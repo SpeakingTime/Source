@@ -38,7 +38,7 @@
 	   		android:textSize="16px"
 	        android:textStyle="bold"
             android:textColor="@android:color/white"
-            android:text="Select a group" 
+            android:text="Select a group first" 
 		/>
    	</LinearLayout>
 	    

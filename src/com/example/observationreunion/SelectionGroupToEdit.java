@@ -49,7 +49,7 @@ public class SelectionGroupToEdit extends Activity{
 						TextView textViewGroupName = (TextView) findViewById (R.id.textView_group_name_to_edit);
 						String s_group_name_choiced =  textViewGroupName.getText().toString();
 						
-						if (!s_group_name_choiced.equalsIgnoreCase("Select a group")){
+						if (!s_group_name_choiced.equalsIgnoreCase("Select a group first")){
 							Intent intent = new Intent(SelectionGroupToEdit.this, SelectionContactToEdit.class);
 							intent.putExtra("selectedContact", ValidateGroupSelection());
 							intent.putExtra("groupName", GetGroupName());

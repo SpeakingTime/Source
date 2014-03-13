@@ -130,7 +130,7 @@ public class ModalDialog {
 		return mChoice;
 	}
 	
-	public String showEditTextDialog(Context context, String info) {
+	/*public String showEditTextDialog(Context context, String info) {
 		
 		if (!prepareModal()) {
 			return "Cancel";
@@ -181,11 +181,61 @@ public class ModalDialog {
 		
 		doModal();
 		return mEditText;
+	}*/
+	
+	public String showSaveFile(Context context, String info) {
+		
+		if (!prepareModal()) {
+			return "Cancel";
+		}
+		
+		mEditText = "Cancel";
+		
+		LayoutInflater factory = LayoutInflater.from(context);
+		final View alertDialogView = factory.inflate(R.layout.alertdialogperso, null);
+
+				
+		AlertDialog.Builder builder = new AlertDialog.Builder(context);
+		builder.setMessage(info);
+		
+		builder.setView(alertDialogView);
+		
+		builder.setCancelable(false);
+		
+		
+		
+		builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+				ModalDialog.this.mQuitModal = true;
+				ModalDialog.this.mEditText = "Yes";
+				
+				dialog.dismiss();
+				
+			}
+		});
+		
+		builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+				ModalDialog.this.mQuitModal = true;
+				ModalDialog.this.mEditText = "Cancel";
+				dialog.cancel();
+			}
+		});
+		
+		CheckBox chkSSH = (CheckBox) alertDialogView.findViewById(R.id.ChkAlertDialogPerso);
+		
+		
+		AlertDialog alert = builder.create();
+		
+		alert.show();
+		
+		doModal();
+		return mEditText;
 	}
 	
 	public String showSSHDialog(Context context, String info, 
 								final String host, final String username, 
-								final String password, final String meeting_name, final String file) {
+								/*final String password,*/ final String meeting_name, final String file) {
 		
 		if (!prepareModal()) {
 			return "Cancel";
@@ -207,7 +257,14 @@ public class ModalDialog {
 		builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int id) {
 				
-				SendToSSH(host, username, password, meeting_name, file);
+				EditText editTextHost = (EditText) alertDialogView.findViewById(R.id.EditTextAlertDialogHost);
+			    String host_ = editTextHost.getText().toString(); 
+			    EditText editTextUsername = (EditText) alertDialogView.findViewById(R.id.EditTextAlertDialogUsername);
+			    String username_ = editTextUsername.getText().toString();
+			    EditText editTextPassword = (EditText) alertDialogView.findViewById(R.id.EditTextAlertDialogPassword);
+			    String password_ = editTextPassword.getText().toString();
+				
+				SendToSSH(host_, username_, password_, meeting_name, file);
 				
 				ModalDialog.this.mQuitModal = true;
 				
@@ -237,8 +294,8 @@ public class ModalDialog {
 	    editTextHost.setText(host); 
 	    EditText editTextUsername = (EditText) alertDialogView.findViewById(R.id.EditTextAlertDialogUsername);
 	    editTextUsername.setText(username);
-	    EditText editTextPassword = (EditText) alertDialogView.findViewById(R.id.EditTextAlertDialogPassword);
-	    editTextPassword.setText(password);
+	    /*EditText editTextPassword = (EditText) alertDialogView.findViewById(R.id.EditTextAlertDialogPassword);
+	    editTextPassword.setText(password);*/
 		
 		alert.show();
 		
@@ -246,6 +303,56 @@ public class ModalDialog {
 		return mEditText;
 		
 		
+	}
+	
+	public String showModalDialogReunionName(Context context, String info) {
+		
+		if (!prepareModal()) {
+			return "Cancel";
+		}
+		
+		mEditText = "Cancel";
+		
+		LayoutInflater factory = LayoutInflater.from(context);
+		final View alertDialogView = factory.inflate(R.layout.modaldialog_reunion_name, null);
+
+				
+		AlertDialog.Builder builder = new AlertDialog.Builder(context);
+		builder.setMessage(info);
+		
+		builder.setView(alertDialogView);
+		
+		builder.setCancelable(false);
+		
+		
+		
+		builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+				ModalDialog.this.mQuitModal = true;
+				
+				final EditText editTextAlertDialogPerso = (EditText) alertDialogView.findViewById(R.id.EditTextModalDialogReunionName);
+				
+				ModalDialog.this.mEditText = editTextAlertDialogPerso.getText().toString();
+				
+				dialog.dismiss();
+				
+			}
+		});
+		
+		builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+				ModalDialog.this.mQuitModal = true;
+				ModalDialog.this.mEditText = "Cancel";
+				dialog.cancel();
+			}
+		});
+		
+		AlertDialog alert = builder.create();
+		
+		alert.show();
+		
+		doModal();
+		return mEditText;
 	}
 			
 	private boolean prepareModal() {
@@ -348,7 +455,7 @@ public class ModalDialog {
 		
 		JSch jsch=new JSch();
                 	 
-        try {
+        try {        	
 			Session session=jsch.getSession(username, host, 22);
 			
 			java.util.Properties config = new java.util.Properties(); 
@@ -387,7 +494,7 @@ public class ModalDialog {
 			return true;
 		}
 		catch (Exception e){
-			System.out.println(e.toString());
+			System.out.println(e);
 			return false;
 		}
 	}

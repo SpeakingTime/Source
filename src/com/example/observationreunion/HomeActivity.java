@@ -1,5 +1,8 @@
 package com.example.observationreunion;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -29,6 +32,19 @@ public class HomeActivity extends Activity{
 				
 		});
 		
+		Button buttonCreateGroup = (Button) findViewById(R.id.buttonCreateGroup_Home);
+		buttonCreateGroup.setOnClickListener( 
+				new Button.OnClickListener(){
+					
+					@Override
+					public void onClick(View v) {
+						// TODO Auto-generated method stub
+						Intent intent = new Intent(HomeActivity.this, SelectionContact.class);
+						startActivity(intent);
+					}
+				
+		});
+		
 		Button buttonEditGroup = (Button) findViewById(R.id.buttonEditGroup);
 		buttonEditGroup.setOnClickListener( 
 				new Button.OnClickListener(){
@@ -37,19 +53,6 @@ public class HomeActivity extends Activity{
 					public void onClick(View v) {
 						// TODO Auto-generated method stub
 						Intent intent = new Intent(HomeActivity.this, SelectionGroupToEdit.class);
-						startActivity(intent);
-					}
-				
-		});
-		
-		Button buttonCreateGroupOrSelectContacts = (Button) findViewById(R.id.buttonCreateGroupOrSelectContacts);
-		buttonCreateGroupOrSelectContacts.setOnClickListener( 
-				new Button.OnClickListener(){
-					
-					@Override
-					public void onClick(View v) {
-						// TODO Auto-generated method stub
-						Intent intent = new Intent(HomeActivity.this, SelectionContact.class);
 						startActivity(intent);
 					}
 				
@@ -92,6 +95,18 @@ public class HomeActivity extends Activity{
 					}
 				
 		});
+		
+		/*long time = 2000;                 
+        long startTime = 0;                    
+        Timer timer = new Timer();             
+        TimerTask tache = new TimerTask() {     
+            @Override
+                public void run() {
+                    System.out.println("salut");   
+                }
+        };
+        timer.scheduleAtFixedRate(tache,startTime,time);*/
+		
 	}
 	
 	

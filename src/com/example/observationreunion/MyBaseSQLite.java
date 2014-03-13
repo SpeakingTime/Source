@@ -20,11 +20,11 @@ public class MyBaseSQLite extends SQLiteOpenHelper{
 	private static final String COL_ID_PREFERENCES  = "_ID_preferences";
 	private static final String COL_HOST = "host";
 	private static final String COL_USERNAME = "username";
-	private static final String COL_PASSWORD = "password";
+	private static final String COL_TIME_INTERVAL_FOR_SAVE_FILE = "timeintervalforsavefile";
 	
 	private static final String CREATE_BDD_PREFERENCES = "CREATE TABLE IF NOT EXISTS " + TABLE_PREFERENCES + " ("
 			+ COL_ID_PREFERENCES + " INTEGER PRIMARY KEY AUTOINCREMENT, " + COL_HOST + " TEXT NOT NULL, "
-			+ COL_USERNAME + " TEXT NOT NULL, " + COL_PASSWORD + " TEXT NOT NULL);";
+			+ COL_USERNAME + " TEXT NOT NULL, " + COL_TIME_INTERVAL_FOR_SAVE_FILE + " TEXT NOT NULL);";
  
 	public MyBaseSQLite(Context context, String name, CursorFactory factory, int version) {
 		super(context, name, factory, version);

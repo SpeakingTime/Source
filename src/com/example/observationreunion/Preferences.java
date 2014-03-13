@@ -5,14 +5,14 @@ public class Preferences {
 	private int _ID_preferences;
 	private String host;
 	private String username;
-	private String password;
- 
+	private String timeintervalforsavefile;
+
 	public Preferences(){}
  
-	public Preferences(String host, String username, String password){
+	public Preferences(String host, String username, String timeintervalforsavefile){
 		this.host = host;
 		this.username = username;
-		this.password = password;
+		this.timeintervalforsavefile = timeintervalforsavefile;
 	}
  
 	public int get_ID_preferences() {
@@ -38,18 +38,17 @@ public class Preferences {
 	public void setusername(String username) {
 		this.username = username;
 	}
+
+	public String gettimeintervalforsavefile() {
+		return timeintervalforsavefile;
+	}
+ 
+	public void settimeintervalforsavefile(String timeintervalforsavefile) {
+		this.timeintervalforsavefile = timeintervalforsavefile;
+	}
 	
-	public String getpassword() {
-		return password;
-	}
- 
-	public void setpassword(String password) {
-		this.password = password;
-	}
- 
 	public String toString(){
-		return "_ID_preferences : " + _ID_preferences + "\nhost : " + host + "\nusername : " + username
-				+ "\npassword" + password;
+		return "_ID_preferences : " + _ID_preferences + "\nhost : " + host + "\nusername : " + username;
 	}
 	
 }

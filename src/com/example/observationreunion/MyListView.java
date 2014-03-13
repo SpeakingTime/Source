@@ -88,7 +88,7 @@ public class MyListView extends ListView {
 					
 					/*LinearLayout ll = (LinearLayout)v.findViewById(R.id.item_ecoute);
 					System.out.println("ll : " + Integer.valueOf(ll.getTag().toString()));	*/	
-					
+										
 					mMessage = mMessage == null? new Message() : mHandler.obtainMessage();
 					
 					try {

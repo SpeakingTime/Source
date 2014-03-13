@@ -10,12 +10,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 
 public class StatisticResultActivity extends Activity{
 
@@ -49,7 +52,23 @@ public class StatisticResultActivity extends Activity{
     				
     				@Override
     				public void onClick(View v) {
-    					BarGraph bar = new BarGraph(getParticipantsWithSpeakingTime(filename));
+    					
+    					RadioGroup radioGroup = (RadioGroup) findViewById(R.id.radioOrder);
+    					int selectedId = radioGroup.getCheckedRadioButtonId();
+    					RadioButton radioOrderButton = (RadioButton) findViewById(selectedId);
+    					
+    					
+    					int order = -1;
+    					if  (radioOrderButton.getText().toString().equalsIgnoreCase("In increasing order")){
+    						order = 1;
+						}
+    					else if  (radioOrderButton.getText().toString().equalsIgnoreCase("In decreasing order")){
+    						order = 0;
+    					}
+    					
+    					System.out.println("order : " + order);
+    					
+    					BarGraph bar = new BarGraph(getParticipantsWithSpeakingTime(filename), order);
     					Intent barIntent = bar.getIntent(StatisticResultActivity.this);
     					//barIntent.putExtra("SelectedParticipantsWithSpeakingTime", getParticipantsWithListValue(filename));
     					startActivity(barIntent);
@@ -63,10 +82,26 @@ public class StatisticResultActivity extends Activity{
     				
     				@Override
     				public void onClick(View v) {
-    					BarGraph1 bar = new BarGraph1(getParticipantsWithSpeakingTime(filename));
-    					Intent barIntent = bar.getIntent(StatisticResultActivity.this);
-    					//barIntent.putExtra("SelectedParticipantsWithSpeakingTime", getParticipantsWithListValue(filename));
-    					startActivity(barIntent);
+    					
+    					EditText editTextTimeInterval = (EditText) findViewById(R.id.editTextTimeInterval);
+    					try{
+    						int timeInterval = Integer.valueOf((editTextTimeInterval.getText().toString()));
+    						
+    						BarGraph1 bar = new BarGraph1(getParticipantsWithSpeakingTime(filename), timeInterval);
+        					Intent barIntent = bar.getIntent(StatisticResultActivity.this);
+        					//barIntent.putExtra("SelectedParticipantsWithSpeakingTime", getParticipantsWithListValue(filename));
+        					startActivity(barIntent);
+    						
+    					}
+    					catch (Exception e){
+    						AlertDialog.Builder alertDialog = new AlertDialog.Builder(StatisticResultActivity.this);
+							alertDialog.setTitle("Warning");
+							alertDialog.setMessage("Please, enter an integer !");
+							alertDialog.show();
+    					}
+    						
+    					
+    					
     				}
     			}
     	);

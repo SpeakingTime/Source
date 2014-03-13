@@ -47,11 +47,34 @@ import android.widget.TextView;
 							TextView textViewGroupName = (TextView) findViewById (R.id.textView_group_name);
 							String s_group_name_choiced =  textViewGroupName.getText().toString();
 							
-							if (!s_group_name_choiced.equalsIgnoreCase("Select a group")){
-								Intent intent = new Intent(SelectionGroup.this, MainActivity.class);
-								intent.putExtra("selectedContact", ValidateGroupSelection());
-								startActivity(intent);
-								finish();
+							if (!s_group_name_choiced.equalsIgnoreCase("Select a group first")){
+								
+								ModalDialog modalDialog = new ModalDialog();
+								String meeting_name = modalDialog.showModalDialogReunionName(SelectionGroup.this, "Give a name to this meeting");    					
+								
+								if (meeting_name != "Cancel"){
+									if (meeting_name.equalsIgnoreCase("")){
+										
+										AlertDialog.Builder alertDialog = new AlertDialog.Builder(SelectionGroup.this);
+										alertDialog.setTitle("Warning");
+										alertDialog.setMessage("GIVE A VALID NAME !");
+										alertDialog.show();
+															
+									}
+									else {
+										
+										Intent intent = new Intent(SelectionGroup.this, MainActivity.class);
+										intent.putExtra("selectedContact", ValidateGroupSelection());
+										intent.putExtra("meetingName", meeting_name);
+										intent.putExtra("groupName",  s_group_name_choiced);
+										startActivity(intent);
+										finish();
+																		
+									}
+								}
+								
+								
+								
 							}
 							else {
 								AlertDialog.Builder alertDialog = new AlertDialog.Builder(SelectionGroup.this);

@@ -38,8 +38,27 @@
    			android:padding="5dip"
    			>
 			<Button
-    		    android:id="@+id/buttonCreateTheGroup"
-    		    android:text="@string/buttonCreateTheGroup"
+    		    android:id="@+id/buttonAddContact"
+    		    android:text="@string/buttonAddContact"
+    		    android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="4dip"
+				android:textSize="16dp"
+		    	>
+    		</Button>
+    	</LinearLayout>
+    	
+       	<LinearLayout 
+	        android:layout_width="match_parent"
+	    	android:layout_height="match_parent"
+	    	android:layout_weight="1"
+	    	android:gravity="center"
+	      	android:background="@drawable/border"
+   			android:padding="5dip"
+   			>
+			<Button
+    		    android:id="@+id/buttonCancelAddContact"
+    		    android:text="@string/buttonCancelAddContact"
     		    android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:layout_marginTop="4dip"

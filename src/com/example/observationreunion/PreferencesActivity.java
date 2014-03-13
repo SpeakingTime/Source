@@ -1,6 +1,8 @@
 package com.example.observationreunion;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.view.View;
@@ -12,7 +14,7 @@ public class PreferencesActivity extends Activity{
 	private static final int NUM_COL_ID_PREFERENCES = 0;
 	private static final int NUM_COL_HOST = 1;
 	private static final int NUM_COL_USERNAME = 2;
-	private static final int NUM_COL_PASSWORD = 3;
+	private static final int NUM_COL_TIME_INTERVAL_FOR_SAVE_FILE = 3;
 
 	
 	@Override
@@ -36,8 +38,16 @@ public class PreferencesActivity extends Activity{
 					
 					@Override
 					public void onClick(View v) {
-						SavePreferences();
-						finish();
+						try{
+							SavePreferences();
+							finish();
+						}
+						catch (NumberFormatException e){ 
+							AlertDialog.Builder alertDialog = new AlertDialog.Builder(PreferencesActivity.this);
+							alertDialog.setTitle("Warning");
+							alertDialog.setMessage("Please, enter an integer in time interval!");
+							alertDialog.show();	
+						}
 					}
 				});
 		
@@ -54,14 +64,14 @@ public class PreferencesActivity extends Activity{
 			String s_ID_preferences =  mCursor.getString(NUM_COL_ID_PREFERENCES);
 			String s_host =  mCursor.getString(NUM_COL_HOST);
 			String s_username =  mCursor.getString(NUM_COL_USERNAME);
-			String s_password =  mCursor.getString(NUM_COL_PASSWORD);
+			String s_timeintervalforsavefile =  mCursor.getString(NUM_COL_TIME_INTERVAL_FOR_SAVE_FILE);
 				
 			EditText editTextHost = (EditText) findViewById(R.id.host);
 		    editTextHost.setText(s_host); 
 		    EditText editTextUsername = (EditText) findViewById(R.id.username);
 		    editTextUsername.setText(s_username);
-		    EditText editTextPassword = (EditText) findViewById(R.id.password);
-		    editTextPassword.setText(s_password);
+		    EditText editTextTimeIntervalForSaveFile = (EditText) findViewById(R.id.timeintervalforsavefile);
+		    editTextTimeIntervalForSaveFile.setText(s_timeintervalforsavefile);
 				
 		}
 		catch(Exception e){
@@ -89,7 +99,7 @@ public class PreferencesActivity extends Activity{
     	}
 	}
     	
-	public Boolean SavePreferences(){
+	public Boolean SavePreferences() throws NumberFormatException{
 		
 		try {
 	    	//Création d'une instance de ma classe PreferencesBDD
@@ -99,11 +109,13 @@ public class PreferencesActivity extends Activity{
 	    	String host = editTextHost.getText().toString(); 
 	    	EditText editTextUsername = (EditText) findViewById(R.id.username);
 	    	String username = editTextUsername.getText().toString();
-	    	EditText editTextPassword = (EditText) findViewById(R.id.password);
-	    	String password = editTextPassword.getText().toString();
+	    	EditText editTextTimeIntervalForSaveFile = (EditText) findViewById(R.id.timeintervalforsavefile);
+	    	String timeintervalforsavefile = editTextTimeIntervalForSaveFile.getText().toString();
+	    	
+	    	int timeIntervalForSaveFile = Integer.valueOf((editTextTimeIntervalForSaveFile.getText().toString()));
 	    	
 	    	//Création des pr�ferences
-		    Preferences preferences = new Preferences(host, username, password);
+		    Preferences preferences = new Preferences(host, username, timeintervalforsavefile);
 	    		
 		    //On ouvre la base de données pour écrire dedans
 		    preferencesBdd.open();
@@ -114,6 +126,9 @@ public class PreferencesActivity extends Activity{
 	    	
 	    	return true;
     	}
+		catch (NumberFormatException e){
+			throw new NumberFormatException();
+		}
     	catch (Exception e){
     		return false;
     	}

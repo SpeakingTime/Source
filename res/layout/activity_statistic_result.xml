@@ -39,31 +39,86 @@
         android:orientation="vertical" 
         android:gravity="center" 
         android:layout_alignParentBottom="true">
-	    	
-        <Button
-		    android:id="@+id/buttonBarGraph"
-		    android:text="@string/buttonBarGraph"
+        
+        <LinearLayout 
 		    android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
-			android:layout_gravity="center" >
-	    </Button> 
-	    
-        <Button
-		    android:id="@+id/buttonBarGraph1"
-		    android:text="@string/buttonBarGraph1"
-		    android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
-			android:layout_gravity="center" >
-	    </Button>
-	    
-        <Button
-		    android:id="@+id/buttonBarGraph2"
-		    android:text="@string/buttonBarGraph2"
-		    android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
-			android:layout_gravity="center" >
-	    </Button>
+	        android:layout_height="wrap_content"
+	        android:orientation="horizontal" 
+	        android:gravity="left" 
+	        android:layout_alignParentBottom="true"> 
          
+		    <Button
+				android:id="@+id/buttonBarGraph"
+				android:text="@string/buttonBarGraph"
+				android:layout_width="300sp"
+				android:layout_height="wrap_content"
+				android:layout_gravity="left" >
+			</Button> 
+			
+		    <RadioGroup
+                android:id="@+id/radioOrder"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"  >
+         
+                <RadioButton
+                    android:id="@+id/inIncreasingOrder"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="In increasing order"
+                    android:textColor="@android:color/white"
+                    android:checked="true" />
+         
+                <RadioButton
+                    android:id="@+id/inDecreasingOrder"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="In decreasing order"
+                    android:textColor="@android:color/white" />
+         
+            </RadioGroup>
+		    
+		</LinearLayout>
+		    
+        <LinearLayout 
+		    android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:orientation="horizontal" 
+	        android:gravity="left" 
+	        android:layout_alignParentBottom="true">
+        
+		    <Button
+				android:id="@+id/buttonBarGraph1"
+				android:text="@string/buttonBarGraph1"
+				android:layout_width="300sp"
+				android:layout_height="wrap_content"
+				android:layout_gravity="left" >
+			</Button>
+			
+		    <EditText 
+		        android:id="@+id/editTextTimeInterval"
+		        android:text="@string/editTextTimeInterval"
+		        android:layout_width="50sp"
+				android:layout_height="wrap_content"
+		    />
+		    
+		    <TextView android:layout_width="wrap_content"
+		          android:layout_height="wrap_content"
+		          android:text="Time interval in minute"
+		          android:textColor="@android:color/white"
+			/>
+		    
+		    
+		</LinearLayout>
+		    
+	    <Button
+			android:id="@+id/buttonBarGraph2"
+			android:text="@string/buttonBarGraph2"
+			android:layout_width="300sp"
+			android:layout_height="wrap_content"
+			android:layout_gravity="left" >
+		</Button>
+		    
 	</LinearLayout>
 
 </LinearLayout>
