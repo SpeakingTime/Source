@@ -233,9 +233,9 @@ public class ModalDialog {
 		return mEditText;
 	}
 	
-	public String showSSHDialog(Context context, String info, 
+	public String showSSHDialog (Context context, String info, 
 								final String host, final String username, 
-								/*final String password,*/ final String meeting_name, final String file) {
+								/*final String password,*/ final String meeting_name, final String file) throws SSHException {
 		
 		if (!prepareModal()) {
 			return "Cancel";
@@ -264,15 +264,20 @@ public class ModalDialog {
 			    EditText editTextPassword = (EditText) alertDialogView.findViewById(R.id.EditTextAlertDialogPassword);
 			    String password_ = editTextPassword.getText().toString();
 				
-				SendToSSH(host_, username_, password_, meeting_name, file);
+
+			    
+			    if (SendToSSH(host_, username_, password_, meeting_name, file) == false){
+					ModalDialog.this.mEditText = "error"; 
+				}
+				else {
 				
+					final EditText editTextAlertDialogPerso = (EditText) alertDialogView.findViewById(R.id.EditTextAlertDialogHost);
+				
+					ModalDialog.this.mEditText = editTextAlertDialogPerso.getText().toString();
+				}
+			
 				ModalDialog.this.mQuitModal = true;
-				
-				final EditText editTextAlertDialogPerso = (EditText) alertDialogView.findViewById(R.id.EditTextAlertDialogHost);
-				
-				ModalDialog.this.mEditText = editTextAlertDialogPerso.getText().toString();
-				
-				dialog.dismiss();
+				//dialog.dismiss();
 				
 			}
 		});
@@ -451,7 +456,7 @@ public class ModalDialog {
 		}
 	}
 	
-	private Boolean SendToSSH(String host, String username, String password, String meeting_name, String file){
+	private Boolean SendToSSH (String host, String username, String password, String meeting_name, String file){
 		
 		JSch jsch=new JSch();
                 	 
@@ -494,10 +499,18 @@ public class ModalDialog {
 			return true;
 		}
 		catch (Exception e){
-			System.out.println(e);
+			System.out.println("Not send : " + e);
 			return false;
+			
 		}
 	}
+	
+	public class SSHException extends Exception {
+		  public SSHException() { super(); }
+		  public SSHException(String message) { super(message); }
+		  public SSHException(Throwable cause) { super(cause); }
+		  
+		}
 	
 	
 }

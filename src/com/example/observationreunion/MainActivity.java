@@ -14,6 +14,7 @@ import java.util.Scanner;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import com.example.observationreunion.ModalDialog.SSHException;
 import com.example.observationreunion.MyListAdapterCheckmarkEcoute.IListAdapterCheckmarkEcouteCallback;
 import com.example.observationreunion.MyListAdapterCheckmarkInactif.IListAdapterCheckmarkInactifCallback;
 import com.example.observationreunion.MyListAdapterCheckmarkParole.IListAdapterCheckmarkParoleCallback;
@@ -310,11 +311,21 @@ public class MainActivity extends Activity implements /*OnItemDoubleTapLister, O
 			    	     				    	     	
 			    			if (ssh == true){
 			    					
-			    				SendToSSH(meeting_name, output.toString());
+		    					if (SendToSSH(meeting_name, output.toString()) == true){
+		    						
+		    						/*AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
+		    						alertDialog.setTitle("Warning");
+		    						alertDialog.setMessage("SendToSSH : " + true);
+		    						alertDialog.show();*/
+		    						
+		    						finish();
+		    					}
+		    					
 			    					
 			    			}
-			    						    					
-			    			finish();
+			    			else if (ssh == false){			    						    						
+			    				finish();
+			    			}
     					}
     				}
     			}
@@ -695,6 +706,9 @@ public class MainActivity extends Activity implements /*OnItemDoubleTapLister, O
     public boolean SendToSSH(String meeting_name, String file){
 		
     	PreferencesBDD preferencesBdd = new PreferencesBDD(this);
+    	String s_host;
+		String s_username;
+		boolean fileSent = true;
     	
     	try{
 			
@@ -704,24 +718,38 @@ public class MainActivity extends Activity implements /*OnItemDoubleTapLister, O
 			
 				Cursor mCursor = preferencesBdd.getCursor();
 				
-		     	/*AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
-				alertDialog.setTitle("preferencesBdd.open()");
-				alertDialog.setMessage("preferencesBdd.open()");
-				alertDialog.show();	*/
-			
-				
-				mCursor.moveToLast();
-							
-				String s_ID_preferences =  mCursor.getString(NUM_COL_ID_PREFERENCES);
-				String s_host =  mCursor.getString(NUM_COL_HOST);
-				String s_username =  mCursor.getString(NUM_COL_USERNAME);
-				//String s_password =  mCursor.getString(NUM_COL_PASSWORD);
-				
+				try {
+					mCursor.moveToLast();
+					//String s_ID_preferences =  mCursor.getString(NUM_COL_ID_PREFERENCES);
+					s_host =  mCursor.getString(NUM_COL_HOST);
+					s_username =  mCursor.getString(NUM_COL_USERNAME);
+					//String s_password =  mCursor.getString(NUM_COL_PASSWORD);
+				}				
+				catch (Exception e){
+					s_host = "";
+					s_username = "";
+				}
 
 				ModalDialog modalDialogSSH = new ModalDialog();
-				modalDialogSSH.showSSHDialog(MainActivity.this, "Remote Server Connexion...",
-											s_host, s_username/*, s_password*/, meeting_name, file);
-			
+				
+				String modalDialogSSHResult = modalDialogSSH.showSSHDialog(MainActivity.this, "Remote Server Connexion...",
+						s_host, s_username/*, s_password*/, meeting_name, file);
+				
+				if (modalDialogSSHResult == "error"){
+				
+					AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
+					alertDialog.setTitle("Warning");
+					alertDialog.setMessage("The file result has not been sent by ssh. Verify your connexion");
+					alertDialog.show();
+					
+					fileSent = false;
+					ssh = false;
+				}
+				else if (modalDialogSSHResult == "Cancel"){
+					fileSent = false;
+					ssh = false;
+				}
+				
 			}
 			catch(Exception e){
 				System.out.println(e);
@@ -729,7 +757,7 @@ public class MainActivity extends Activity implements /*OnItemDoubleTapLister, O
 			
 			preferencesBdd.close();
 			
-			return true;
+			return fileSent;
 		}
 		catch (Exception e){
     		return false;
@@ -1433,15 +1461,15 @@ public class MainActivity extends Activity implements /*OnItemDoubleTapLister, O
     {        
        if (keyCode == KeyEvent.KEYCODE_BACK) {
           AlertDialog.Builder builder = new AlertDialog.Builder(this);
-          builder.setMessage("Etes vous sûr de vouloir quitter ?")
+          builder.setMessage("Do you really want to quit this meeting ?")
              .setCancelable(false)
-             .setPositiveButton("Oui", new DialogInterface.OnClickListener() {
+             .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
                    back_answer = true;
                    finish();
                 }
              })
-             .setNegativeButton("Non", new DialogInterface.OnClickListener() {
+             .setNegativeButton("No", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
                    back_answer = false;
                 }

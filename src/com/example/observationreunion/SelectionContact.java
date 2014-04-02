@@ -120,7 +120,8 @@ public class SelectionContact extends Activity{
         // works in Honeycomb
         String selection = null;
         String[] selectionArgs = null;
-        String sortOrder = null;
+        String sortOrder = ContactsContract.Contacts.DISPLAY_NAME
+                + " COLLATE LOCALIZED ASC";
 
         CursorLoader cursorLoader = new CursorLoader(
                 activity, 

@@ -5,7 +5,7 @@
     <string name="menu_settings">Settings</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="buttonTakePhoto_text">Prendre la photo</string>
-    <string name="title_selection_contact">SpeakingTime</string>
+    <string name="title_selection_contact">Create the group</string>
     <string name="buttonSendToDatabase">Send to database</string>
     <string name="buttonSelectGroup">Start meeting</string>
     <string name="buttonCreateGroup">Create a group</string>
