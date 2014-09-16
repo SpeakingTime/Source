@@ -20,6 +20,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -27,10 +28,9 @@ import android.widget.TextView;
 
 public class StatisticActivity extends Activity{
 	
-	//List<HashMap<String, Object>> filesList = new ArrayList<HashMap<String, Object>>();
-	List<FileAndDate> filesList = new ArrayList<FileAndDate>();	
+	StatisticLoadFiles s = new StatisticLoadFiles();
 	
-	//List<File> filesList = new ArrayList<File>();
+	List<FileAndDate> filesList = new ArrayList<FileAndDate>();	
 	
 	ArrayList<HashMap<String, Object>> listItem = new ArrayList<HashMap<String, Object>>();
 	ListView lVStatistic;
@@ -40,176 +40,109 @@ public class StatisticActivity extends Activity{
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_statistic);
-		
-		filesList = LoadFiles();
+				
+		Bundle b = getIntent().getExtras();
+    	String statistic_type = b.getString("statistic_type");
+    	System.out.println("   statistic_type : " + statistic_type);
+    	
+    	if (statistic_type.equals("histograms")) {
+    		setContentView(R.layout.activity_statistic);
+    	}
+    	else if (statistic_type.equals("boxplots")) {
+    		setContentView(R.layout.activity_statistic_with_checkmark);
+    	}
+    		
+		filesList = s.LoadFiles();
 		
 		for (int i = 0; i < filesList.size(); i++){
-			//HashMap<String, Object> file = filesList.get(i);
 			FileAndDate fileAndDate = filesList.get(i);
 			
 			HashMap<String, Object> map = new HashMap<String, Object>();
-			//map.put("file_name", file.get("file_name"));
-			//map.put("date_file", file.get("date_file"));
 			map.put("file_name", fileAndDate.getName());
-			map.put("date_file", getDateFile(fileAndDate.getName()));
+			map.put("date_file", s.getDateFile(fileAndDate.getName()));
 			
-			//System.out.println("FileName " + String.valueOf(i) + " : "  + file.getName());			
+			if (statistic_type.equals("boxplots")) {
+				map.put("isSelected", false);
+				map.put("tag_checkbox", i);
+			}
 			
 			map.put("tag_group", i);
 			listItem.add(map);
 		}
 		
-		/*filesList = LoadFiles();
+		if (statistic_type.equals("histograms")) {
 		
-		for (int i = 0; i < filesList.size(); i++){
-			File file = filesList.get(i);
-			HashMap<String, Object> map = new HashMap<String, Object>();
-			map.put("file_name", file.getName());
-			map.put("date_file", getDateFile(file.getName()));
+			lVStatistic = new ListView(this.getApplicationContext());
+			lVStatistic = (ListView) findViewById(R.id.listViewStatistic);
 			
-			System.out.println("FileName " + String.valueOf(i) + " : "  + file.getName());			
-			
-			map.put("tag_group", i);
-			listItem.add(map);
-		}*/
+	        mSchedule = new MyListAdapterStatistic (this.getBaseContext(), listItem, R.layout.affichageitem_statistic,
+	                new String[] { "file_name", "date_file", "tag_statistic"}, 
+	                new int[] { R.id.file_name, R.id.date_file, R.id.tag_statistic});
+	        
+	        lVStatistic.setAdapter(mSchedule);
+	        
+		}
+    	else if (statistic_type.equals("boxplots")) {
+    		
+    		lVStatistic = new ListView(this.getApplicationContext());
+    		lVStatistic = (ListView) findViewById(R.id.listViewStatisticWithCheckmark);
+    		
+            mSchedule = new MyListAdapterStatisticWithCheckMark (this.getBaseContext(), listItem, R.layout.affichageitem_statistic_with_checkmark,
+                    new String[] { "file_name", "date_file", "tag_statistic", "tag_checkbox"}, 
+                    new int[] { R.id.file_name, R.id.date_file, R.id.tag_statistic, R.id.tag_checkbox});
+            
+            lVStatistic.setAdapter(mSchedule);
+    		
+            Button buttonBarGraph2 = (Button) findViewById(R.id.buttonBarGraph2);
+            buttonBarGraph2.setOnClickListener( 
+    				new Button.OnClickListener(){
+    					
+    					@Override
+    					public void onClick(View v) {
+    						// TODO Auto-generated method stub
+    						int nbboxplots = 0;
+    						
+    						for (int i = 0; i<lVStatistic.getCount();i++){
+    							HashMap<String, Object> map = (HashMap<String, Object>) lVStatistic.getItemAtPosition(i);
+    							
+    							if ((Boolean) map.get("isSelected") == true){
+    								nbboxplots = nbboxplots + 1;
+    							}    							
+    						}
+    						
+    						Intent intent =null;
+    						
+    						int j = 0;
+    						
+    						for (int i = 0; i<lVStatistic.getCount();i++){
+    							HashMap<String, Object> map = (HashMap<String, Object>) lVStatistic.getItemAtPosition(i);
+    							
+    							if ((Boolean) map.get("isSelected") == true){
+    								j = j + 1;
+        							if (j == 1) {
+    									intent = new Intent(StatisticActivity.this, BarGraph2.class);
+    									intent.putExtra("nbboxplots", String.valueOf(nbboxplots));
+    								}
+    								System.out.println("participantsWithSpeakingTime" + String.valueOf(j));
+    								intent.putExtra("participantsWithSpeakingTime" + String.valueOf(j), s.getParticipantsWithSpeakingTime(map.get("file_name").toString()));
+    							}    							
+    						}
+    						
+    						if (j > 0){
+    							
+    							startActivity(intent);
+    						}
+    					}
+    				
+    		});		
+    	}
 		
+
 		
-		lVStatistic = new ListView(this.getApplicationContext());
-		lVStatistic = (ListView) findViewById(R.id.listViewStatistic);
-		
-        mSchedule = new MyListAdapterStatistic (this.getBaseContext(), listItem, R.layout.affichageitem_statistic,
-                new String[] { "file_name", "date_file", "tag_statistic"}, 
-                new int[] { R.id.file_name, R.id.date_file, R.id.tag_statistic});
-        
-        lVStatistic.setAdapter(mSchedule);
 		
 		
 		
 	}
-	
-	/*public List<File> LoadFiles(){
-		
-		List<File> files = new ArrayList<File>();
-		File myDir = new File(Environment.getExternalStorageDirectory() + File.separator + "SpeakingTime"); 
-		File[] allFiles = myDir.listFiles();
-		if (allFiles != null) {
-			for (int i=0; i < allFiles.length; i++) {
-				files.add(0, allFiles[i]);
-				
-			}
-		}
-		return files;
-	}*/
-	
-	/*public List<HashMap<String, Object>> LoadFiles(){
-		
-		List<HashMap<String, Object>> filesList = new ArrayList<HashMap<String, Object>>();
-		
-		List<File> files = new ArrayList<File>();
-		File myDir = new File(Environment.getExternalStorageDirectory() + File.separator + "SpeakingTime"); 
-		File[] allFiles = myDir.listFiles();
-		if (allFiles != null) {
-			for (int i=0; i < allFiles.length; i++) {
-				
-				String str_date = getDateFile(allFiles[i].getName());
-				SimpleDateFormat formatter ; 
-				Date date = null ; 
-				formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-				try {
-					date = formatter.parse(str_date);
-				} catch (ParseException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				System.out.println(date.toString());
-				
-				//if (date.after(datecompare)){
-					HashMap<String, Object> map = new HashMap<String, Object>();
-					map.put("file_name", allFiles[i].getName());
-					map.put("date_file", getDateFile(allFiles[i].getName()));
-					filesList.add(map);
-				//}
-			}
-		}
-		return filesList;
-		
-	}*/
-	
-	
-	public List<FileAndDate> LoadFiles(){
-		
-		List<FileAndDate> filesList = new ArrayList<FileAndDate>();
-		
-		List<File> files = new ArrayList<File>();
-		File myDir = new File(Environment.getExternalStorageDirectory() + File.separator + "SpeakingTime"); 
-		File[] allFiles = myDir.listFiles();
-		if (allFiles != null) {
-			for (int i=0; i < allFiles.length; i++) {
-				
-				String str_date = getDateFile(allFiles[i].getName());
-				SimpleDateFormat formatter ; 
-				Date date = null ; 
-				formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-				try {
-					date = formatter.parse(str_date);
-				} catch (ParseException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				System.out.println(date.toString());
-				
-				//if (date.after(datecompare)){
-					/*HashMap<String, Object> map = new HashMap<String, Object>();
-					map.put("file_name", allFiles[i].getName());
-					map.put("date_file", getDateFile(allFiles[i].getName()));
-					filesList.add(map);*/
-					FileAndDate fileAndDate = new FileAndDate(allFiles[i].getName(), date);
-					filesList.add(fileAndDate);
-				//}
-			}
-		}
-		
-		Collections.sort(filesList, new DateComparator());
-		
-		return filesList;
-		
-	}
-	
-	public String getDateFile(String filename){
-		
-		boolean dateFound = false;
-		String dateFile = null;
-		
-		try {
-			FileInputStream objFile = new FileInputStream(Environment.getExternalStorageDirectory() + File.separator + "SpeakingTime" + File.separator +  filename);
-			InputStreamReader objReader = new InputStreamReader(objFile);
-			BufferedReader objBufferReader = new BufferedReader(objReader);
-			String strLine;
-			while ((strLine = objBufferReader.readLine()) != null) {
-				
-				if ((strLine.indexOf("begin: meeting") != -1) && (dateFound == false)) { 
-					dateFound = true;
-					dateFile = strLine.substring(15, strLine.length());
-					
-				}
-				
-				
-			}
-			objFile.close();
-			
-		}
-		catch (FileNotFoundException objError) {
-			System.out.println("Fichier non trouvé\n"+objError.toString());
-		}
-		catch (IOException objError) {
-			System.out.println("Erreur\n"+objError.toString());
-		}
-		
-		return dateFile;
-		
-	}
-	
 	
 	public void myClickHandlerStatistic(View v) {
 		
@@ -218,14 +151,35 @@ public class StatisticActivity extends Activity{
 		
 		HashMap<String, Object> mapItem = (HashMap<String, Object>) lVStatistic.getItemAtPosition(position);
 		String filename = mapItem.get("file_name").toString();
+		System.out.println("filename : " + filename);
 		
 		Intent intent = new Intent(StatisticActivity.this, StatisticResultActivity.class);
 		intent.putExtra("selectedFile", filename);
 		startActivity(intent);
 		
-		//TextView textViewGroupName = (TextView) findViewById (R.id.textView_group_name);	
-		//textViewGroupName.setText(groupname);
-		
 	}
+	
+    public void myClickHandlerStatisticCheckBox(View v) {
+		
+    	CheckBox cb = (CheckBox)v;
+		int position = Integer.parseInt(cb.getTag().toString());
+		
+		if (cb.isChecked()){
+			HashMap<String, Object> mapItem = (HashMap<String, Object>) lVStatistic.getItemAtPosition(position);
+			listItem.remove(mapItem);		
+			mapItem.put("isSelected", true);
+			listItem.add(position, mapItem);	
+			mSchedule.notifyDataSetChanged();
+				
+		}
+		else{
+			HashMap<String, Object> mapItem = (HashMap<String, Object>) lVStatistic.getItemAtPosition(position);
+			listItem.remove(mapItem);		
+			mapItem.put("isSelected", false);
+			listItem.add(position, mapItem);	
+			mSchedule.notifyDataSetChanged();
+				
+		}
+    }
 	
 }

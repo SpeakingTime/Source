@@ -111,13 +111,7 @@
 		    
 		</LinearLayout>
 		    
-	    <Button
-			android:id="@+id/buttonBarGraph2"
-			android:text="@string/buttonBarGraph2"
-			android:layout_width="300sp"
-			android:layout_height="wrap_content"
-			android:layout_gravity="left" >
-		</Button>
+
 		    
 	</LinearLayout>
 

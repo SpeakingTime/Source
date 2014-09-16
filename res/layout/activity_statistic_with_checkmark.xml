@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" 
+    android:background="@android:color/black">
+    
+    <LinearLayout 
+        android:orientation="horizontal" 
+        android:layout_width="match_parent"
+    	android:layout_height="match_parent"
+    	android:layout_weight="1"
+      	android:gravity="top">
+    
+	    <ListView
+	    	android:id="@+id/listViewStatisticWithCheckmark"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content" 
+	        android:divider="@null">
+	    </ListView>
+	      	
+	</LinearLayout>
+	
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" 
+        android:gravity="left" 
+        android:layout_alignParentBottom="true">
+		
+       	<LinearLayout 
+	        android:layout_width="match_parent"
+	    	android:layout_height="match_parent"
+	    	android:layout_weight="1"
+	    	android:gravity="center"
+	      	android:background="@drawable/border"
+   			android:padding="5dip"
+   			>
+			<Button
+				android:id="@+id/buttonBarGraph2"
+				android:text="@string/buttonBarGraph2"
+				android:layout_width="300sp"
+				android:layout_height="wrap_content"
+				android:layout_gravity="left" >
+			</Button>
+    	</LinearLayout>
+    	
+    </LinearLayout>
+    
+
+</LinearLayout>

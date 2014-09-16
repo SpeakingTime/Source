@@ -34,6 +34,7 @@
 	<string name="buttonUnselectAll_inactif">Unselect All</string>
 	<string name="buttonStatistic">Statistics</string>
 	<string name="title_statistic_activity">Statistics</string>
+	<string name="title_statistic_choice_activity">Statistics</string>
 	<string name="title_statistic_result_activity">Statistic Result</string>
 	<string name="buttonGetValue">Get Value</string>
 	<string name="buttonBarGraph">Speaking time per participant</string>
@@ -43,7 +44,7 @@
 	<string name="title_preferences_activity">Preferences</string>
 	<string name="buttonSavePreferences">Save Preferences</string>
 	<string name="buttonCancelPreferences">Cancel</string>
-	<string name="buttonBarGraph2">Box Plot (Internet needed)</string>
+	<string name="buttonBarGraph2">Generate Box Plots (Internet needed)</string>
 	<string name="title_boxplot">Box Plot</string>
 	<string name="editTextTimeInterval">1</string>
 	<string name="buttonCreateGroup_Home">Create a group</string>
@@ -51,5 +52,8 @@
 	<string name="title_selection_contact_to_add">Add contact</string>
 	<string name="buttonCancelAddContact">Cancel</string>
 	<string name="timeintervalforsavefile">1</string>
+	<string name="buttonHistograms">Histograms</string>
+	<string name="buttonBoxPlots">Box Plots</string>
+	<string name="buttonGenerateBoxPlots">Generate Box Plots</string>
 	
 </resources>

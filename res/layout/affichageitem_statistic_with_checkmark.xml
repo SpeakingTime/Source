@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/item_statistic_with_checkmark"
+    android:orientation="horizontal"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/listview_background"
+    android:tag="@+id/tag_statistic" 
+    
+    >
+    
+    <LinearLayout
+	    android:orientation="horizontal"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	   	android:layout_gravity="center_vertical"
+	    android:layout_weight="1"
+    >
+    
+	   	<TextView
+			android:id="@+id/file_name"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+		   	android:layout_gravity="center_vertical"
+		   	android:padding="10px"
+		   	android:textSize="16px"
+		    android:textStyle="bold"
+	    	android:textColor="@android:color/white"
+		/>
+	 
+	   	<TextView
+			android:id="@+id/date_file"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+		   	android:layout_gravity="center_vertical"
+		   	android:padding="10px"
+		   	android:textSize="16px"
+		    android:textStyle="bold"
+	    	android:textColor="@android:color/white"
+		/>
+   	</LinearLayout>
+   	
+   	<LinearLayout
+	    android:orientation="vertical"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	   	android:layout_gravity="top"
+	   	android:paddingLeft="10px"
+    >
+   	
+	   	<CheckBox 
+	   	 	android:id="@+id/statistic_checkbox"
+	    	android:layout_width="wrap_content"
+	       	android:layout_height="wrap_content"
+	       	android:layout_gravity="center_horizontal"
+	       	android:tag="@+id/tag_checkbox" 
+			android:onClick="myClickHandlerStatisticCheckBox"  
+	   	/>
+   	</LinearLayout>
+   	
+   	
+</LinearLayout>

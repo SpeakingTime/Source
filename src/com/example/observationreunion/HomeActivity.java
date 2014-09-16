@@ -65,7 +65,7 @@ public class HomeActivity extends Activity{
 					@Override
 					public void onClick(View v) {
 						// TODO Auto-generated method stub
-						Intent intent = new Intent(HomeActivity.this, StatisticActivity.class);
+						Intent intent = new Intent(HomeActivity.this, StatisticChoiceActivity.class);
 						startActivity(intent);
 					}
 				
