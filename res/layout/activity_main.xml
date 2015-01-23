@@ -1,3 +1,4 @@
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -22,15 +23,35 @@
 	    	android:layout_height="match_parent"
 	    	android:layout_weight="1"
 	      	android:gravity="top">
-	
+			
+	        	       	
+	       <ImageButton
+				android:id="@+id/imageButtonUpListViewEcoute"
+    			android:layout_width="match_parent" 
+    			android:layout_height="32dip" 
+     			android:layout_weight="0"
+    			android:src="@drawable/arrow_up3" >
+    		</ImageButton>
+
 	        <com.example.observationreunion.MyListView
 	            android:id="@+id/listViewEcoute"
 	            android:layout_width="match_parent"
-	            android:layout_height="wrap_content" 
+	            android:layout_height="0dip"
+	            android:layout_weight="1" 
 	            android:divider="@null">
 	        </com.example.observationreunion.MyListView>
-	      	
+	        
+        	<ImageButton
+				android:id="@+id/imageButtonDownListViewEcoute"
+    			android:layout_width="match_parent" 
+    			android:layout_height="32dip" 
+     			android:layout_weight="0"
+    			android:src="@drawable/arrow_down3" >
+    		</ImageButton>
+	        	
 	    </LinearLayout>
+	    
+
 	     
 	    <LinearLayout 
 	        android:id="@+id/LinearLayoutVertical2"
@@ -38,14 +59,32 @@
 	        android:layout_width="match_parent"
 	    	android:layout_height="match_parent"
 	    	android:layout_weight="1"
-	       	android:gravity="top">      	
+	       	android:gravity="top">      
+	       	
+	        <ImageButton
+				android:id="@+id/imageButtonUpListViewParole"
+    			android:layout_width="match_parent" 
+    			android:layout_height="32dip" 
+     			android:layout_weight="0"
+    			android:src="@drawable/arrow_up3" >
+    		</ImageButton>	
 	       	
 	        <com.example.observationreunion.MyListView
 	            android:id="@+id/listViewParole"
 	            android:layout_width="match_parent"
-	            android:layout_height="wrap_content" 
+	            android:layout_height="0dip"
+	            android:layout_weight="1" 
 	            android:divider="@null">
 	        </com.example.observationreunion.MyListView>
+	        
+	        
+	        <ImageButton
+				android:id="@+id/imageButtonDownListViewParole"
+    			android:layout_width="match_parent" 
+    			android:layout_height="32dip" 
+     			android:layout_weight="0"
+    			android:src="@drawable/arrow_down3" >
+    		</ImageButton>
 	        
 	    </LinearLayout>   
 	    
@@ -55,15 +94,32 @@
 	        android:layout_width="match_parent"
 	    	android:layout_height="match_parent"
 	    	android:layout_weight="1"
-	       	android:gravity="top">      	
+	       	android:gravity="top">    
+	       	
+	        <ImageButton
+				android:id="@+id/imageButtonUpListViewInactif"
+    			android:layout_width="match_parent" 
+    			android:layout_height="32dip" 
+     			android:layout_weight="0"
+    			android:src="@drawable/arrow_up3" >
+    		</ImageButton>	
 	       	
 	        <com.example.observationreunion.MyListView
 	            android:id="@+id/listViewInactif"
 	            android:layout_width="match_parent"
-	            android:layout_height="wrap_content" 
+	            android:layout_height="0dip"
+	            android:layout_weight="1" 
 	            android:divider="@null">
 	        </com.example.observationreunion.MyListView>
 	        
+	        <ImageButton
+				android:id="@+id/imageButtonDownListViewInactif"
+    			android:layout_width="match_parent" 
+    			android:layout_height="32dip" 
+     			android:layout_weight="0"
+    			android:src="@drawable/arrow_down3" >
+    		</ImageButton>
+	       	        
 	    </LinearLayout>
     
 	</LinearLayout>

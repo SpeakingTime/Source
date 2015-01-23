@@ -36,8 +36,10 @@
         <activity android:name=".StatisticResultActivity" android:label="@string/title_statistic_result_activity" android:theme="@style/SmallTitleTheme" ></activity>
         <activity android:name=".StatisticChoiceActivity" android:label="@string/title_statistic_choice_activity" android:theme="@style/SmallTitleTheme" ></activity>
         <activity android:name=".PreferencesActivity" android:label="@string/title_preferences_activity" android:theme="@style/SmallTitleTheme" ></activity>
-        <activity android:name=".BarGraph2" android:label="@string/title_boxplot" android:theme="@style/SmallTitleTheme" ></activity>
+        <activity android:name=".BarGraph2Activity" android:label="@string/title_boxplot" android:theme="@style/SmallTitleTheme" ></activity>
         <activity android:name="org.achartengine.GraphicalActivity" android:label="@string/title_statistic_bar_graph" android:theme="@style/SmallTitleTheme" ></activity>
+        <activity android:name=".BarGraphActivity" android:label="@string/title_bargraph_activity" android:theme="@style/SmallTitleTheme" ></activity>
+        <activity android:name=".BarGraph1Activity" android:label="@string/title_bargraph1_activity" android:theme="@style/SmallTitleTheme" ></activity>
         
     </application>
 

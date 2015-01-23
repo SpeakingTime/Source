@@ -22,6 +22,7 @@ import com.example.observationreunion.MyListAdapterCheckmarkParole.IListAdapterC
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.Looper;
 import android.os.StrictMode;
 import android.os.SystemClock;
@@ -43,9 +44,11 @@ import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnGestureListener;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AbsListView;
@@ -109,6 +112,19 @@ public class MainActivity extends Activity implements /*OnItemDoubleTapLister, O
 	private static final int NUM_COL_USERNAME = 2;
 	private static final int NUM_COL_TIME_INTERVAL_FOR_SAVE_FILE = 3;
 	
+	private static Timer timerUpListViewEcoute; 
+	TimerTask timerTaskUpListViewEcoute;
+	private static Timer timerDownListViewEcoute;
+	TimerTask timerTaskDownListViewEcoute;
+	private static Timer timerUpListViewParole; 
+	TimerTask timerTaskUpListViewParole;
+	private static Timer timerDownListViewParole;
+	TimerTask timerTaskDownListViewParole;
+	private static Timer timerUpListViewInactif; 
+	TimerTask timerTaskUpListViewInactif;
+	private static Timer timerDownListViewInactif;
+	TimerTask timerTaskDownListViewInactif;
+	
 	//public static Integer position = -1;
 	
 	private class ViewHolder {
@@ -117,6 +133,31 @@ public class MainActivity extends Activity implements /*OnItemDoubleTapLister, O
         TextView txtCOMPANY_AND_TITLE;
         TextView txtCHRONOMETRE;
     }
+	
+	/*private class MyTimerTask extends TimerTask {
+
+		 @Override
+         public void run() {           
+           //get and send location information 
+           
+           System.out.println("Long Press!");
+           ListView lv = (ListView) findViewById(R.id.listViewEcoute);
+
+           int firstVisibleItem = lv.getFirstVisiblePosition();
+           int lastVisibleCount = lv.getLastVisiblePosition();
+           if (firstVisibleItem != 0) {
+               int count1 = firstVisibleItem
+                       - (lastVisibleCount - firstVisibleItem);
+               if (count1 < 0) {
+                   lv.setSelection(0);
+               }
+
+               else {
+                   lv.setSelection(count1);
+               }
+           }
+         }
+     }*/
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -195,9 +236,348 @@ public class MainActivity extends Activity implements /*OnItemDoubleTapLister, O
     			}
     	);
         
-        
-        
+        /*ImageButton imageButtonUpListViewEcoute = (ImageButton) findViewById(R.id.imageButtonUpListViewEcoute);
+        imageButtonUpListViewEcoute.setOnClickListener( 
+    			new Button.OnClickListener(){
+    				
+    				@Override
+    				public void onClick(View v) {
+    					// TODO Auto-generated method stub
+    					
+    					ListView lv = (ListView) findViewById(R.id.listViewEcoute);
 
+    		            int firstVisibleItem = lv.getFirstVisiblePosition();
+    		            int lastVisibleCount = lv.getLastVisiblePosition();
+    		            if (firstVisibleItem != 0) {
+    		                int count1 = firstVisibleItem
+    		                        - (lastVisibleCount - firstVisibleItem);
+    		                if (count1 < 0) {
+    		                    lv.setSelection(0);
+    		                }
+
+    		                else {
+    		                    lv.setSelection(count1);
+    		                }
+    				}
+    			}
+    		}
+    	);*/
+        
+       
+        
+        ImageButton imageButtonUpListViewEcoute = (ImageButton) findViewById(R.id.imageButtonUpListViewEcoute);
+        imageButtonUpListViewEcoute.setOnTouchListener(new OnTouchListener() {
+        	
+        	@Override
+        	public boolean onTouch(View v, MotionEvent event) {
+        		
+        		if(event.getAction() == MotionEvent.ACTION_DOWN){
+        			timerUpListViewEcoute = new Timer();
+        			
+        			final Handler mHandler = new Handler();
+        			final Runnable mUpdateResults = new Runnable() {
+        			            public void run() {
+        			            	System.out.println("Long Press!");
+                	                ListView lv = (ListView) findViewById(R.id.listViewEcoute);
+
+                	                /*int firstVisibleItem = lv.getFirstVisiblePosition();
+                	                int lastVisibleCount = lv.getLastVisiblePosition();
+                	                //System.out.println("lv.getCount() : " + lv.getCount());
+                	            	//System.out.println("lv.getLastVisiblePosition : " + lv.getLastVisiblePosition());
+                	                if (firstVisibleItem != 0) {
+                	                	int count1 = firstVisibleItem
+                	                			- (lastVisibleCount - firstVisibleItem);
+                	                    	if (count1 < 0) {
+                	                    		lv.setSelection(0);
+                	                    	}
+
+                	                        else {
+                	                            lv.setSelection(count1);
+                	                        }
+                	                }*/
+                	                
+                	                int firstVisibleItem = lv.getFirstVisiblePosition();
+                	                if (firstVisibleItem == 0) {
+                	                	lv.setSelection(0);
+                	                }
+          	                        else {
+           	                            lv.setSelection(firstVisibleItem - 1);
+           	                        }
+                	                
+        			            }
+        			};
+        			timerUpListViewEcoute.scheduleAtFixedRate(new TimerTask() {           
+        			            @Override
+        			            public void run() {
+        			                //timeRemain();
+        			                mHandler.post(mUpdateResults);
+        			            }
+        			}, 0, 500);
+            	}        		
+        		if(event.getAction() == MotionEvent.ACTION_UP){
+        			System.out.println("ACTION_UP");
+        			 if (timerUpListViewEcoute != null) { 
+        				 timerUpListViewEcoute.cancel(); 
+        		      } 
+        		      if (timerTaskUpListViewEcoute != null) { 
+        		    	  timerTaskUpListViewEcoute.cancel(); 
+        		      }     
+        		}
+        		
+        		return false;
+        	}
+        
+        });
+        
+        ImageButton imageButtonDownListViewEcoute = (ImageButton) findViewById(R.id.imageButtonDownListViewEcoute);
+        imageButtonDownListViewEcoute.setOnTouchListener(new OnTouchListener() {
+        	
+        	@Override
+        	public boolean onTouch(View v, MotionEvent event) {
+        		
+        		if(event.getAction() == MotionEvent.ACTION_DOWN){
+        			timerDownListViewEcoute = new Timer();
+        			
+        			final Handler mHandler = new Handler();
+        			final Runnable mUpdateResults = new Runnable() {
+        			            public void run() {
+        			            	System.out.println("Long Press!");
+                	                ListView lv = (ListView) findViewById(R.id.listViewEcoute);
+
+                	                int count = lv.getCount();
+                	                /*int firstVisibleItem = lv.getFirstVisiblePosition();
+                	                int lastVisibleCount = lv.getLastVisiblePosition();
+                	                if (lastVisibleCount != count) {
+                	                    int count1 = lastVisibleCount
+                	                            + (lastVisibleCount - firstVisibleItem);
+                	                    if (count1 > count) {
+                	                        lv.setSelection(count);
+                	                    } else {
+                	                        lv.setSelection(count1);
+                	                    }
+                	                }*/
+                	                
+                	                int firstVisibleItem = lv.getFirstVisiblePosition();
+                	                int lastVisibleCount = lv.getLastVisiblePosition();
+                	                if (lastVisibleCount != count) {
+                	                	lv.setSelection(firstVisibleItem + 1);
+           	                        }
+               	                
+        			            }
+        			};
+        			timerDownListViewEcoute.scheduleAtFixedRate(new TimerTask() {           
+        			            @Override
+        			            public void run() {
+        			                //timeRemain();
+        			                mHandler.post(mUpdateResults);
+        			            }
+        			}, 0, 500);
+            	}        		
+        		if(event.getAction() == MotionEvent.ACTION_UP){
+        			System.out.println("ACTION_UP");
+        			 if (timerDownListViewEcoute != null) { 
+        				 timerDownListViewEcoute.cancel(); 
+        		      } 
+        		      if (timerTaskDownListViewEcoute != null) { 
+        		    	  timerTaskDownListViewEcoute.cancel(); 
+        		      }     
+        		}
+        		
+        		return false;
+        	}
+        
+        });
+
+        ImageButton imageButtonUpListViewParole = (ImageButton) findViewById(R.id.imageButtonUpListViewParole);
+        imageButtonUpListViewParole.setOnTouchListener(new OnTouchListener() {
+        	
+        	@Override
+        	public boolean onTouch(View v, MotionEvent event) {
+        		
+        		if(event.getAction() == MotionEvent.ACTION_DOWN){
+        			timerUpListViewParole = new Timer();
+        			
+        			final Handler mHandler = new Handler();
+        			final Runnable mUpdateResults = new Runnable() {
+        			            public void run() {
+        			            	System.out.println("Long Press!");
+                	                ListView lv = (ListView) findViewById(R.id.listViewParole);
+                	                
+                	                int firstVisibleItem = lv.getFirstVisiblePosition();
+                	                if (firstVisibleItem == 0) {
+                	                	lv.setSelection(0);
+                	                }
+          	                        else {
+           	                            lv.setSelection(firstVisibleItem - 1);
+           	                        }
+                	                
+        			            }
+        			};
+        			timerUpListViewParole.scheduleAtFixedRate(new TimerTask() {           
+        			            @Override
+        			            public void run() {
+        			                //timeRemain();
+        			                mHandler.post(mUpdateResults);
+        			            }
+        			}, 0, 500);
+            	}        		
+        		if(event.getAction() == MotionEvent.ACTION_UP){
+        			System.out.println("ACTION_UP");
+        			 if (timerUpListViewParole != null) { 
+        				 timerUpListViewParole.cancel(); 
+        		      } 
+        		      if (timerTaskUpListViewParole != null) { 
+        		    	  timerTaskUpListViewParole.cancel(); 
+        		      }     
+        		}
+        		
+        		return false;
+        	}
+        
+        });
+        
+        ImageButton imageButtonDownListViewParole = (ImageButton) findViewById(R.id.imageButtonDownListViewParole);
+        imageButtonDownListViewParole.setOnTouchListener(new OnTouchListener() {
+        	
+        	@Override
+        	public boolean onTouch(View v, MotionEvent event) {
+        		
+        		if(event.getAction() == MotionEvent.ACTION_DOWN){
+        			timerDownListViewParole = new Timer();
+        			
+        			final Handler mHandler = new Handler();
+        			final Runnable mUpdateResults = new Runnable() {
+        			            public void run() {
+        			            	System.out.println("Long Press!");
+                	                ListView lv = (ListView) findViewById(R.id.listViewParole);
+
+                	                int count = lv.getCount();
+                	                int firstVisibleItem = lv.getFirstVisiblePosition();
+                	                int lastVisibleCount = lv.getLastVisiblePosition();
+                	                if (lastVisibleCount != count) {
+                	                	lv.setSelection(firstVisibleItem + 1);
+           	                        }
+               	                
+        			            }
+        			};
+        			timerDownListViewParole.scheduleAtFixedRate(new TimerTask() {           
+        			            @Override
+        			            public void run() {
+        			                //timeRemain();
+        			                mHandler.post(mUpdateResults);
+        			            }
+        			}, 0, 500);
+            	}        		
+        		if(event.getAction() == MotionEvent.ACTION_UP){
+        			System.out.println("ACTION_UP");
+        			 if (timerDownListViewParole != null) { 
+        				 timerDownListViewParole.cancel(); 
+        		      } 
+        		      if (timerTaskDownListViewParole != null) { 
+        		    	  timerTaskDownListViewParole.cancel(); 
+        		      }     
+        		}
+        		
+        		return false;
+        	}
+        
+        });
+        
+        ImageButton imageButtonUpListViewInactif = (ImageButton) findViewById(R.id.imageButtonUpListViewInactif);
+        imageButtonUpListViewInactif.setOnTouchListener(new OnTouchListener() {
+        	
+        	@Override
+        	public boolean onTouch(View v, MotionEvent event) {
+        		
+        		if(event.getAction() == MotionEvent.ACTION_DOWN){
+        			timerUpListViewInactif = new Timer();
+        			
+        			final Handler mHandler = new Handler();
+        			final Runnable mUpdateResults = new Runnable() {
+        			            public void run() {
+        			            	System.out.println("Long Press!");
+                	                ListView lv = (ListView) findViewById(R.id.listViewInactif);
+                	                
+                	                int firstVisibleItem = lv.getFirstVisiblePosition();
+                	                if (firstVisibleItem == 0) {
+                	                	lv.setSelection(0);
+                	                }
+          	                        else {
+           	                            lv.setSelection(firstVisibleItem - 1);
+           	                        }
+                	                
+        			            }
+        			};
+        			timerUpListViewInactif.scheduleAtFixedRate(new TimerTask() {           
+        			            @Override
+        			            public void run() {
+        			                //timeRemain();
+        			                mHandler.post(mUpdateResults);
+        			            }
+        			}, 0, 500);
+            	}        		
+        		if(event.getAction() == MotionEvent.ACTION_UP){
+        			System.out.println("ACTION_UP");
+        			 if (timerUpListViewInactif != null) { 
+        				 timerUpListViewInactif.cancel(); 
+        		      } 
+        		      if (timerTaskUpListViewInactif != null) { 
+        		    	  timerTaskUpListViewInactif.cancel(); 
+        		      }     
+        		}
+        		
+        		return false;
+        	}
+        
+        });
+        
+        ImageButton imageButtonDownListViewInactif = (ImageButton) findViewById(R.id.imageButtonDownListViewInactif);
+        imageButtonDownListViewInactif.setOnTouchListener(new OnTouchListener() {
+        	
+        	@Override
+        	public boolean onTouch(View v, MotionEvent event) {
+        		
+        		if(event.getAction() == MotionEvent.ACTION_DOWN){
+        			timerDownListViewInactif = new Timer();
+        			
+        			final Handler mHandler = new Handler();
+        			final Runnable mUpdateResults = new Runnable() {
+        			            public void run() {
+        			            	System.out.println("Long Press!");
+                	                ListView lv = (ListView) findViewById(R.id.listViewInactif);
+
+                	                int count = lv.getCount();
+                	                int firstVisibleItem = lv.getFirstVisiblePosition();
+                	                int lastVisibleCount = lv.getLastVisiblePosition();
+                	                if (lastVisibleCount != count) {
+                	                	lv.setSelection(firstVisibleItem + 1);
+           	                        }
+               	                
+        			            }
+        			};
+        			timerDownListViewInactif.scheduleAtFixedRate(new TimerTask() {           
+        			            @Override
+        			            public void run() {
+        			                //timeRemain();
+        			                mHandler.post(mUpdateResults);
+        			            }
+        			}, 0, 500);
+            	}        		
+        		if(event.getAction() == MotionEvent.ACTION_UP){
+        			System.out.println("ACTION_UP");
+        			 if (timerDownListViewInactif != null) { 
+        				 timerDownListViewInactif.cancel(); 
+        		      } 
+        		      if (timerTaskDownListViewInactif != null) { 
+        		    	  timerTaskDownListViewInactif.cancel(); 
+        		      }     
+        		}
+        		
+        		return false;
+        	}
+        
+        });
+        
         ImageButton imageButtonPause = (ImageButton) findViewById(R.id.imageButtonPause);
         imageButtonPause.setOnClickListener( 
     			new Button.OnClickListener(){
@@ -361,8 +741,7 @@ public class MainActivity extends Activity implements /*OnItemDoubleTapLister, O
                 new String[] {"img", "display_name", "company_and_title", "chronometre", "tag2"}, new int[] {R.id.IMG_parole, R.id.DISPLAY_NAME_parole, R.id.COMPANY_AND_TITLE_parole, R.id.CHRONOMETRE_parole, R.id.tag2_parole});
        
         mScheduleParole.setViewBinder(new MyViewBinder()); // VOICI LA CLE!!!!
-        
-  	    //On attribut à notre listView l'adapter que l'on vient de créer
+        //On attribut à notre listView l'adapter que l'on vient de créer
         lVDataParole.setAdapter(mScheduleParole);
         /*lVDataParole.setOnItemDoubleClickListener(this);
         lVDataParole.setOnTouchListener(this);*/
@@ -417,8 +796,8 @@ public class MainActivity extends Activity implements /*OnItemDoubleTapLister, O
       //On commence le décompte du chronometre principal
         Chronometer chronometerTotalTime = (Chronometer) findViewById(R.id.chronometerTotalTime);
         chronometerTotalTime.start();
-      
         
+
     }
     
     /*@Override
@@ -430,6 +809,19 @@ public class MainActivity extends Activity implements /*OnItemDoubleTapLister, O
     public void OnSingleTap(AdapterView<?> parent, View view, int position, long id) {
 
     }*/
+    
+    private boolean isListViewGreaterThanScreen(ListView lv){
+    	//System.out.println("lv.getCount() : " + lv.getCount());
+    	//System.out.println("lv.getLastVisiblePosition : " + lv.getLastVisiblePosition());
+    	if (lv.getLastVisiblePosition() == -1){
+    		return false;
+    	}    	
+    	if (lv.getCount() > lv.getLastVisiblePosition()){
+    		return true;
+    	}
+    	else
+    		return false;
+    }
     
     private void Select(ListView listView, ArrayList<HashMap<String, Object>> listItem, 
     					SimpleAdapter mSchedule, Boolean bSelectAll){
@@ -646,6 +1038,13 @@ public class MainActivity extends Activity implements /*OnItemDoubleTapLister, O
   	    
         //On attribut à notre listView l'adapter que l'on vient de créer
         lVDataEcoute.setAdapter(mScheduleEcoute); 
+        
+        if (isListViewGreaterThanScreen(lVDataEcoute)){
+        	AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
+			alertDialog.setTitle("Is ListView is greater than screen ?");
+			alertDialog.setMessage("True");
+			alertDialog.show();	
+        }
         
         
         //Start2();

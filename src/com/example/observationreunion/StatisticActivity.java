@@ -51,9 +51,9 @@ public class StatisticActivity extends Activity{
     	else if (statistic_type.equals("boxplots")) {
     		setContentView(R.layout.activity_statistic_with_checkmark);
     	}
-    		
+    		    	
 		filesList = s.LoadFiles();
-		
+			
 		for (int i = 0; i < filesList.size(); i++){
 			FileAndDate fileAndDate = filesList.get(i);
 			
@@ -111,20 +111,24 @@ public class StatisticActivity extends Activity{
     						}
     						
     						Intent intent =null;
+    						String reunionName = "";
     						
     						int j = 0;
     						
     						for (int i = 0; i<lVStatistic.getCount();i++){
     							HashMap<String, Object> map = (HashMap<String, Object>) lVStatistic.getItemAtPosition(i);
+    							reunionName = map.get("file_name").toString();
     							
     							if ((Boolean) map.get("isSelected") == true){
     								j = j + 1;
         							if (j == 1) {
-    									intent = new Intent(StatisticActivity.this, BarGraph2.class);
+    									intent = new Intent(StatisticActivity.this, BarGraph2Activity.class);
     									intent.putExtra("nbboxplots", String.valueOf(nbboxplots));
     								}
     								System.out.println("participantsWithSpeakingTime" + String.valueOf(j));
     								intent.putExtra("participantsWithSpeakingTime" + String.valueOf(j), s.getParticipantsWithSpeakingTime(map.get("file_name").toString()));
+    								intent.putExtra("reunionName" + String.valueOf(j), reunionName.substring(0, reunionName.length()-4));
+    								System.out.println("reunionName" + String.valueOf(j) + ": " + reunionName.substring(0, reunionName.length()-4));
     							}    							
     						}
     						

@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.example.observationreunion.MyListView.OnItemMoveTapLister;
+//import com.example.observationreunion.MyListView.OnItemMoveTapLister;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -139,10 +139,15 @@ public class MyListAdapterCheckmarkEcoute extends SimpleAdapter implements View.
 	    
 		long width = v.getWidth();
 		
+		/*if (event.getRawX() > width) {
+			v.getParent().requestDisallowInterceptTouchEvent(true);
+		}*/
 		
 		//MainActivity main = new MainActivity();
 		
-		if (event.getAction() == MotionEvent.ACTION_UP) {
+		if ((event.getAction() == MotionEvent.ACTION_UP) || (event.getAction() == MotionEvent.ACTION_CANCEL)) {
+    		
+			System.out.println("ACTION_UP");
     		
     		if ((event.getRawX() > width*2) && (event.getRawX() < width*3)){
     			if (callerActivity.islVDataEcouteCheck()){
@@ -158,7 +163,7 @@ public class MyListAdapterCheckmarkEcoute extends SimpleAdapter implements View.
     					callerActivity.ListeningToIdle(position);
     				}
     				catch (Exception e){
-    					 Log.i("Exception", e.toString());   					
+    					Log.i("Exception", e.toString());   
     				}
     			}
     		}
@@ -181,8 +186,16 @@ public class MyListAdapterCheckmarkEcoute extends SimpleAdapter implements View.
     			}
     		}
     		
+    		//return true;
+    		
     	}
-    	else if(event.getAction()==MotionEvent.ACTION_DOWN){
+		//else if ((event.getAction() == MotionEvent.ACTION_MOVE) && (event.getRawX() > width)){
+		//}
+		
+		else if(event.getAction()==MotionEvent.ACTION_DOWN){
+			v.getParent().requestDisallowInterceptTouchEvent(true);
+			
+			System.out.println("ACTION_DOWN");
 	    	ViewHolder holder;
 			holder = (ViewHolder) v.getTag();
 	    	position = holder.position;

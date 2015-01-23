@@ -9,6 +9,11 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.jjoe64.graphview.BarGraphView;
+import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.GraphViewSeries;
+import com.jjoe64.graphview.LineGraphView;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -17,6 +22,7 @@ import android.os.Environment;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
@@ -42,7 +48,7 @@ public class StatisticResultActivity extends Activity{
     				@Override
     				public void onClick(View v) {
     					
-    					RadioGroup radioGroup = (RadioGroup) findViewById(R.id.radioOrder);
+    					/*RadioGroup radioGroup = (RadioGroup) findViewById(R.id.radioOrder);
     					int selectedId = radioGroup.getCheckedRadioButtonId();
     					RadioButton radioOrderButton = (RadioButton) findViewById(selectedId);
     					
@@ -59,7 +65,28 @@ public class StatisticResultActivity extends Activity{
     					
     					BarGraph bar = new BarGraph(s.getParticipantsWithSpeakingTime(filename), order);
     					Intent barIntent = bar.getIntent(StatisticResultActivity.this);
-    					startActivity(barIntent);
+    					startActivity(barIntent);*/
+    					
+    					RadioGroup radioGroup = (RadioGroup) findViewById(R.id.radioOrder);
+    					int selectedId = radioGroup.getCheckedRadioButtonId();
+    					RadioButton radioOrderButton = (RadioButton) findViewById(selectedId);
+    					
+    					Intent intent = new Intent(StatisticResultActivity.this, BarGraphActivity.class);
+    					intent.putExtra("participantsWithSpeakingTime", s.getParticipantsWithSpeakingTime(filename));
+    					
+    					if  (radioOrderButton.getText().toString().equalsIgnoreCase("In increasing order")){
+    						intent.putExtra("order", "1");
+						}
+    					else if  (radioOrderButton.getText().toString().equalsIgnoreCase("In decreasing order")){
+    						intent.putExtra("order", "0");
+    					}
+    					
+    					intent.putExtra("name", filename);
+    					
+    					startActivity(intent);
+    					
+    					
+    					
     				}
     			}
     	);
@@ -71,14 +98,30 @@ public class StatisticResultActivity extends Activity{
     				@Override
     				public void onClick(View v) {
     					
-    					EditText editTextTimeInterval = (EditText) findViewById(R.id.editTextTimeInterval);
+    					/*EditText editTextTimeInterval = (EditText) findViewById(R.id.editTextTimeInterval);
     					try{
     						int timeInterval = Integer.valueOf((editTextTimeInterval.getText().toString()));
     						
     						BarGraph1 bar = new BarGraph1(s.getParticipantsWithSpeakingTime(filename), timeInterval);
-        					Intent barIntent = bar.getIntent(StatisticResultActivity.this);
+    						Intent barIntent = bar.getIntent(StatisticResultActivity.this);
         					startActivity(barIntent);
     						
+    					}
+    					catch (Exception e){
+    						AlertDialog.Builder alertDialog = new AlertDialog.Builder(StatisticResultActivity.this);
+							alertDialog.setTitle("Warning");
+							alertDialog.setMessage("Please, enter an integer !");
+							alertDialog.show();
+    					}*/
+    					
+    					EditText editTextTimeInterval = (EditText) findViewById(R.id.editTextTimeInterval);
+    					try{
+    						int timeInterval = Integer.valueOf((editTextTimeInterval.getText().toString()));
+    						Intent intent = new Intent(StatisticResultActivity.this, BarGraph1Activity.class);
+    						intent.putExtra("participantsWithSpeakingTime", s.getParticipantsWithSpeakingTime(filename));
+    						intent.putExtra("timeIntervalInMin", editTextTimeInterval.getText().toString());
+    						intent.putExtra("name", filename);
+    						startActivity(intent);
     					}
     					catch (Exception e){
     						AlertDialog.Builder alertDialog = new AlertDialog.Builder(StatisticResultActivity.this);

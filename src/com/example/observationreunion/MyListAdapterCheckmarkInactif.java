@@ -111,15 +111,16 @@ public class MyListAdapterCheckmarkInactif extends SimpleAdapter implements View
 		return v;
 	}	
 	
+
+	
 	@Override
 	public boolean onTouch(View v, MotionEvent event) {
 	    
 		long width = v.getWidth();
 		
-		
 		//MainActivity main = new MainActivity();
 		
-		if (event.getAction() == MotionEvent.ACTION_UP) {
+		if ((event.getAction() == MotionEvent.ACTION_UP) || (event.getAction() == MotionEvent.ACTION_CANCEL)) {
     		
     		if ((event.getRawX() > width) && (event.getRawX() < width*2)){
     			if (callerActivity.islVDataInactifCheck()){
@@ -164,14 +165,21 @@ public class MyListAdapterCheckmarkInactif extends SimpleAdapter implements View
     		}
     		
     	}
-    	else if(event.getAction()==MotionEvent.ACTION_DOWN){
-	    	ViewHolder holder;
+    	else if (event.getAction()==MotionEvent.ACTION_DOWN){
+			//v.getParent().requestDisallowInterceptTouchEvent(true);
+			//v.getParent().getParent().requestDisallowInterceptTouchEvent(true);
+    		
+    		v.getParent().requestDisallowInterceptTouchEvent(true);
+    		
+			ViewHolder holder;
 			holder = (ViewHolder) v.getTag();
 	    	position = holder.position;
 			return true;
 	    }
 	    return false;
 	}
+	
+	
 	
 	private void  stopChrono(View v){
 		

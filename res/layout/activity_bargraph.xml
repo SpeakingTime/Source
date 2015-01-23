@@ -3,26 +3,20 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/black"
+    android:gravity="bottom"
     android:orientation="vertical" >
     
     
-     <LinearLayout 
-   		android:id="@+id/UpLinearLayoutHorizontal2"
+    <LinearLayout 
+   		android:id="@+id/chart"
     	android:layout_width="match_parent"
     	android:layout_height="wrap_content"
     	android:orientation="horizontal"
 		android:layout_weight="1">
-
-        <WebView android:id="@+id/WebView"
-        	android:layout_height="fill_parent"
-        	android:layout_width="fill_parent"
-        	android:layout_weight="1"
-      		android:gravity="top"
-    	/>
-     </LinearLayout>  
-
-     <LinearLayout
-        android:id="@+id/BottomLinearLayoutHorizontal2"
+    </LinearLayout>  
+    
+    <LinearLayout
+        android:id="@+id/BottomLinearLayoutHorizontal"
 	    android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal" 
@@ -30,7 +24,7 @@
         android:layout_alignParentBottom="true">
         
     	<Button
-			android:id="@+id/buttonSaveGraphAsImage2"
+			android:id="@+id/buttonSaveGraphAsImage"
 		    android:text="@string/buttonSaveGraphAsImage"
 		    android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
@@ -38,15 +32,14 @@
 	   	</Button>
 	   	
     	<Button
-			android:id="@+id/buttonSendGraphByEMail2"
+			android:id="@+id/buttonSendGraphByEMail"
 		    android:text="@string/buttonSendGraphByEMail"
 		    android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_gravity="center" >
 	   	</Button>
     
-	</LinearLayout>
+	</LinearLayout>  
     
-    
-
 </LinearLayout>
+      

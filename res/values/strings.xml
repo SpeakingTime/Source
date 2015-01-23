@@ -55,5 +55,10 @@
 	<string name="buttonHistograms">Histograms</string>
 	<string name="buttonBoxPlots">Box Plots</string>
 	<string name="buttonGenerateBoxPlots">Generate Box Plots</string>
+	<string name="buttonUpListViewEcoute">^^^^^^^</string>
+	<string name="title_bargraph_activity">Speaking time per participant</string>
+	<string name="buttonSaveGraphAsImage">Save graph as image</string>
+	<string name="buttonSendGraphByEMail">Send graph by E-mail</string>
+	<string name="title_bargraph1_activity">Number of participants per time class</string>
 	
 </resources>

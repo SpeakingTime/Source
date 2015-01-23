@@ -17,7 +17,9 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -29,7 +31,7 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
 
-public class ModalDialog {
+public class ModalDialog{
 	
 	private boolean mChoice = false;
 	private boolean mQuitModal = false;
@@ -359,6 +361,116 @@ public class ModalDialog {
 		doModal();
 		return mEditText;
 	}
+	
+	public String showModalDialogBoxplotsName(Context context, String info) {
+		
+		if (!prepareModal()) {
+			return "Cancel";
+		}
+		
+		mEditText = "Cancel";
+		
+		LayoutInflater factory = LayoutInflater.from(context);
+		final View alertDialogView = factory.inflate(R.layout.modaldialog_boxplots_name, null);
+
+				
+		AlertDialog.Builder builder = new AlertDialog.Builder(context);
+		builder.setMessage(info);
+		
+		builder.setView(alertDialogView);
+		
+		builder.setCancelable(false);
+		
+		
+		
+		builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+				ModalDialog.this.mQuitModal = true;
+				
+				final EditText editTextAlertDialogPerso = (EditText) alertDialogView.findViewById(R.id.EditTextModalDialogBoxplotsName);
+				
+				ModalDialog.this.mEditText = editTextAlertDialogPerso.getText().toString();
+				
+				dialog.dismiss();
+				
+			}
+		});
+		
+		builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+				ModalDialog.this.mQuitModal = true;
+				ModalDialog.this.mEditText = "Cancel";
+				dialog.cancel();
+			}
+		});
+		
+		AlertDialog alert = builder.create();
+		
+		alert.show();
+		
+		doModal();
+		return mEditText;
+	}	
+	
+	public String showModalDialogSendByEmail(final Context context, String info, final String attachment_path) {
+		
+		if (!prepareModal()) {
+			return "Cancel";
+		}
+		
+		mEditText = "Cancel";
+		
+		LayoutInflater factory = LayoutInflater.from(context);
+		final View alertDialogView = factory.inflate(R.layout.modaldialog_send_by_email, null);
+
+				
+		AlertDialog.Builder builder = new AlertDialog.Builder(context);
+		builder.setMessage(info);
+		
+		builder.setView(alertDialogView);
+		
+		builder.setCancelable(false);
+		
+		
+		
+		builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+				
+				EditText editTextMailAddress = (EditText) alertDialogView.findViewById(R.id.EditTextModalDialogMailAddress);
+			    String mailAddress = editTextMailAddress.getText().toString();
+			    EditText editTextSubject = (EditText) alertDialogView.findViewById(R.id.EditTextModalDialogSubject);
+			    String subject = editTextSubject.getText().toString();
+			    EditText editTextBody = (EditText) alertDialogView.findViewById(R.id.EditTextModalDialogBody);
+			    String body = editTextBody.getText().toString();
+			    
+			    if (SendByEmail(context, mailAddress, subject, body, attachment_path) == false){
+					ModalDialog.this.mEditText = "error"; 
+				}
+				else {
+					ModalDialog.this.mEditText = mailAddress;
+				}
+			
+				ModalDialog.this.mQuitModal = true;
+				//dialog.dismiss();
+				
+			}
+		});
+		
+		builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+				ModalDialog.this.mQuitModal = true;
+				ModalDialog.this.mEditText = "Cancel";
+				dialog.cancel();
+			}
+		});
+		
+		AlertDialog alert = builder.create();
+		
+		alert.show();
+		
+		doModal();
+		return mEditText;
+	}
 			
 	private boolean prepareModal() {
 		Class<?> clsMsgQueue = null;
@@ -510,7 +622,46 @@ public class ModalDialog {
 		  public SSHException(String message) { super(message); }
 		  public SSHException(Throwable cause) { super(cause); }
 		  
-		}
+	}
 	
+	private Boolean SendByEmail(Context context, String mailAddress, String subjet, String body, String attachment_path){
+		
+		try{/*
+			//Intent intent = new Intent(Intent.ACTION_SEND); 
+			final Intent intent = new Intent(android.content.Intent.ACTION_SEND);
+			//intent.setType("message/rfc822");
+			//intent.setType("vnd.android.cursor.dir/email");
+			intent.setType("image/png");
+			intent.putExtra(Intent.EXTRA_SUBJECT, subjet);
+			intent.putExtra(Intent.EXTRA_TEXT, body);
+			//intent.setData(Uri.parse("mailto:" + mailAddress)); // or just "mailto:" for blank
+			intent .putExtra(Intent.EXTRA_EMAIL, new String[] {mailAddress});
+			System.out.println(attachment_path);
+			File file = new File(attachment_path);
+			//intent.putExtra(Intent.EXTRA_STREAM, attachment_path);
+			intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file));
+			intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // this will make such that when user returns to your app, your app is displayed, instead of the email app.
+			//context.startActivity(intent);
+			context.startActivity(Intent.createChooser(intent , "Send email..."));*/
+			
+			Intent intent = new Intent(Intent.ACTION_SENDTO); 
+			intent.setType("message/rfc822");
+			intent.putExtra(Intent.EXTRA_SUBJECT, subjet);
+			intent.putExtra(Intent.EXTRA_TEXT, body);
+			intent.setData(Uri.parse("mailto:" + mailAddress)); // or just "mailto:" for blank
+			System.out.println(attachment_path);
+			File file = new File(attachment_path);
+			intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file));
+			intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // this will make such that when user returns to your app, your app is displayed, instead of the email app.
+			context.startActivity(intent);
+			
+			return true;
+		}
+		catch (Exception e){
+			System.out.println("Email not send : " + e);
+			return false;
+			
+		}
+	}
 	
 }

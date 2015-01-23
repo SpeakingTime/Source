@@ -338,7 +338,7 @@ public class StatisticLoadFiles {
 			result.append(getParticipantsSpeakingTime(filename, participantsList.get(i)));
 		}
 	
-		System.out.println(result.toString());
+		//System.out.println(result.toString());
 		return result.toString();
 	}
 	

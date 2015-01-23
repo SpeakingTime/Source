@@ -15,7 +15,7 @@ import android.widget.ListView;
 public class MyListView extends ListView {
 
 	
-	private final static int MOVE_TAP = 3; 
+	/*private final static int MOVE_TAP = 3; 
 	private final static int DOUBLE_TAP = 2;
 	private final static int SINGLE_TAP = 1;
 	private final static int DELAY = ViewConfiguration.getDoubleTapTimeout();
@@ -53,24 +53,24 @@ public class MyListView extends ListView {
        				break;	
         	}
         }
-    };
+    };*/
 	
 	public MyListView(Context context) {
 		super(context);
-		removeSelector();
+		//removeSelector();
 	}
 	
 	public MyListView(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		removeSelector();	
+		//removeSelector();	
 	}
 	
 	public MyListView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs);
-		removeSelector();	
+		//removeSelector();	
 	}
 	
-	public void setOnTouchListener (OnItemMoveTapLister listener){
+	/*public void setOnTouchListener (OnItemMoveTapLister listener){
 		mOnMoveTapListener = listener;
 		
 		if(mOnMoveTapListener==null)
@@ -84,10 +84,7 @@ public class MyListView extends ListView {
 				public boolean onTouch(View v, MotionEvent event) {
 					// TODO Auto-generated method stub
 					mView = v;
-					mEvent = event;
-					
-					/*LinearLayout ll = (LinearLayout)v.findViewById(R.id.item_ecoute);
-					System.out.println("ll : " + Integer.valueOf(ll.getTag().toString()));	*/	
+					mEvent = event;	
 										
 					mMessage = mMessage == null? new Message() : mHandler.obtainMessage();
 					
@@ -109,16 +106,13 @@ public class MyListView extends ListView {
 
 
 	
-	}
+	}*/
 	
-	public void setOnItemDoubleClickListener(OnItemDoubleTapLister listener ){
+	/*public void setOnItemDoubleClickListener(OnItemDoubleTapLister listener ){
 		mOnDoubleTapListener = listener;
-		/*If the listener is null then throw exception*/
 		if(mOnDoubleTapListener==null)
 			throw new IllegalArgumentException("OnItemDoubleTapListener cannot be null");
 		else{
-			/*If the OnItemDoubleTapListener is not null,
-			* register the default onItemClickListener to proceed with listening */
 			setOnItemClickListener(new OnItemClickListener(){
 			
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id){
@@ -126,13 +120,10 @@ public class MyListView extends ListView {
 				mView = view;
 				mPosition = position;
 				mId=id;
-				if(!mTookFirstEvent) /* Testing if first tap occurred */{
+				if(!mTookFirstEvent) {
 					mPositionHolder=position;
-					/*this will hold the position variable from first event.
-					 * In case user presses any other item (position)*/
 					mTookFirstEvent=true;
 					mMessage = mMessage == null? new Message() : mHandler.obtainMessage();
-					/*"Recycling" the message, instead creating new instance we get the old one */
 					mHandler.removeMessages(SINGLE_TAP);
 					mMessage.what = SINGLE_TAP;
 					mHandler.sendMessageDelayed(mMessage, DELAY);
@@ -140,33 +131,15 @@ public class MyListView extends ListView {
 				else{
 					if(mPositionHolder == position){
 						mHandler.removeMessages(SINGLE_TAP);
-						/*Removing the message that was queuing for scheduled
-						 * sending after elapsed time > DELAY,
-						 * immediately when we have second event,
-						 * when the time is < DELAY
-						 */
 						mPosition = position;
 						mMessage = mHandler.obtainMessage();
-						/*obtaining old message instead creating new one */
 						mMessage.what=DOUBLE_TAP;
 						mHandler.sendMessageAtFrontOfQueue(mMessage);
-						/*Sending the message immediately when we have second event,
-						* when the time is < DELAY
-						*/
+					
 						mTookFirstEvent=false;
 						
 					}
 					else{
-						/* When the position is different from previously
-						* stored position in mPositionHolder (mPositionHolder!=position).
-						* Wait for double tap on the new item at position which is
-						* different from mPositionHolder. Setting the flag mTookFirstEvent
-						* back to false.
-						*
-						* However we can ignore the case when we have mPosition!=position, when we want,
-						* to do something when onSingleTap/onItemClickListener are called.
-						*
-						*/
 						mMessage = mHandler.obtainMessage();
 						mHandler.removeMessages(SINGLE_TAP);
 						mTookFirstEvent=true;
@@ -179,9 +152,9 @@ public class MyListView extends ListView {
 			}});
 		}
 	
-	}
+	}*/
 	
-	public void removeSelector()
+	/*public void removeSelector()
 	{
 		setSelector(android.R.color.transparent); // optional
 		//TODO solution for double tap selector needed.
@@ -196,6 +169,6 @@ public class MyListView extends ListView {
 
 	public interface OnItemMoveTapLister{
 		public void OnMoveTap(View view, MotionEvent event);
-	}
+	}*/
 	
 }

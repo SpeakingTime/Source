@@ -141,7 +141,7 @@ public class MyListAdapterCheckmarkParole extends SimpleAdapter implements View.
 		
 		//MainActivity main = new MainActivity();
 		
-		if (event.getAction() == MotionEvent.ACTION_UP) {
+		if ((event.getAction() == MotionEvent.ACTION_UP) || (event.getAction() == MotionEvent.ACTION_CANCEL)) {
     		
     		if ((event.getRawX() > width*2) && (event.getRawX() < width*3)){
     			if (callerActivity.islVDataParoleCheck()){
@@ -182,7 +182,9 @@ public class MyListAdapterCheckmarkParole extends SimpleAdapter implements View.
     		
     	}
     	else if(event.getAction()==MotionEvent.ACTION_DOWN){
-	    	ViewHolder holder;
+    		v.getParent().requestDisallowInterceptTouchEvent(true);
+    		
+    		ViewHolder holder;
 			holder = (ViewHolder) v.getTag();
 	    	position = holder.position;
 			return true;

@@ -1,15 +1,28 @@
 package com.example.observationreunion;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
+import android.graphics.Canvas;
+import android.graphics.Picture;
+import android.graphics.drawable.PictureDrawable;
 import android.os.Bundle;
+import android.os.Environment;
+import android.view.View;
+import android.webkit.WebBackForwardList;
 import android.webkit.WebView;
+import android.widget.Button;
 
-public class BarGraph2  extends Activity{
+public class BarGraph2Activity  extends Activity{
 
 	private String url;
     private WebView webView;
@@ -23,6 +36,51 @@ public class BarGraph2  extends Activity{
         webView = (WebView) findViewById(R.id.WebView);
         Post();
         
+        
+        
+        
+        final Bundle b = savedInstanceState;
+        
+        Button buttonSaveGraphAsImage2 = (Button) findViewById(R.id.buttonSaveGraphAsImage2);
+    	buttonSaveGraphAsImage2.setOnClickListener( 
+    			new Button.OnClickListener(){
+    				
+    				@Override
+    				public void onClick(View v) {   		
+    					
+    					File myDir = new File(Environment.getExternalStorageDirectory() + File.separator + "SpeakingTime Graphs"); //pour créer le repertoire dans lequel on va mettre notre fichier
+    		            if (!myDir.exists()) {
+    		            	myDir.mkdir(); //On crée le répertoire (s'il n'existe pas!!)
+    		            }
+    					
+    		            FileOutputStream out = null;
+						try {
+							out = new FileOutputStream(Environment.getExternalStorageDirectory() + File.separator + "SpeakingTime Graphs" + File.separator + "boxplots.jpg");
+						} catch (FileNotFoundException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+    					
+												
+						Picture picture = webView.capturePicture();
+						PictureDrawable pictureDrawable = new PictureDrawable(picture);
+						Bitmap bitmap = Bitmap.createBitmap(pictureDrawable.getIntrinsicWidth(),pictureDrawable.getIntrinsicHeight(), Config.ARGB_8888);
+					        
+						Canvas canvas = new Canvas(bitmap);
+				        
+						canvas.drawPicture(pictureDrawable.getPicture());
+						
+						bitmap.compress( Bitmap.CompressFormat.JPEG, 97, out );
+    					try {
+							out.close();
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+    				}
+    			}
+    	);
+        
 	}
 	
 	public void Post(){
@@ -30,21 +88,28 @@ public class BarGraph2  extends Activity{
 		Bundle b = getIntent().getExtras();
     	String nbboxplots = b.getString("nbboxplots");
     	
+    	List<String> reunionNameList = new ArrayList<String>();
+    	for (int i=1; i<Integer.valueOf(nbboxplots) + 1 ;i++){
+    		reunionNameList.add(b.getString("reunionName" + String.valueOf(i)));
+    	}
+    		
     	int i = 0;
     	int j = 1;
-    	url = "http://data-mysql.fr/boxplot/test5.php?nb=" + nbboxplots;
-    	while (i < Integer.valueOf(nbboxplots) * 5 ) {
-	    	String minValue = String.valueOf(getMinValue(String.valueOf(j)));
+    	url = "http://data-mysql.fr/boxplot/test6.php?nb=" + nbboxplots;
+    	while (i < Integer.valueOf(nbboxplots) * 6 ) {
+	    	String reunionName = reunionNameList.get(j-1);
+    		String minValue = String.valueOf(getMinValue(String.valueOf(j)));
 	    	String quartile1 = String.valueOf(getQuartile1(String.valueOf(j)));
 	    	String median = String.valueOf(getMedian(String.valueOf(j)));
 	    	String quartile3 = String.valueOf(getQuartile3(String.valueOf(j)));
 	    	String maxValue = String.valueOf(getMaxValue(String.valueOf(j)));
-	    	url = url + "&" + String.valueOf(i+1) + "=" + minValue + 
-	    					"&" + String.valueOf(i+2) + "=" + quartile1 + 
-	    					"&" + String.valueOf(i+3) + "=" + median +
-	    					"&" + String.valueOf(i+4) + "=" + quartile3 + 
-	    					"&" + String.valueOf(i+5) + "=" + maxValue;
-	    	i = i + 5;
+	    	url = url +     "&" + String.valueOf(i+1) + "=" + reunionName + 
+					        "&" + String.valueOf(i+2) + "=" + minValue + 
+	    					"&" + String.valueOf(i+3) + "=" + quartile1 + 
+	    					"&" + String.valueOf(i+4) + "=" + median +
+	    					"&" + String.valueOf(i+5) + "=" + quartile3 + 
+	    					"&" + String.valueOf(i+6) + "=" + maxValue;
+	    	i = i + 6;
 	    	j = j + 1;
     	}
     	

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    
+	<TextView 
+        android:id="@+id/TextViewModalDialogMailAddress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Mail address :" 
+        android:textColor="@android:color/white"
+    />
+    
+    <EditText 
+        android:id="@+id/EditTextModalDialogMailAddress"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/TextViewModalDialogMailAddress"
+    />
+    
+    <TextView 
+        android:id="@+id/TextViewModalDialogSubject"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Subject :" 
+        android:textColor="@android:color/white"
+    />
+    
+    <EditText 
+        android:id="@+id/EditTextModalDialogSubject"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/TextViewModalDialogSubject"
+    />
+    
+    <TextView 
+        android:id="@+id/TextViewModalDialogBody"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="body :" 
+        android:textColor="@android:color/white"
+    />
+    
+    <EditText 
+        android:id="@+id/EditTextModalDialogBody"
+    	android:layout_width="fill_parent"
+    	android:layout_height="wrap_content"
+    	android:lines="5"
+    	android:gravity="top|left"
+    	android:inputType="textMultiLine"
+    	android:scrollHorizontally="false" 
+	/>
+    
+    
+    
+</LinearLayout>
